@@ -2,6 +2,8 @@
 
 =reglib's Event delegation methods=
 
+Here are the methods for event delegation:
+
   * reg.click(selectorString, clickHandler)
   * reg.hover(selectorString, mouseOverHandler[, mouseOutHandler])
   * reg.focus(selectorString, focusHandler[, blurHandler])
