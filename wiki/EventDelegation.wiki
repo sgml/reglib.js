@@ -4,8 +4,8 @@
 
   * reg.click(selectorString, clickHandler)
   * reg.hover(selectorString, overHandler[, outHandler])
-  * reg.focus(selector, focusHandler[, blurHandler])
-  * reg.key(selector, downHandler, pressHandler, upHandler)
+  * reg.focus(selectorString, focusHandler[, blurHandler])
+  * reg.key(selectorString, downHandler, pressHandler, upHandler)
 
 Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
 
@@ -51,7 +51,7 @@ body.foo { background: yellow; }
 </p>
 }}}
 
-==reg.focus(selector, focusHandler[, blurHandler])==
+==reg.focus(selectorString, focusHandler[, blurHandler])==
 
 {{{
 // in the JavaScript
@@ -67,4 +67,4 @@ reg.focus('input.date', null, function(e){
 });
 }}}
 
-==reg.key(selector, downHandler, pressHandler, upHandler)==
+==reg.key(selectorString, downHandler, pressHandler, upHandler)==
