@@ -2,7 +2,7 @@
 
 =The API=
 
-`reglib` has a simple Selector API. The following code demonstrates everything that it is possible to do with the Selector API.
+`reglib` has a simple Selector API. The following code demonstrates everything it's possible to do with the Selector API.
 
 {{{
 var sel = new Selector('div#foo ul > li.bar');
@@ -10,7 +10,7 @@ var myElement = document.getElementById('baz');
 if (sel.matches(myElement)) { ... }
 }}}
 
-You shouldn't ever need to use this API directly. `reg` functions and methods always accept plain old selector strings and will convert them internally to Selector objects, often caching the compiled versions for future use.
+You shouldn't ever need to use this API directly. `reg` functions and methods always accept plain selector strings and will convert them internally to Selector objects, often caching the compiled versions for future use.
 
 =Selector Syntax=
 
