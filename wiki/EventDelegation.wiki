@@ -10,8 +10,8 @@ $(document).ready(function(){
         window.open(this.href);
         e.preventDefault();
     });
+    document.body.innerHTML += "<p>Whoops, I just overwrote all the events I just attached!</p>";
 });
-document.body.innerHTML += "<p>Whoops, I just overwrote all the events I just attached!</p>";
 }}}
 
 The downside of this is that the events aren't available until the entire DOM finishes loading into memory. Also, as you can see, overwrites of the DOM will overwrite the events. Here is the roughly equivalent code in reglib:
