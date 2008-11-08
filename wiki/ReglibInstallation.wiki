@@ -16,3 +16,27 @@ reg.click('a@href', function(ev){
 
 </script>
 }}}
+
+=Renaming the `reg` Object=
+
+Within `reg.js` you can edit this line:
+
+{{{
+window.reg = (function(){
+}}}
+
+For example maybe you'd rather name it `$$$`:
+
+{{{
+window.$$$ = (function(){
+}}}
+
+This is perfectly acceptable. Then your page might look like this:
+{{{
+<script type="text/javascript" src="path/to/reg.js"></script>
+<script type="text/javascript">
+$$$.click('a@href', function(ev){
+    alert('hello whirled');
+});
+</script>
+}}}
