@@ -1,5 +1,7 @@
 #summary Using reglib's event delegation methods
 
+=Event delegation methods=
+
 Here are the event delegation methods `reglib` offers:
 
 ==reg.click()==
