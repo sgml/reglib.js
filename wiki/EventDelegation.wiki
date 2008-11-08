@@ -4,9 +4,7 @@
 
 Here are the event delegation methods `reglib` offers:
 
-==reg.click()==
-
-`reg.click(selector, handler)`
+==reg.click(selector, handler)==
 
 Registers click events. `selector` is a CSS selector string. `handler` is a function that accepts the event object as its parameter. Within the `handler` function, `this` always refers to the element matching the selector, even if the event target was a descendant of that element.
 
