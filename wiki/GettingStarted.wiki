@@ -1,8 +1,10 @@
 #summary Getting started using reglib
 
+=Installation=
+
 See the ReglibInstallation page for installation instructions.
 
-=Renaming the `reg` Object=
+=Renaming the `reg` object=
 
 Within `reg.js` you can edit this line:
 
@@ -24,7 +26,7 @@ $$$.click('a@href', function(ev){...});
 </script>
 }}}
 
-=Global Variable Name Collisions=
+=Playing well with other scripts=
 
 `reglib` adds a single variable `reg` to the global namespace. All `reglib` functions and methods are properties of this object:
 
@@ -49,7 +51,7 @@ removeClassName(document.body, 'foo');
 
 If there's a collision `reg.importAll()` will throw an exception listing each collision.
 
-=Function Shorthand Aliases=
+=Saving typing by using aliases=
 
 If you want to save even more typing, you can use reg's shorthand aliases:
 
