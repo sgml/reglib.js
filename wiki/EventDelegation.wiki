@@ -53,7 +53,7 @@ body.bar { background: yellow; }
 {{{
 <!-- in the html -->
 <p class="foo">
-    <!-- hovering this makes the background yellow -->
+    <!-- hovering this makes the whole page yellow -->
     <a href="page.html">hoverme</a>
 </p>
 }}}
