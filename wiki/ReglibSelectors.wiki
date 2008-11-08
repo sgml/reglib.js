@@ -53,13 +53,14 @@ Here's a rundown of the selection options:
 || `.foo` or `*.foo` || any element with a class attribute that equals `foo`, or contains `foo` in a space-separated list ||
 || `:target` or `*:target` || any element whose id matches the URL hash ||
 
+------
 
 =Performance=
 
-If you're worried about performance, there are some considerable considerations to consider when choosing your selectors. Generally, less ambiguous selectors perform better, more ambiguous selectors perform slower. For example:
+If you're worried about performance, there are some considerations in choosing your selectors. Generally, less ambiguous selectors perform faster, more ambiguous selectors perform slower. For example:
 
   * `div.foo` will be faster than `.foo`
   * `ul > li` will be faster than `ul li`
   * `br + a` will be faster than `br ~ a`
 
-This will be especially true in traversal situations, where element are repeatedly matched against selector. The less ambiguity in the selector, the more search possibilities can be ruled out, allowing the match to run much faster.
+This will be especially true in traversal situations, where elements are repeatedly matched against selectors. The less ambiguity in the selector, the more search possibilities can be ruled out ahead of time, allowing the match to run much faster.
