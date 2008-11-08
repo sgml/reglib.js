@@ -19,6 +19,20 @@ This is just documented for posterity. You shouldn't ever need to use this API d
 
 =Selector Syntax=
 
+If you're familiar with CSS, it should be fairly obvious what these selectors mean and how they work. This is by no means a comprehensive implementation of CSS3 selectors, in fact the attribute selection syntax differs from CSS3:
+
+{{{
+/* CSS3 */
+a[href=foo.html]
+}}}
+
+{{{
+/* reglib */
+a@href='foo.html'
+}}}
+
+Here's a rundown of the selection options:
+
 || *Selector* || *What it Selects* ||
 || `a` || `a` elements ||
 || `a span` || `span` elements descended from `a` elements ||
