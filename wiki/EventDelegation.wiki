@@ -9,7 +9,7 @@
 
 Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
 
-==reg.click(selectorString, clickHandler)==
+==reg.click()==
 
 {{{
 // in the JavaScript
@@ -27,7 +27,7 @@ reg.click('p.foo a', function(e){
 </p>
 }}}
 
-==reg.hover(selectorString, overHandler[, outHandler])==
+==reg.hover()==
 
 {{{
 // in the JavaScript
@@ -51,7 +51,7 @@ body.foo { background: yellow; }
 </p>
 }}}
 
-==reg.focus(selectorString, focusHandler[, blurHandler])==
+==reg.focus()==
 
 {{{
 // in the JavaScript
@@ -67,4 +67,4 @@ reg.focus('input.date', null, function(e){
 });
 }}}
 
-==reg.key(selectorString, downHandler, pressHandler, upHandler)==
+==reg.key()==
