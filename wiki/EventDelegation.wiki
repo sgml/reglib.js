@@ -6,7 +6,7 @@
 
 {{{
 // in the JavaScript
-reg.click('div.foo a', function(e){
+reg.click('p.foo a', function(e){
     alert(this.nodeName);
     alert(reg.getTarget(e).nodeName);
 });
@@ -14,10 +14,10 @@ reg.click('div.foo a', function(e){
 
 {{{
 <!-- in the html -->
-<div class="foo">
-    <!-- clicking should alert "A" and then alert "EM" -->
+<p class="foo">
+    <!-- clicking this link will alert "A" and then alert "EM" -->
     <a href="foo.html"><em>clickme</em></a>
-</div>
+</p>
 }}}
 
 ==reg.hover(selectorString, overHandler[, outHandler])==
