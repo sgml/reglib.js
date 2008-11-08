@@ -5,18 +5,18 @@
 ==reg.click(selectorString, clickHandler)==
 
 {{{
-<!-- in the html -->
-<div class="foo">
-    <a href="doc.html"><em>documentation</em></a>
-</div>
-}}}
-
-{{{
 // in the JavaScript
 reg.click('div.foo a', function(e){
     alert(this.nodeName); // should alert "A"
     alert(reg.getTarget(e).nodeName); // should alert "EM"
 });
+}}}
+
+{{{
+<!-- in the html -->
+<div class="foo">
+    <a href="doc.html"><em>documentation</em></a>
+</div>
 }}}
 
 ==reg.hover(selectorString, overHandler[, outHandler])==
