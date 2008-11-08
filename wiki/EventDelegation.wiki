@@ -53,7 +53,7 @@ Three things to remember about the handler functions:
 
 --------
 
-==Examples==
+=Examples=
 
 Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
 
