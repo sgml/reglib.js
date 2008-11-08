@@ -19,7 +19,7 @@ This is just documented for posterity. You shouldn't ever need to use this API d
 
 =Selector Syntax=
 
-If you're familiar with CSS, it should be fairly obvious what these selectors mean and how they work. Do note however that this is a stripped-down, souped-up implementation of CSS3 selectors, and the attribute selection syntax differs from CSS3:
+If you're familiar with CSS, it should be fairly obvious what these selectors mean and how they work. However, for performance reasons, this is a stripped-down, souped-up implementation of CSS3 selectors, and the attribute selection syntax differs from CSS3:
 
 {{{
 /* CSS3 */
