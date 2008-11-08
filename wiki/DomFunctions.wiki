@@ -2,7 +2,7 @@
 
 =reglib DOM functions=
 
-Here's a list of `reglib` DOM functions. Most of these have shorthand aliases, shown in braces:
+Here's a list of reglib's DOM convenience functions. Most of these have shorthand aliases, shown in braces:
 
 <wiki:toc max_depth="3" />
 
