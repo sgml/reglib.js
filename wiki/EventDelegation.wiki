@@ -2,11 +2,7 @@
 
 =Event delegation methods=
 
-Here are the event delegation methods `reglib` offers:
-
-==reg.click(selector, handler)==
-
-Registers click events. `selector` is a CSS selector string. `handler` is a function that accepts the event object as its parameter. Within the `handler` function, `this` always refers to the element matching the selector, even if the event target was a descendant of that element.
+==reg.click(selectorString, clickHandler)==
 
 {{{
 <!-- in the html -->
@@ -23,20 +19,8 @@ reg.click('div.foo a', function(e){
 });
 }}}
 
-==reg.hover()==
+==reg.hover(selectorString, overHandler[, outHandler])==
 
-`reg.hover(selector, overHandler[, outHandler])`
+==reg.focus(selector, focusHandler[, blurHandler])==
 
-registers mouseover and mouseout events
-
-==reg.focus()==
-
-`reg.focus(selector, focusHandler[, blurHandler])`
-
-registers focus and blur events
-
-==reg.key()==
-
-`reg.key(selector, downHandler, pressHandler, upHandler)`
-
-registers keydown, keypress and keyup events
+==reg.key(selector, downHandler, pressHandler, upHandler)==
