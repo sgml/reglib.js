@@ -9,17 +9,19 @@ Here are the methods for event delegation:
   * reg.focus(selectorString, focusHandler[, blurHandler])
   * reg.key(selectorString, keyDownHandler, keyPressHandler, keyUpHandler)
 
+==Handler functions==
+
 Each method takes a selector and one or more handler functions. There are three things to remember about the handler functions, other than which event they handle:
 
   # They take an event object as their only parameter.
   # The `this` object always refers to the element matching the selector, even if the event target was an ancestor of that element.
   # Returning `false` from them prevents the default action of the event.
 
-=Examples=
+==Examples==
 
 Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
 
-==reg.click()==
+===reg.click()===
 
 {{{
 // in the JavaScript
@@ -38,7 +40,7 @@ reg.click('p.foo a', function(e){
 </p>
 }}}
 
-==reg.hover()==
+===reg.hover()===
 
 {{{
 // in the JavaScript
@@ -60,7 +62,7 @@ body.bar { background: yellow; }
 </p>
 }}}
 
-==reg.focus()==
+===reg.focus()===
 
 {{{
 // in the JavaScript
