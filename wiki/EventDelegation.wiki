@@ -101,6 +101,11 @@ body.bar { background: yellow; }
 ===reg.focus()===
 
 {{{
+/* in the css */
+input.error { border: 2px solid red; }
+}}}
+
+{{{
 // in the JavaScript
 // we just want to validate the date format onblur,
 // no need to handle the focus event, so it can be null
