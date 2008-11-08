@@ -4,17 +4,19 @@
 
 Here's a list of `reglib` DOM functions. Most of these have shorthand aliases, shown in braces:
 
+<wiki:toc max_depth="1" />
+
 ==Functions for working with class attributes==
 
-These functions work based on the notion of the "class list", i.e. an element's class, although represented in the attribute as one big string, is really an unordered set. For example class="foo bar" represents a class list of ["foo","bar"]. Note that `class="foo bar"`, `class="bar foo"` and `class="foo bar foo"` are all treated as having identical class lists.
+These functions are predicated upon the notion of the "class list". An element's class is represented in the attribute as a space-separated set of values. For example class="foo bar" represents a class list of ["foo","bar"]. Since it's an unordered set, `class="foo bar"`, `class="bar foo"` and `class="foo bar foo"` are all treated as having a class list of ["foo","bar"].
 
 ===reg.addClassName(el, cName) {acn}===
 
-Adds `cName` to the the class list of `el`. If the class list of `el` already contains `cName`, nothing happens.
+Adds `cName` to the the class list of `el`. If the class list of `el` already contains `cName`, the function just returns silently.
 
-===reg.getElementsByClassName(cNames[, ctxNode[, tagName]]) {gebcn}===
+===reg.getElementsByClassName(cName[, ctxNode[, tagName]]) {gebcn}===
 
-Returns an array of elements whose class lists contain a given class. If `cNames` contains whitespace between characters, it's treated as a class list separated by logical AND. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. If `tagName` is present, only elements of that tag name are returned. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.getElementsByClassName()` implementations whenever possible.
+Returns an array of all elements whose class lists contain `cName`. `cName` can optionally contain a space-separated class list. If so, only elements containing all classes are returned. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. If `tagName` is present, only elements of that tag name are returned. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.getElementsByClassName()` implementations when possible, otherwise falling back on slower search methods.
 
 ===reg.hasClassName(el, cName) {hcn}===
 
@@ -22,11 +24,11 @@ Returns true if the class list of `el` contains `cName`, otherwise returns false
 
 ===reg.matchClassName(el, regexp) {mcn}===
 
-Returns true if the class list of `el` contains a value that matches `regexp`, otherwise returns false. `regexp` is tested against individual items in the class list, not the entire class attribute value, so for example if the class attribute is `class="foo bar baz"` then `reg.matchClassName(el, /^bar$/)` returns true.
+Returns true if the class list of `el` contains a value matching `regexp`, otherwise returns false. `regexp` is tested against individual items in the class list, not the entire class attribute value, so if the class attribute is `class="foo bar baz"`, then `reg.matchClassName(el, /^bar$/)` returns true.
 
 ===reg.removeClassName(el, cName) {rcn}===
 
-Removes `cName` from the the class list of `el`. If the class list of `el` doesn't contain `cName`, nothing happens.
+Removes `cName` from the the class list of `el`. If the class list of `el` doesn't contain `cName`, the function just returns silently.
 
 ===reg.switchClassName(el, cName1, cName2) {scn}===
 
@@ -44,11 +46,31 @@ Returns true if `el` matches `selString`. Identical to `new reg.Selector(selStri
 
 ===reg.getElementsBySelector(selString[, ctxNode]) {gebs}===
 
-Returns an array of elements matching `selString`. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.querySelectorAll()` implementations whenever possible.
+Returns an array of elements matching `selString`. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.querySelectorAll()` implementations whenever possible, otherwise falling back on slower search methods.
 
 ===reg.getParent(el, selString)===
 
-Returns the nearest ancestor node of `el` matching `selString`, or `null` if no matching node is found.
+Returns the nearest ancestor node to `el` matching `selString`, or `null` if no matching node is found:
+
+{{{
+<!-- in the html -->
+<div class="baz">
+  <div class="foo bar">
+    <div class="foo">
+      <div class="foo">
+        <span id="blah"/>
+      </div>
+    </div>
+  </div>
+</div>
+}}}
+
+{{{
+// in the JavaScript
+var span = document.getElementById('blah');
+var c = reg.getParent(span, 'div.baz > div.foo').className;
+// c equals "foo bar"
+}}}
 
 ==Other functions==
 
@@ -65,10 +87,10 @@ Returns the sum total of the values of the text nodes within `el`. For example:
 // in the JavaScript
 var h1 = document.getElementById('title');
 var txt = reg.elementText(h1);
-// txt now contains "Get it now!"
+// txt equals "Get it now!"
 }}}
 
-`h1.innerHTML` would have returned the EM tags, which in many cases isn't desirable.
+`h1.innerHTML` would have returned the EM tags, which may not have been desirable.
 
 ===reg.getElementById() {gebi}===
 
