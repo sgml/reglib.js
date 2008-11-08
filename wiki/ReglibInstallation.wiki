@@ -35,8 +35,42 @@ This is perfectly acceptable. Then your page might look like this:
 {{{
 <script type="text/javascript" src="path/to/reg.js"></script>
 <script type="text/javascript">
-$$$.click('a@href', function(ev){
-    alert('hello whirled');
-});
+$$$.click('a@href', function(ev){...});
+</script>
+}}}
+
+=Global Variable Name Collisions=
+
+`reglib` adds a single variable `reg` to the global namespace. All `reglib` functions and methods are properties of this object:
+
+{{{
+<script type="text/javascript" src="path/to/reg.js"></script>
+<script type="text/javascript">
+reg.addClassName(document.body, 'foo');
+reg.removeClassName(document.body, 'foo');
+</script>
+}}}
+
+This keeps variable name collisions with other scripts to a minimum. If you feel confident that other scripts won't conflict with reg's function names, you can import reg's functions to the global namespace:
+
+{{{
+<script type="text/javascript" src="path/to/reg.js"></script>
+<script type="text/javascript">
+reg.importAll();
+addClassName(document.body, 'foo');
+removeClassName(document.body, 'foo');
+</script>
+}}}
+
+=Function Shorthand Aliases=
+
+If you want to save even more typing, you can use reg's shorthand aliases:
+
+{{{
+<script type="text/javascript" src="path/to/reg.js"></script>
+<script type="text/javascript">
+reg.importAll();
+acn(document.body, 'foo'); // acn is short for addClassName
+rcn(document.body, 'foo'); // rcn is short for removeClassName
 </script>
 }}}
