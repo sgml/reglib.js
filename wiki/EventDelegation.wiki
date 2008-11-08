@@ -43,7 +43,7 @@ See ReglibSelectors for info on how to write selectors.
 
 ==Handler functions==
 
-Each method takes a selector and one or more handler functions. There are three things to remember about the handler functions, other than which event they handle:
+Three things to remember about the handler functions:
 
   # They take an event object as their only parameter.
   # The `this` object always refers to the element matching the selector, even if the event target was an ancestor of that element.
