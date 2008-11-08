@@ -3,9 +3,14 @@
 =Event delegation methods=
 
   * reg.click(selectorString, clickHandler)
-  * reg.hover(selectorString, overHandler[, outHandler])
+  * reg.hover(selectorString, mouseOverHandler[, mouseOutHandler])
   * reg.focus(selectorString, focusHandler[, blurHandler])
-  * reg.key(selectorString, downHandler, pressHandler, upHandler)
+  * reg.key(selectorString, keyDownHandler, keyPressHandler, keyUpHandler)
+
+Each method takes a selector and one or more handler functions. There are two things to remember about the handler functions, other than which event they handle:
+
+  # They take an event object as their only parameter.
+  # The `this` object refers to the element matching the selector, even of the event target was an ancestor of that element.
 
 Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
 
@@ -66,5 +71,3 @@ reg.focus('input.date', null, function(e){
     }
 });
 }}}
-
-==reg.key()==
