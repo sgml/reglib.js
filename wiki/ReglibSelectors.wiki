@@ -15,7 +15,7 @@ var sel = new Selector('div#foo ul > li.bar');
 if (sel.matches(myElement)) { ... }
 }}}
 
-You shouldn't ever need to use this API directly. `reg` functions and methods always accept plain selector strings and will convert them internally to Selector objects, often caching the compiled versions for future use.
+This is just documented for posterity. You shouldn't ever need to use this API directly. `reg` functions and methods always accept plain selector strings and will convert them internally to Selector objects, often caching the compiled versions for future use.
 
 =Selector Syntax=
 
