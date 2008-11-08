@@ -15,7 +15,7 @@ $(document).ready(function(){
 });
 }}}
 
-The downside of this is that the events aren't available until the entire DOM finishes loading into memory. Also, as you can see, overwrites of the DOM will overwrite the events. Here is the roughly equivalent code in reglib:
+The downside of this is that the events aren't available until the DOM finishes loading, and overwrites to the DOM overwrite the events. Here's the roughly equivalent code in reglib:
 
 {{{
 // reglib
