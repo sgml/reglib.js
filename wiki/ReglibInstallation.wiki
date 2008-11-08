@@ -1,6 +1,6 @@
 #summary Installing reglib on your site
 
-=Installing and Using=
+=Installing `reglib` on your site=
 
 Like most libraries, installation is just a matter of putting `reg.js` on your webserver and linking to it from your HTML page:
 
