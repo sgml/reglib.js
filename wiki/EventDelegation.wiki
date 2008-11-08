@@ -40,11 +40,9 @@ reg.click('p.foo a', function(e){
 
 {{{
 // in the JavaScript
-reg.hover('p.foo a', function(e){
-    reg.addClassName(document.body, 'bar'); // mouseover
-}, function(e){
-    reg.removeClassName(document.body, 'bar'); // mouseout
-});
+function mOver(e) { reg.addClassName(document.body, 'bar'); }
+function mOut(e) { reg.removeClassName(document.body, 'bar'); }
+reg.hover('p.foo a', mOver, mOut);
 }}}
 
 {{{
