@@ -1,4 +1,4 @@
-#summary Installing and using reglib
+#summary Installing reglib on your page
 
 =Installing and Using=
 
