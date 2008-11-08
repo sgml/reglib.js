@@ -22,6 +22,28 @@ reg.click('p.foo a', function(e){
 
 ==reg.hover(selectorString, overHandler[, outHandler])==
 
+{{{
+// in the JavaScript
+reg.hover('p.foo a', function(e){
+    reg.addClassName(document.body, 'foo');
+}, function(e){
+    reg.removeClassName(document.body, 'foo');
+});
+}}}
+
+{{{
+/* in the css */
+body.foo { background: yellow; }
+}}}
+
+{{{
+<!-- in the html -->
+<p class="foo">
+    <!-- hovering this link will make the background color yellow -->
+    <a href="foo.html"><em>hoverme</em></a>
+</p>
+}}}
+
 ==reg.focus(selector, focusHandler[, blurHandler])==
 
 ==reg.key(selector, downHandler, pressHandler, upHandler)==
