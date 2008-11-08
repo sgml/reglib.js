@@ -11,7 +11,7 @@ Each method takes a selector and one or more handler functions. There are three 
 
   # They take an event object as their only parameter.
   # The `this` object always refers to the element matching the selector, even if the event target was an ancestor of that element.
-  # Returning false from them prevents the default action of the event.
+  # Returning `false` from them prevents the default action of the event.
 
 =Examples=
 
