@@ -14,43 +14,78 @@ These functions are predicated upon the notion of the "class list". An element's
 
 --------
 
-===reg.addClassName(el, cName) {acn}===
+===reg.addClassName() or acn()===
+
+{{{
+reg.addClassName(el, cName)
+acn(el, cName)
+}}}
 
 Adds `cName` to the the class list of `el`. If the class list of `el` already contains `cName`, the function just returns silently.
 
 --------
 
-===reg.getElementsByClassName(cName[, ctxNode[, tagName]]) {gebcn}===
+===reg.getElementsByClassName() or gebcn()===
+
+{{{
+reg.getElementsByClassName(cName[, ctxNode[, tagName]])
+gebcn(cName[, ctxNode[, tagName]])
+}}}
 
 Returns an array of all elements whose class lists contain `cName`. `cName` can optionally contain a space-separated class list. If so, only elements containing all classes are returned. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. If `tagName` is present, only elements of that tag name are returned. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.getElementsByClassName()` implementations when possible, otherwise falling back on slower search methods.
 
 --------
 
-===reg.hasClassName(el, cName) {hcn}===
+===reg.hasClassName() or hcn()===
+
+{{{
+reg.hasClassName(el, cName)
+hcn(el, cName)
+}}}
 
 Returns true if the class list of `el` contains `cName`, otherwise returns false.
 
 --------
 
-===reg.matchClassName(el, regexp) {mcn}===
+===reg.matchClassName() or mcn()===
+
+{{{
+reg.matchClassName(el, regexp)
+mcn(el, regexp)
+}}}
 
 Returns true if the class list of `el` contains a value matching `regexp`, otherwise returns false. `regexp` is tested against individual items in the class list, not the entire class attribute value, so if the class attribute is `class="foo bar baz"`, then `reg.matchClassName(el, /^bar$/)` returns true. This function is much slower than `reg.hasClassName()`.
 
 --------
 
-===reg.removeClassName(el, cName) {rcn}===
+===reg.removeClassName() or rcn()===
+
+{{{
+reg.removeClassName(el, cName)
+rcn(el, cName)
+}}}
 
 Removes `cName` from the the class list of `el`. If the class list of `el` doesn't contain `cName`, the function just returns silently.
 
 --------
 
-===reg.switchClassName(el, cName1, cName2) {scn}===
+===reg.switchClassName() or scn()===
+
+{{{
+reg.switchClassName(el, cName1, cName2)
+scn(el, cName1, cName2)
+}}}
 
 Toggles the presence of `cName1` and `cName2` so that if `el` starts out having `cName1` in its class list, it will be replaced by `cName2`, and vice versa. If neither are present, `cName1` is added. If both are present, `cName2` is removed.
 
 --------
 
-===reg.toggleClassName(el, cName) {tcn}===
+===reg.toggleClassName() or tcn()===
+
+{{{
+reg.toggleClassName(el, cName)
+tcn(el, cName)
+}}}
 
 If the class list of `el` contains `cName` it's removed, otherwise it's added.
 
@@ -60,19 +95,33 @@ If the class list of `el` contains `cName` it's removed, otherwise it's added.
 
 --------
 
-===reg.elementMatchesSelector(el, selString) {matches}===
+===reg.elementMatchesSelector() or matches()===
+
+{{{
+reg.elementMatchesSelector(el, selString)
+matches(el, selString)
+}}}
 
 Returns true if `el` matches `selString`. Identical to `new reg.Selector(selString).matches(el)`.
 
 --------
 
-===reg.getElementsBySelector(selString[, ctxNode]) {gebs}===
+===reg.getElementsBySelector() or gebs()===
+
+{{{
+reg.getElementsBySelector(selString[, ctxNode])
+gebs(selString[, ctxNode])
+}}}
 
 Returns an array of elements matching `selString`. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.querySelectorAll()` implementations whenever possible, otherwise falling back on slower search methods.
 
 --------
 
-===reg.getParent(el, selString)===
+===reg.getParent()===
+
+{{{
+reg.getParent(el, selString)
+}}}
 
 Returns the nearest ancestor node to `el` matching `selString`, or `null` if no matching node is found:
 
@@ -102,7 +151,12 @@ var c = reg.getParent(span, 'div.baz > div.foo').className;
 
 --------
 
-===reg.elementText(el) {elemText}===
+===reg.elementText() or elemText()===
+
+{{{
+reg.elementText(el)
+elemText(el)
+}}}
 
 Returns the sum total of the values of the text nodes within `el`. For example:
 
@@ -122,19 +176,33 @@ var txt = reg.elementText(h1);
 
 --------
 
-===reg.getElementById() {gebi}===
+===reg.getElementById() or gebi()===
+
+{{{
+reg.getElementById(id)
+gebi(id)
+}}}
 
 Just a wrapper for `document.getElementById()`. It would be pointless to have this function except that its alias, `gebi()`, can save a lot of typing.
 
 --------
 
-===reg.getElementsByTagName(tagName[, ctxNode]) {gebtn}===
+===reg.getElementsByTagName() or gebtn()===
+
+{{{
+reg.getElementsByTagName(tagName[, ctxNode])
+gebtn(tagName[, ctxNode])
+}}}
 
 Just a wrapper for `document.getElementsByTagName()`. It would be pointless to have this function except that its alias, `gebtn()`, can save a lot of typing.
 
 --------
 
-===reg.innerWrap(el, wrapperEl)===
+===reg.innerWrap()===
+
+{{{
+reg.innerWrap(el, wrapperEl)
+}}}
 
 Makes `wrapperEl` the one and only child of `el`. All of the children of `el` become children of `wrapperEl`.
 
@@ -146,7 +214,12 @@ Inserts `insertMe` after `afterThis` in the DOM. This function only exists to fi
 
 --------
 
-===reg.newElement(tagName[, attObj[, contents]]) {elem}===
+===reg.newElement() or elem()===
+
+{{{
+reg.newElement(tagName[, attObj[, contents]])
+elem(tagName[, attObj[, contents]])
+}}}
 
 Creates a new element. `tagName` will be the tag name of the element, or it can contain class and id notation:
 
@@ -190,18 +263,32 @@ para.appendChild(icon);
 
 --------
 
-===reg.nextElement(el) {nextElem}===
+===reg.nextElement() or nextElem()===
+
+{{{
+reg.nextElement(el)
+nextElem(el)
+}}}
 
 Returns the next sibling element of `el`, or `null` if not found. Differes from `Node.nextSibling` because it skips text nodes and returns only element nodes, i.e. nodes where `nodeType == 1`.
 
 --------
 
-===reg.outerWrap(el, wrapperEl)===
+===reg.outerWrap()===
+
+{{{
+reg.outerWrap(el, wrapperEl)
+}}}
 
 Removes `el` from its parent and adds it as a child of `wrapperEl`.
 
 --------
 
-===reg.previousElement(el) {prevElem}===
+===reg.previousElement() or prevElem()===
+
+{{{
+reg.previousElement(el)
+prevElem(el)
+}}}
 
 Returns the previous sibling element of `el`, or `null` if not found. Differes from `Node.previousSibling` because it skips text nodes and returns only element nodes, i.e. nodes where `nodeType == 1`.
