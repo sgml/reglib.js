@@ -15,21 +15,21 @@ You shouldn't ever need to use this API directly. `reg` functions and methods al
 =Selector Syntax=
 
 || *Selector* || *What it Selects* ||
-|| a || `a` elements ||
-|| a span || `span` elements descended from `a` elements ||
-|| a > span || `span` elements that are direct children of `a` elements ||
-|| a + span || `span` elements that are immediate next siblings of `a` elements ||
-|| a ~ span || `span` elements that are following siblings of `a` elements ||
-|| a, span || any `span` or `a` element ||
-|| a@title || `a` elements having title attributes ||
-|| a@title='foo' || `a` elements whose title attributes equal `foo` ||
-|| a@title^='foo' || `a` elements whose title attributes begin with `foo` ||
-|| a@title*='foo' || `a` elements whose title attributes contain `foo` ||
-|| a@title$='foo' || `a` elements whose title attributes end with `foo` ||
-|| a@title!='foo' || `a` elements whose title attributes do not equal `foo` ||
-|| a#foo || `a` elements whose id equals `foo` ||
-|| a.foo || `a` elements whose class attributes equal `foo`, or contain `foo` in a space-separated list ||
-|| a:target || `a` elements whose id matches the URL hash ||
-|| #foo or *#foo || any element with an id that equals `foo` ||
-|| .foo or *.foo || any element with a class attribute that equals `foo`, or contains `foo` in a space-separated list ||
-|| :target or *:target || any element whose id matches the URL hash ||
+|| `a` || `a` elements ||
+|| `a span` || `span` elements descended from `a` elements ||
+|| `a > span` || `span` elements that are direct children of `a` elements ||
+|| `a + span` || `span` elements that are immediate next siblings of `a` elements ||
+|| `a ~ span` || `span` elements that are following siblings of `a` elements ||
+|| `a, span` || any `span` or `a` element ||
+|| `a@title` || `a` elements having title attributes ||
+|| `a@title='foo'` || `a` elements whose title attributes equal `foo` ||
+|| `a@title^='foo'` || `a` elements whose title attributes begin with `foo` ||
+|| `a@title*='foo'` || `a` elements whose title attributes contain `foo` ||
+|| `a@title$='foo'` || `a` elements whose title attributes end with `foo` ||
+|| `a@title!='foo'` || `a` elements whose title attributes do not equal `foo` ||
+|| `a#foo` || `a` elements whose id equals `foo` ||
+|| `a.foo` || `a` elements whose class attributes equal `foo`, or contain `foo` in a space-separated list ||
+|| `a:target` || `a` elements whose id matches the URL hash ||
+|| `#foo` or `*#foo` || any element with an id that equals `foo` ||
+|| `.foo` or `*.foo` || any element with a class attribute that equals `foo`, or contains `foo` in a space-separated list ||
+|| `:target` or `*:target` || any element whose id matches the URL hash ||
