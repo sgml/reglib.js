@@ -84,7 +84,7 @@ Makes `wrapperEl` the one and only child of `el`. All of the children of `el` be
 
 ===reg.insertAfter(insertMe, afterThis)===
 
-Inserts `insertMe` after `afterThis` in the DOM. This function only exists to fill a gap in the DOM spec, namely the lack if `Node.insertAfter(insertMe, afterThis)` even though the DOM spec contains `Node.insertBefore(insertMe, beforeThis)` and `Node.appendChild(appendMe)`.
+Inserts `insertMe` after `afterThis` in the DOM. This function only exists to fill a gap in the DOM spec, namely the lack if `Node.insertAfter(insertMe, afterThis)`.
 
 ===reg.newElement(tagName[, attObj[, contents]]) {elem}===
 
@@ -112,17 +112,30 @@ var p = reg.newElement('p',null,["Get it ",now,'!']);
 // p equals <p>Get it <em>now</em>!</p>
 }}}
 
-A quick and easy way to create new DOM elements. Especially if the alias `elem` is used:
+Often new sections of DOM are added via `innerHTML`. Sometimes though you need to create chunks of DOM node by node, for example if you want to attach events at arbitrary points within the new subtree. `newElement()` provides a way to do this that's more flexible and terse than `document.createElement()` and friends, especially when the alias `elem` is used. For example look at these two ways of doing the same thing:
 
 {{{
 var icon = elem('img.icon', {alt:'',src:'secure.gif'});
-var para = elem('p.intro',{},["Security ",icon]);
-// creates the html equivalent of this:
-// <p class="intro">Secure <img class="icon" alt="" src="secure.gif"/></p>
+var para = elem('p.intro',null,["Security ",icon]);
+}}}
+
+{{{
+var icon = document.createElement('img');
+icon.alt = "";
+icon.src = 'secure.gif';
+var para = document.createElement('p');
+para.appendChild(document.createTextNode('Security '));
+para.appendChild(icon);
 }}}
 
 ===reg.nextElement(el) {nextElem}===
 
+Returns the next sibling element of `el`, or `null` if not found. Differes from `Node.nextSibling` because it skips text nodes and returns only element nodes, i.e. nodes where `nodeType == 1`.
+
 ===reg.outerWrap(el, wrapperEl)===
 
+Removes `el` from its parent and adds it as a child of `wrapperEl`.
+
 ===reg.previousElement(el) {prevElem}===
+
+Returns the previous sibling element of `el`, or `null` if not found. Differes from `Node.previousSibling` because it skips text nodes and returns only element nodes, i.e. nodes where `nodeType == 1`.
