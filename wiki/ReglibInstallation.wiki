@@ -62,6 +62,8 @@ removeClassName(document.body, 'foo');
 </script>
 }}}
 
+If there's a collision `reg.importAll()` will throw an exception listing each collision.
+
 =Function Shorthand Aliases=
 
 If you want to save even more typing, you can use reg's shorthand aliases:
