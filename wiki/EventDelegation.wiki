@@ -28,6 +28,8 @@ document.body.innerHTML += "<p>I just overwrote the DOM, but all my events still
 
 Not only is the event available immediately, but overwriting the DOM doesn't overwrite the events.
 
+--------
+
 =reglib's Event delegation methods=
 
 Here are the methods for event delegation:
@@ -48,6 +50,8 @@ Three things to remember about the handler functions:
   # They take an event object as their only parameter.
   # The `this` object always refers to the element matching the selector, even if the event target was an ancestor of that element.
   # Returning `false` from them prevents the default action of the event.
+
+--------
 
 ==Examples==
 
