@@ -65,4 +65,4 @@ If you're worried about performance, there are some considerations in choosing y
   * `ul > li` will be faster than `ul li`
   * `br + a` will be faster than `br ~ a`
 
-This will be especially true in traversal situations, where elements are repeatedly matched against selectors. The less ambiguity in the selector, the more search possibilities can be ruled out ahead of time, allowing the match to run much faster.
+This will be especially true in traversal situations, where elements are repeatedly matched against selectors. The less ambiguity in the selector, the more search possibilities can be ruled out ahead of time, allowing the match to execute faster.
