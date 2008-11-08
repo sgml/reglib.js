@@ -1,6 +1,6 @@
 #summary Using reglib's event delegation methods
 
-=Event delegation methods=
+=`reglib`'s Event delegation methods=
 
   * reg.click(selectorString, clickHandler)
   * reg.hover(selectorString, mouseOverHandler[, mouseOutHandler])
