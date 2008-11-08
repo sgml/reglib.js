@@ -25,8 +25,10 @@ reg.click('p.foo a', function(e){
 {{{
 // in the JavaScript
 reg.hover('p.foo a', function(e){
+    // handling mouseover
     reg.addClassName(document.body, 'foo');
 }, function(e){
+    // handling mouseout
     reg.removeClassName(document.body, 'foo');
 });
 }}}
@@ -40,7 +42,7 @@ body.foo { background: yellow; }
 <!-- in the html -->
 <p class="foo">
     <!-- hovering this link will make the background color yellow -->
-    <a href="foo.html"><em>hoverme</em></a>
+    <a href="foo.html">hoverme</a>
 </p>
 }}}
 
