@@ -10,7 +10,7 @@
 Each method takes a selector and one or more handler functions. There are two things to remember about the handler functions, other than which event they handle:
 
   # They take an event object as their only parameter.
-  # The `this` object refers to the element matching the selector, even of the event target was an ancestor of that element.
+  # The `this` object refers to the element matching the selector, even if the event target was an ancestor of that element.
 
 Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
 
