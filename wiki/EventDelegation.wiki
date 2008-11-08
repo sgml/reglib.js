@@ -2,6 +2,8 @@
 
 =Event delegation methods=
 
+Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
+
 ==reg.click(selectorString, clickHandler)==
 
 {{{
@@ -45,5 +47,19 @@ body.foo { background: yellow; }
 }}}
 
 ==reg.focus(selector, focusHandler[, blurHandler])==
+
+{{{
+// in the JavaScript
+// we just want to validate the date format onblur,
+// so no need to handle the focus event
+reg.focus('input.date', null, function(e){
+    if (!this.value.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+        alert('invalid date');
+        reg.addClassName(this, 'error');
+    } else {
+        reg.removeClassName(this, 'error');
+    }
+});
+}}}
 
 ==reg.key(selector, downHandler, pressHandler, upHandler)==
