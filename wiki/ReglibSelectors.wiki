@@ -2,11 +2,16 @@
 
 =The API=
 
-`reglib` has a simple Selector API. The following code demonstrates everything it's possible to do with the Selector API.
+`reglib` has a simple Selector API. Supposing you first executed this code:
+
+{{{
+var myElement = document.getElementById('baz');
+}}}
+
+The following demonstrates the entirety of what's possible with the Selector API.
 
 {{{
 var sel = new Selector('div#foo ul > li.bar');
-var myElement = document.getElementById('baz');
 if (sel.matches(myElement)) { ... }
 }}}
 
