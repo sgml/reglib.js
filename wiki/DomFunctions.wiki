@@ -34,7 +34,7 @@ Returns true if the class list of `el` contains `cName`, otherwise returns false
 
 ===reg.matchClassName(el, regexp) {mcn}===
 
-Returns true if the class list of `el` contains a value matching `regexp`, otherwise returns false. `regexp` is tested against individual items in the class list, not the entire class attribute value, so if the class attribute is `class="foo bar baz"`, then `reg.matchClassName(el, /^bar$/)` returns true.
+Returns true if the class list of `el` contains a value matching `regexp`, otherwise returns false. `regexp` is tested against individual items in the class list, not the entire class attribute value, so if the class attribute is `class="foo bar baz"`, then `reg.matchClassName(el, /^bar$/)` returns true. This function is much slower than `reg.hasClassName()`.
 
 --------
 
