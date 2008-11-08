@@ -1,0 +1,128 @@
+#summary reglib DOM functions
+
+=reglib DOM functions=
+
+Here's a list of `reglib` DOM functions. Most of these have shorthand aliases, shown in braces:
+
+==Functions for working with class attributes==
+
+These functions work based on the notion of the "class list", i.e. an element's class, although represented in the attribute as one big string, is really an unordered set. For example class="foo bar" represents a class list of ["foo","bar"]. Note that `class="foo bar"`, `class="bar foo"` and `class="foo bar foo"` are all treated as having identical class lists.
+
+===reg.addClassName(el, cName) {acn}===
+
+Adds `cName` to the the class list of `el`. If the class list of `el` already contains `cName`, nothing happens.
+
+===reg.getElementsByClassName(cNames[, ctxNode[, tagName]]) {gebcn}===
+
+Returns an array of elements whose class lists contain a given class. If `cNames` contains whitespace between characters, it's treated as a class list separated by logical AND. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. If `tagName` is present, only elements of that tag name are returned. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.getElementsByClassName()` implementations whenever possible.
+
+===reg.hasClassName(el, cName) {hcn}===
+
+Returns true if the class list of `el` contains `cName`, otherwise returns false.
+
+===reg.matchClassName(el, regexp) {mcn}===
+
+Returns true if the class list of `el` contains a value that matches `regexp`, otherwise returns false. `regexp` is tested against individual items in the class list, not the entire class attribute value, so for example if the class attribute is `class="foo bar baz"` then `reg.matchClassName(el, /^bar$/)` returns true.
+
+===reg.removeClassName(el, cName) {rcn}===
+
+Removes `cName` from the the class list of `el`. If the class list of `el` doesn't contain `cName`, nothing happens.
+
+===reg.switchClassName(el, cName1, cName2) {scn}===
+
+Toggles the presence of `cName1` and `cName2` so that if `el` starts out having `cName1` in its class list, it will be replaced by `cName2`, and vice versa. If neither are present, `cName1` is added. If both are present, `cName2` is removed.
+
+===reg.toggleClassName(el, cName) {tcn}===
+
+If the class list of `el` contains `cName` it's removed, otherwise it's added.
+
+==Functions using CSS selectors==
+
+===reg.elementMatchesSelector(el, selString) {matches}===
+
+Returns true if `el` matches `selString`. Identical to `new reg.Selector(selString).matches(el)`.
+
+===reg.getElementsBySelector(selString[, ctxNode]) {gebs}===
+
+Returns an array of elements matching `selString`. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.querySelectorAll()` implementations whenever possible.
+
+===reg.getParent(el, selString)===
+
+Returns the nearest ancestor node of `el` matching `selString`, or `null` if no matching node is found.
+
+==Other functions==
+
+===reg.elementText(el) {elemText}===
+
+Returns the sum total of the values of the text nodes within `el`. For example:
+
+{{{
+<!-- in the html -->
+<h1 id="title">Get it <em>now</em>!</h1>
+}}}
+
+{{{
+// in the JavaScript
+var h1 = document.getElementById('title');
+var txt = reg.elementText(h1);
+// txt now contains "Get it now!"
+}}}
+
+`h1.innerHTML` would have returned the EM tags, which in many cases isn't desirable.
+
+===reg.getElementById() {gebi}===
+
+Just a wrapper for `document.getElementById()`. It would be pointless to have this function except that its alias, `gebi()`, can save a lot of typing.
+
+===reg.getElementsByTagName(tagName[, ctxNode]) {gebtn}===
+
+Just a wrapper for `document.getElementsByTagName()`. It would be pointless to have this function except that its alias, `gebtn()`, can save a lot of typing.
+
+===reg.innerWrap(el, wrapperEl)===
+
+Makes `wrapperEl` the one and only child of `el`. All of the children of `el` become children of `wrapperEl`.
+
+===reg.insertAfter(insertMe, afterThis)===
+
+Inserts `insertMe` after `afterThis` in the DOM. This function only exists to fill a gap in the DOM spec, namely the lack if `Node.insertAfter(insertMe, afterThis)` even though the DOM spec contains `Node.insertBefore(insertMe, beforeThis)` and `Node.appendChild(appendMe)`.
+
+===reg.newElement(tagName[, attObj[, contents]]) {elem}===
+
+Creates a new element. `tagName` will be the tag name of the element, or it can contain class and id notation:
+
+{{{
+var div1 = reg.newElement('div');         // div1 equals <div/>
+var div2 = reg.newElement('div.foo');     // div2 equals <div class="foo"/>
+var div3 = reg.newElement('div#bar');     // div3 equals <div id="bar"/>
+var div4 = reg.newElement('div.foo#bar'); // div4 equals <div id="bar" class="foo"/>
+}}}
+
+If `attObj` is provided, it will be used as attribute names and values:
+
+{{{
+var img = reg.newElement('img',{'src':'image.jpg','alt':'Hello'});
+// img equals <img src="image.jpg" alt="Hello"/>
+}}}
+
+`contents` can be either a string, an element, or an array of strings or elements. Strings become text node children of the returned element, elements become child elements of the returned element:
+
+{{{
+var now = reg.newElement('em',null,'now');
+var p = reg.newElement('p',null,["Get it ",now,'!']);
+// p equals <p>Get it <em>now</em>!</p>
+}}}
+
+A quick and easy way to create new DOM elements. Especially if the alias `elem` is used:
+
+{{{
+var icon = elem('img.icon', {alt:'',src:'secure.gif'});
+var para = elem('p.intro',{},["Security ",icon]);
+// creates the html equivalent of this:
+// <p class="intro">Secure <img class="icon" alt="" src="secure.gif"/></p>
+}}}
+
+===reg.nextElement(el) {nextElem}===
+
+===reg.outerWrap(el, wrapperEl)===
+
+===reg.previousElement(el) {prevElem}===
