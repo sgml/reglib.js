@@ -5,6 +5,7 @@
 Suppose you wanted links with `class="popup"` to launch in new windows. In JQuery, using the onload-traverse-attach methodology, you might do something like this:
 
 {{{
+// JQuery
 $(document).ready(function(){
     $('a.popup').click(function(e){
         window.open(this.href);
@@ -17,6 +18,7 @@ $(document).ready(function(){
 The downside of this is that the events aren't available until the entire DOM finishes loading into memory. Also, as you can see, overwrites of the DOM will overwrite the events. Here is the roughly equivalent code in reglib:
 
 {{{
+// reglib
 reg.click('a.popup',function(e){
     window.open(this.href);
     return false;
