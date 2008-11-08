@@ -31,7 +31,7 @@ reg.click('p.foo a', function(e){
 {{{
 <!-- in the html -->
 <p class="foo">
-    <!-- clicking this link will alert "A" and then alert "EM" -->
+    <!-- clicking this link will alert "A" and then alert "EM" and then nothing will happen -->
     <a href="page.html"><em>clickme</em></a>
 </p>
 }}}
