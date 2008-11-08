@@ -7,10 +7,11 @@
   * reg.focus(selectorString, focusHandler[, blurHandler])
   * reg.key(selectorString, keyDownHandler, keyPressHandler, keyUpHandler)
 
-Each method takes a selector and one or more handler functions. There are two things to remember about the handler functions, other than which event they handle:
+Each method takes a selector and one or more handler functions. There are three things to remember about the handler functions, other than which event they handle:
 
   # They take an event object as their only parameter.
   # The `this` object always refers to the element matching the selector, even if the event target was an ancestor of that element.
+  # Returning false from them prevents the default action of the event.
 
 =Examples=
 
@@ -23,6 +24,7 @@ Here are some code examples showing what kinds of things you can do with the `re
 reg.click('p.foo a', function(e){
     alert(this.nodeName);
     alert(reg.getTarget(e).nodeName);
+    return false;
 });
 }}}
 
@@ -30,7 +32,7 @@ reg.click('p.foo a', function(e){
 <!-- in the html -->
 <p class="foo">
     <!-- clicking this link will alert "A" and then alert "EM" -->
-    <a href="foo.html"><em>clickme</em></a>
+    <a href="page.html"><em>clickme</em></a>
 </p>
 }}}
 
@@ -54,7 +56,7 @@ body.bar { background: yellow; }
 <!-- in the html -->
 <p class="foo">
     <!-- hovering this makes the background yellow -->
-    <a href="foo.html">hoverme</a>
+    <a href="page.html">hoverme</a>
 </p>
 }}}
 
