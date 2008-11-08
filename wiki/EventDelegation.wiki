@@ -1,5 +1,31 @@
 #summary Using reglib's event delegation methods
 
+=Introduction=
+
+Suppose you wanted links with `class="popup"` to launch in new windows. In JQuery, using the onload-traverse-attach methodology, you might do something like this:
+
+{{{
+$(document).ready(function(){
+    $('a.popup').click(function(e){
+        window.open(this.href);
+        e.preventDefault();
+    });
+});
+document.body.innerHTML += "<p>Whoops, I just overwrote all the events I just attached!</p>";
+}}}
+
+The downside of this is that the events aren't available until the entire DOM finishes loading into memory. Also, as you can see, overwrites of the DOM will overwrite the events. Here is the roughly equivalent code in reglib:
+
+{{{
+reg.click('a.popup',function(e){
+    window.open(this.href);
+    return false;
+});
+document.documentElement.innerHTML += "<p>I just overwrote the entire DOM, but all my events still work!</p>";
+}}}
+
+Not only is the event available immediately, but overwriting the DOM doesn't overwrite the events.
+
 =reglib's Event delegation methods=
 
 Here are the methods for event delegation:
