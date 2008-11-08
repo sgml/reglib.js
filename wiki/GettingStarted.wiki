@@ -18,14 +18,6 @@ For example maybe you'd rather name it `$$$`:
 window.$$$ = (function(){
 }}}
 
-This is perfectly acceptable. Then your page might look like this:
-{{{
-<script type="text/javascript" src="path/to/reg.js"></script>
-<script type="text/javascript">
-$$$.click('a@href', function(ev){...});
-</script>
-}}}
-
 =Playing well with other scripts=
 
 `reglib` adds a single variable `reg` to the global namespace. All `reglib` functions and methods are properties of this object:
