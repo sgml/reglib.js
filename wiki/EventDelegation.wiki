@@ -63,7 +63,7 @@ body.foo { background: yellow; }
 // we just want to validate the date format onblur,
 // no need to handle the focus event, so it can be null
 reg.focus('input.date', null, function(e){
-    if (!this.value.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+    if (!this.value.match(/^\d\d\/\d\d\/\d\d\d\d$/)) {
         alert('invalid date');
         reg.addClassName(this, 'error');
     } else {
