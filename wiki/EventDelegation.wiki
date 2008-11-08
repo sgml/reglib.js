@@ -2,6 +2,11 @@
 
 =Event delegation methods=
 
+  * reg.click(selectorString, clickHandler)
+  * reg.hover(selectorString, overHandler[, outHandler])
+  * reg.focus(selector, focusHandler[, blurHandler])
+  * reg.key(selector, downHandler, pressHandler, upHandler)
+
 Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
 
 ==reg.click(selectorString, clickHandler)==
