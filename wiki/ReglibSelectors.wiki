@@ -15,7 +15,6 @@ You shouldn't ever need to use this API directly. `reg` functions and methods al
 =Selector Syntax=
 
 || *Selector* || *What it Selects* ||
-|| * || any element ||
 || a || `a` elements ||
 || a span || `span` elements descended from `a` elements ||
 || a > span || `span` elements that are direct children of `a` elements ||
