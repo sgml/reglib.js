@@ -7,15 +7,16 @@
 {{{
 // in the JavaScript
 reg.click('div.foo a', function(e){
-    alert(this.nodeName); // should alert "A"
-    alert(reg.getTarget(e).nodeName); // should alert "EM"
+    alert(this.nodeName);
+    alert(reg.getTarget(e).nodeName);
 });
 }}}
 
 {{{
 <!-- in the html -->
 <div class="foo">
-    <a href="doc.html"><em>documentation</em></a>
+    <!-- clicking should alert "A" and then alert "EM" -->
+    <a href="foo.html"><em>clickme</em></a>
 </div>
 }}}
 
