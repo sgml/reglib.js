@@ -71,6 +71,7 @@ reg.setup('#foo', function(){
 // is O(1) rather than O(N)
 reg.postSetup(function(){
     var el = document.getElementById('foo');
+    if (!el) { return; }
     // do something with el
 });
 }}}
