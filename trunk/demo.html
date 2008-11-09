@@ -4,27 +4,48 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>reglib Demo</title>
 <style type="text/css">
-body.bar { background: yellow; }
+body.bar div { background: #bdb; }
+body.bar h1 { color: orange !important; }
+div { padding:0px 15px; border:1px solid #999; margin:15px 0px; }
+p { border:1px solid #999; padding:10px; margin:15px 0px; background:white; }
+p:before { content: "hover me for green: "; color: #aaa; }
+span.dim{ font-size:12px; color:#999; }
 </style>
 <script type="text/javascript" src="reg.js"></script>
 <script type="text/javascript">
 
 reg.importAll();
 
+var i = 0;
+
+function someText() {
+	return (i++)+': clicking here clones this P and appends it to the parent DIV';
+}
+
 reg.postSetup(function(){
 	document.body.appendChild(elem('h1',null,"reglib demo"));
-	document.body.appendChild(elem('p',null,elem('a.foo',{href:'http://google.com/'},'clicking here appends another link')));
-	document.body.appendChild(elem('ul',null,elem('li',null,elem('a.foo',{href:'http://google.com/'},'clicking here appends another link'))));
+	document.body.appendChild(elem('div',null,elem('p',null,elem('a.foo',{href:'http://google.com/'},someText()))));
 });
 
 reg.click('a.foo',function(e){
-	this.parentNode.parentNode.appendChild(this.parentNode.cloneNode(true));
+	var newNode = this.parentNode.cloneNode(true);
+	gebcn('foo',newNode)[0].innerHTML = someText();
+	this.parentNode.parentNode.appendChild(newNode);
 	return false;
 });
 
-reg.hover('body a.foo', mOver, mOut);
+reg.hover('body p', mOver, mOut);
 function mOver() { acn(document.body, 'bar'); }
 function mOut() { rcn(document.body, 'bar'); }
+
+reg.focus('a.foo', fIn, fOut);
+function fIn(){
+	window.f = elem('span.dim',null," currently focused: \""+elemText(this)+"\"");
+	gebtn('h1')[0].appendChild(window.f);
+}
+function fOut(){
+	gebtn('h1')[0].removeChild(window.f);
+}
 
 </script>
 </head>
