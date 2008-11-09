@@ -17,10 +17,10 @@ window.reg = (function(){
 
 	var reg = {};
 
-	// this adds a bunch of stuff from under the reg namespace to the
-	// global namespace. don't call this method if you want to keep
-	// your global namespace clean. alternatively you can individually
-	// import certain sections, this is just a convenient way to do them all
+	// this adds reg's dom helper functions and event functions to the 
+	// global namespace. don't call this method if you want to keep your 
+	// global namespace clean. alternatively you can individually import 
+	// certain sections, this is just a convenient way to do them all.
 	reg.importAll = function() {
 		var errStrings = [];
 		try { reg.importSelectorAPI(); }
@@ -1012,7 +1012,7 @@ window.reg = (function(){
 	/*
 	For backwards compatibility.
 	Allows console.log() to be called in old clients without errors.
-	console.contents() fetches logged messages.
+	in which case console.contents() fetches logged messages.
 	*/
 
 	var logMessages = [];
