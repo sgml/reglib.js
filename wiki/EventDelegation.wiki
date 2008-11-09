@@ -60,11 +60,12 @@ reg.focus('form', function(e){
 ==reg.key(selectorString, keyDownHandler[, keyPressHandler[, keyUpHandler]])==
 
 Registers keyboard event handlers against selected elements. As wildly incompatible as key events are across browsers and platforms, this can sometimes come in handy. Note that reglib makes no attempt to normalize the event behavior across browsers and platforms. keydown is probably the most common event you'd want to handle, but you can pass functions for whichever events you want to handle and `null` for the rest.
-==Selector strings==
+
+==A word about selector strings==
 
 See ReglibSelectors for info on how to write selectors.
 
-==Handler functions==
+==A word about handler functions==
 
 Three things to remember about the handler functions:
 
