@@ -6,14 +6,14 @@ reglib has a whole raft of DOM convenience functions. These can be called direct
 
 {{{
 reg.importAll();
-// now you can do newElement('p')
-// instead of reg.newElement('p')
+// now you can say var p = newElement('p')
+// instead of var p = reg.newElement('p')
 }}}
 
 Many of these functions also have shorthand aliases to save typing:
 
 {{{
-elem('p'); // instead of newElement('p')
+var p = elem('p'); // instead of var p = newElement('p')
 }}}
 
 This page lists reglib's DOM convenience functions:
