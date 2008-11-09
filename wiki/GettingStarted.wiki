@@ -18,6 +18,12 @@ For example maybe you'd rather name it `$$$`:
 window.$$$ = (function(){
 }}}
 
+Or perhaps:
+
+{{{
+window.SWEET_ACTION_JACKSON = (function(){
+}}}
+
 =Playing well with other scripts=
 
 `reglib` adds a single variable `reg` to the global namespace. All `reglib` functions and methods are properties of this object:
