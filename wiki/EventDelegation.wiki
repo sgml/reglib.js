@@ -6,7 +6,7 @@
 
 =Introduction=
 
-Suppose you wanted links with `class="popup"` to launch in new windows. In JQuery, using the onload-traverse-modify methodology, you might do something like this:
+Suppose you wanted links with `class="popup"` to launch in new windows. In JQuery, using the load-traverse-modify methodology, you might do something like this:
 
 {{{
 // JQuery
