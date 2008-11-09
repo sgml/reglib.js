@@ -2,6 +2,8 @@
 
 <wiki:toc max_depth="3" />
 
+-----
+
 =Introduction=
 
 Suppose you wanted links with `class="popup"` to launch in new windows. In JQuery, using the onload-traverse-attach methodology, you might do something like this:
