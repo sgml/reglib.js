@@ -52,9 +52,9 @@ Will result in a bunch of non-red paragraphs appearing at the end of the page.
 If `el` was added after the document ready event fired, you can use this method to re-execute the to-do list against `el` (and its descendants) to make sure it too gets the behavior it needs.
 
 {{{
-var newDiv = elem('div');
-newDiv.innerHTML = threeHundredKilobytesOfHtml;
-reg.rerun(newDiv);
+var johnnyComeLately = elem('div');
+johnnyComeLately.innerHTML = threeHundredKilobytesOfHtml;
+reg.rerun(johnnyComeLately);
 }}}
 
 ==reg.preSetup(function) and reg.postSetup(function)==
