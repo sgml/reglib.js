@@ -1,0 +1,27 @@
+#summary Some examples of reglib usage
+
+=Examples=
+
+{{{
+<script type="text/javascript" src="/path/to/reg.js"></script>
+<script type="text/javascript">
+
+reg.importAll();
+
+// popup links
+reg.click('a@href.popup', function(e){
+    var target = (this.target) ? this.target : "_blank";
+    var width = 600;
+    var height = 400;
+    var dim = mcn(this, /(\d+)x(\d+)/);
+    if (dim) {
+        width = parseInt(dim[1]);
+        height = parseInt(dim[2]);
+    }
+    if (width > screen.width) { width = screen.width - 50; }
+    if (height > screen.height) { height = screen.height - 50; }
+    var pop = window.open(this.href, target, "scrollbars,status,resizable,width="+width+",height="+height);
+});
+
+</script>
+}}}
