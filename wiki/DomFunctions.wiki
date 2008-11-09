@@ -8,7 +8,7 @@ This page lists reglib's DOM convenience functions:
 
 =Introduction=
 
-reglib has a whole raft of DOM convenience functions. These can be called directly off the `reg` object like `reg.addClassName()` or they can be imported to the global namespace:
+reglib has a whole raft of DOM convenience functions. These can be called directly off the `reg` object or they can be imported to the global namespace:
 
 {{{
 reg.importAll();
