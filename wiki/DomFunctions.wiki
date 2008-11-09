@@ -168,7 +168,7 @@ Returns the sum total of the values of the text nodes within `el`. For example:
 {{{
 // in the JavaScript
 var h1 = document.getElementById('title');
-var txt = reg.elementText(h1);
+var txt = elemText(h1);
 // txt equals "Get it now!"
 }}}
 
@@ -228,28 +228,28 @@ elem(tagName[, attObj[, contents]]); // alias
 Creates a new element. `tagName` will be the tag name of the element, or it can contain class and id notation:
 
 {{{
-var div1 = reg.newElement('div');         // div1 equals <div/>
-var div2 = reg.newElement('div.foo');     // div2 equals <div class="foo"/>
-var div3 = reg.newElement('div#bar');     // div3 equals <div id="bar"/>
-var div4 = reg.newElement('div.foo#bar'); // div4 equals <div id="bar" class="foo"/>
+var div1 = elem('div');         // div1 equals <div/>
+var div2 = elem('div.foo');     // div2 equals <div class="foo"/>
+var div3 = elem('div#bar');     // div3 equals <div id="bar"/>
+var div4 = elem('div.foo#bar'); // div4 equals <div id="bar" class="foo"/>
 }}}
 
 If `attObj` is provided, it will be used as attribute names and values:
 
 {{{
-var img = reg.newElement('img',{'src':'image.jpg','alt':'Hello'});
+var img = elem('img',{'src':'image.jpg','alt':'Hello'});
 // img equals <img src="image.jpg" alt="Hello"/>
 }}}
 
 `contents` can be either a string, an element, or an array of strings or elements. Strings become text node children of the returned element, elements become child elements of the returned element:
 
 {{{
-var now = reg.newElement('em',null,'now');
-var p = reg.newElement('p',null,["Get it ",now,'!']);
+var now = elem('em',null,'now');
+var p = elem('p',null,["Get it ",now,'!']);
 // p equals <p>Get it <em>now</em>!</p>
 }}}
 
-Often new sections of DOM are added via `innerHTML`. Sometimes though you need to create chunks of DOM node by node, for example if you want to attach events at arbitrary points within the new subtree. `newElement()` provides a way to do this that's more flexible and terse than `document.createElement()` and friends, especially when the alias `elem` is used. For example look at these two ways of doing the same thing:
+For example of how much typing this function saves, look at this example of `elem()` versus `document.createElement()` and friends:
 
 {{{
 var icon = elem('img.icon', {alt:'',src:'secure.gif'});
