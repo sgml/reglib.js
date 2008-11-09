@@ -23,7 +23,9 @@ reg.click('a.popup',function(e){
     window.open(this.href);
     return false;
 });
-document.body.innerHTML += "<p>I just overwrote the DOM, but all my events still work!</p>";
+addEvent(window, 'load', function(){
+    document.body.innerHTML += "<p>I just overwrote the DOM, but all my events still work!</p>";
+});
 }}}
 
 Not only is the event "live" before the document is ready, but overwriting the DOM doesn't overwrite the events.
