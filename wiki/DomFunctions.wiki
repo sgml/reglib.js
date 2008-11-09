@@ -1,6 +1,12 @@
 #summary reglib DOM functions
 
-=reglib DOM functions=
+This page lists reglib's DOM convenience functions:
+
+<wiki:toc max_depth="2" />
+
+--------
+
+=Introduction=
 
 reglib has a whole raft of DOM convenience functions. These can be called directly off the `reg` object like `reg.addClassName()` or they can be imported to the global namespace:
 
@@ -15,10 +21,6 @@ Many of these functions also have shorthand aliases to save typing:
 {{{
 var p = elem('p'); // instead of var p = newElement('p')
 }}}
-
-This page lists reglib's DOM convenience functions:
-
-<wiki:toc max_depth="2" />
 
 --------
 
