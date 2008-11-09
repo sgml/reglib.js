@@ -51,6 +51,12 @@ Will result in a bunch of non-red paragraphs appearing at the end of the page.
 
 If `el` was added after the document ready event fired, you can use this method to re-execute the above-mentioned to-do list against `el` (and its descendants) to make sure it doesn't miss out on any of the action.
 
+{{{
+var newDiv = elem('div');
+newDiv.innerHTML = threeHundredKilobytesOfHtml;
+reg.rerun(newDiv);
+}}}
+
 ==reg.preSetup(function) and reg.postSetup(function)==
 
 These both also create to-do lists of actions to perform when the document ready event fires. Unlike `reg.setup()` however, they don't run against specific nodes, They just blindly run onload. This makes for a total of three to-do lists that need to be performed onload. The first to get executed is the one for `reg.preSetup()`, the second for `reg.setup()` and the third for `reg.postSetup()`. This ordering comes in handy.
