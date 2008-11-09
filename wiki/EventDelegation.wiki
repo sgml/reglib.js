@@ -32,15 +32,34 @@ Not only is the event "live" before the document is ready, but overwriting the D
 
 --------
 
-=reglib's Event delegation methods=
+=The delegation methods=
 
-Here are the methods for event delegation:
+==reg.click(selectorString, clickHandler)==
 
-  * reg.click(selectorString, clickHandler)
-  * reg.hover(selectorString, mouseOverHandler[, mouseOutHandler])
-  * reg.focus(selectorString, focusHandler[, blurHandler])
-  * reg.key(selectorString, keyDownHandler, keyPressHandler, keyUpHandler)
+Registers a click event handler against selected elements.
 
+==reg.hover(selectorString, mouseOverHandler[, mouseOutHandler])
+
+Registers a mouseover and/or mouseout event handler against selected elements. If only a mouseout handler is needed, `null` can be passed in for the mouseover handler.
+
+==reg.focus(selectorString, focusHandler[, blurHandler])==
+
+Registers a focus and/or blur handler against selected elements. If only a blur handler is needed, `null` can be passed in for the focus handler.
+
+Note: Even if elements like DIV and UL can't receive focus, reglib can still register focus and blur events against them, as long as they have focusable descendants like A and INPUT. As counterintuitive as it perhaps seems, this code works:
+
+{{{
+// all forms turn yellow when their inputs have focus
+reg.focus('form', function(e){
+    this.style.backgroundColor = "#ff0";
+}, function(e){
+    this.style.backgroundColor = "#fff";
+});
+}}}
+
+==reg.key(selectorString, keyDownHandler[, keyPressHandler[, keyUpHandler]])==
+
+Registers keyboard event handlers against selected elements. As wildly incompatible as key events are across browsers and platforms, this can sometimes come in handy. Note that reglib makes no attempt to normalize the event behavior across browsers and platforms. keydown is probably the most common event you'd want to handle, but you can pass functions for whichever events you want to handle and `null` for the rest.
 ==Selector strings==
 
 See ReglibSelectors for info on how to write selectors.
