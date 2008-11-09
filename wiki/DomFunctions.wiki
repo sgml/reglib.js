@@ -14,7 +14,7 @@ These functions are predicated upon the notion of the "class list". An element's
 
 --------
 
-===reg.addClassName()===
+===`reg.addClassName()`===
 
 {{{
 reg.addClassName(el, cName);
@@ -25,7 +25,7 @@ Adds `cName` to the the class list of `el`. If the class list of `el` already co
 
 --------
 
-===reg.getElementsByClassName()===
+===`reg.getElementsByClassName()`===
 
 {{{
 reg.getElementsByClassName(cName[, ctxNode[, tagName]]);
@@ -36,7 +36,7 @@ Returns an array of all elements whose class lists contain `cName`. `cName` can 
 
 --------
 
-===reg.hasClassName()===
+===`reg.hasClassName()`===
 
 {{{
 reg.hasClassName(el, cName);
@@ -47,7 +47,7 @@ Returns true if the class list of `el` contains `cName`, otherwise returns false
 
 --------
 
-===reg.matchClassName()===
+===`reg.matchClassName()`===
 
 {{{
 reg.matchClassName(el, regexp);
@@ -58,7 +58,7 @@ Returns true if the class list of `el` contains a value matching `regexp`, other
 
 --------
 
-===reg.removeClassName()===
+===`reg.removeClassName()`===
 
 {{{
 reg.removeClassName(el, cName);
@@ -69,7 +69,7 @@ Removes `cName` from the the class list of `el`. If the class list of `el` doesn
 
 --------
 
-===reg.switchClassName()===
+===`reg.switchClassName()`===
 
 {{{
 reg.switchClassName(el, cName1, cName2);
@@ -80,7 +80,7 @@ Toggles the presence of `cName1` and `cName2` so that if `el` starts out having 
 
 --------
 
-===reg.toggleClassName()===
+===`reg.toggleClassName()`===
 
 {{{
 reg.toggleClassName(el, cName);
@@ -95,7 +95,7 @@ If the class list of `el` contains `cName` it's removed, otherwise it's added.
 
 --------
 
-===reg.elementMatchesSelector()===
+===`reg.elementMatchesSelector()`===
 
 {{{
 reg.elementMatchesSelector(el, selString);
@@ -106,7 +106,7 @@ Returns true if `el` matches `selString`. Identical to `new reg.Selector(selStri
 
 --------
 
-===reg.getElementsBySelector()===
+===`reg.getElementsBySelector()`===
 
 {{{
 reg.getElementsBySelector(selString[, ctxNode]);
@@ -117,7 +117,7 @@ Returns an array of elements matching `selString`. If `ctxNode` is present, just
 
 --------
 
-===reg.getParent()===
+===`reg.getParent()`===
 
 {{{
 reg.getParent(el, selString);
@@ -151,7 +151,7 @@ var c = reg.getParent(span, 'div.baz > div.foo').className;
 
 --------
 
-===reg.elementText()===
+===`reg.elementText()`===
 
 {{{
 reg.elementText(el);
@@ -176,7 +176,7 @@ var txt = elemText(h1);
 
 --------
 
-===reg.getElementById()===
+===`reg.getElementById()`===
 
 {{{
 reg.getElementById(id);
@@ -187,7 +187,7 @@ Just a wrapper for `document.getElementById()`. It would be pointless to have th
 
 --------
 
-===reg.getElementsByTagName()===
+===`reg.getElementsByTagName()`===
 
 {{{
 reg.getElementsByTagName(tagName[, ctxNode]);
@@ -198,7 +198,7 @@ Just a wrapper for `document.getElementsByTagName()`. It would be pointless to h
 
 --------
 
-===reg.innerWrap()===
+===`reg.innerWrap()`===
 
 {{{
 reg.innerWrap(el, wrapperEl);
@@ -208,7 +208,7 @@ Makes `wrapperEl` the one and only child of `el`. All of the children of `el` be
 
 --------
 
-===reg.insertAfter()===
+===`reg.insertAfter()`===
 
 {{{
 reg.insertAfter(insertMe, afterThis);
@@ -218,7 +218,7 @@ Inserts `insertMe` after `afterThis` in the DOM. This function only exists to fi
 
 --------
 
-===reg.newElement()===
+===`reg.newElement()`===
 
 {{{
 reg.newElement(tagName[, attObj[, contents]]);
@@ -267,7 +267,7 @@ para.appendChild(icon);
 
 --------
 
-===reg.nextElement()===
+===`reg.nextElement()`===
 
 {{{
 reg.nextElement(el);
@@ -278,7 +278,7 @@ Returns the next sibling element of `el`, or `null` if not found. Differes from 
 
 --------
 
-===reg.outerWrap()===
+===`reg.outerWrap()`===
 
 {{{
 reg.outerWrap(el, wrapperEl);
@@ -288,7 +288,7 @@ Removes `el` from its parent and adds it as a child of `wrapperEl`.
 
 --------
 
-===reg.previousElement()===
+===`reg.previousElement()`===
 
 {{{
 reg.previousElement(el);
