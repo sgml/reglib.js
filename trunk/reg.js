@@ -1,5 +1,5 @@
 /*
-reglib version 0.1
+reglib version 1.0
 Copyright 2008
 Released under MIT license
 http://code.google.com/p/reglib/
@@ -7,7 +7,7 @@ This lib contains:
 	* A CSS (ish) selector API
 	* DOM helper functions
 	* A cross-browser event adder/remover
-	* Basic onload-traverse-attach functionality
+	* Basic onload-traverse-modify functionality
 	* Event delegation
 	* adds console.log() to old clients 
 */

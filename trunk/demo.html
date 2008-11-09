@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>reglib Demo</title>
+<style type="text/css">
+body.bar { background: yellow; }
+</style>
+<script type="text/javascript" src="reg.js"></script>
+<script type="text/javascript">
+
+reg.importAll();
+
+reg.postSetup(function(){
+	document.body.appendChild(elem('h1',null,"reglib demo"));
+	document.body.appendChild(elem('p',null,elem('a.foo',{href:'http://google.com/'},'clicking here appends another link')));
+	document.body.appendChild(elem('ul',null,elem('li',null,elem('a.foo',{href:'http://google.com/'},'clicking here appends another link'))));
+});
+
+reg.click('a.foo',function(e){
+	this.parentNode.parentNode.appendChild(this.parentNode.cloneNode(true));
+	return false;
+});
+
+reg.hover('body a.foo', mOver, mOut);
+function mOver() { acn(document.body, 'bar'); }
+function mOut() { rcn(document.body, 'bar'); }
+
+</script>
+</head>
+<body>
+</body>
+</html>
+
