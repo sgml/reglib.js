@@ -6,14 +6,14 @@ reglib has a whole raft of DOM convenience functions. These can be called direct
 
 {{{
 reg.importAll();
-// now you can do addClassName()
-// instead of reg.addClassName()
+// now you can do newElement('p')
+// instead of reg.newElement('p')
 }}}
 
 Many of these functions also have shorthand aliases to save typing:
 
 {{{
-acn(); // instead of addClassName()
+elem('p'); // instead of newElement('p')
 }}}
 
 This page lists reglib's DOM convenience functions:
