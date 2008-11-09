@@ -4,7 +4,7 @@
 
 reglib has a whole raft of DOM convenience functions. These can be called directly off the `reg` object like `reg.addClassName()` or they can be imported to the global namespace by doing `reg.importAll()`. Many of these functions also have shorthand aliases to save typing. So `reg.addClassName()` becomes `acn()`. Here's a list of reglib's DOM convenience functions:
 
-<wiki:toc max_depth="3" />
+<wiki:toc max_depth="2" />
 
 --------
 
