@@ -42,7 +42,7 @@ Not only is the event "live" before the document is ready, but overwriting the D
 
 Registers a click event handler against selected elements.
 
-==reg.hover(selectorString, mouseOverHandler[, mouseOutHandler])
+==reg.hover(selectorString, mouseOverHandler[, mouseOutHandler])==
 
 Registers a mouseover and/or mouseout event handler against selected elements. If only a mouseout handler is needed, `null` can be passed in for the mouseover handler.
 
