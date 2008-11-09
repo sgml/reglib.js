@@ -12,8 +12,6 @@ reglib has a whole raft of DOM convenience functions. These can be called direct
 
 These functions are predicated upon the notion of the "class list". An element's class is represented in the attribute as a space-separated set of values. For example class="foo bar" represents a class list of ["foo","bar"]. Since it's an unordered set, `class="foo bar"`, `class="bar foo"` and `class="foo bar foo"` are all treated as having a class list of ["foo","bar"].
 
---------
-
 ===`reg.addClassName()`===
 
 {{{
@@ -22,8 +20,6 @@ acn(el, cName); // alias
 }}}
 
 Adds `cName` to the the class list of `el`. If the class list of `el` already contains `cName`, the function just returns silently.
-
---------
 
 ===`reg.getElementsByClassName()`===
 
@@ -34,8 +30,6 @@ gebcn(cName[, ctxNode[, tagName]]); // alias
 
 Returns an array of all elements whose class lists contain `cName`. `cName` can optionally contain a space-separated class list. If so, only elements containing all classes are returned. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. If `tagName` is present, only elements of that tag name are returned. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.getElementsByClassName()` implementations when possible, otherwise falling back on slower search methods.
 
---------
-
 ===`reg.hasClassName()`===
 
 {{{
@@ -44,8 +38,6 @@ hcn(el, cName); // alias
 }}}
 
 Returns true if the class list of `el` contains `cName`, otherwise returns false.
-
---------
 
 ===`reg.matchClassName()`===
 
@@ -56,8 +48,6 @@ mcn(el, regexp); // alias
 
 Returns true if the class list of `el` contains a value matching `regexp`, otherwise returns false. `regexp` is tested against individual items in the class list, not the entire class attribute value, so if the class attribute is `class="foo bar baz"`, then `reg.matchClassName(el, /^bar$/)` returns true. This function is much slower than `reg.hasClassName()`.
 
---------
-
 ===`reg.removeClassName()`===
 
 {{{
@@ -67,8 +57,6 @@ rcn(el, cName); // alias
 
 Removes `cName` from the the class list of `el`. If the class list of `el` doesn't contain `cName`, the function just returns silently.
 
---------
-
 ===`reg.switchClassName()`===
 
 {{{
@@ -77,8 +65,6 @@ scn(el, cName1, cName2); // alias
 }}}
 
 Toggles the presence of `cName1` and `cName2` so that if `el` starts out having `cName1` in its class list, it will be replaced by `cName2`, and vice versa. If neither are present, `cName1` is added. If both are present, `cName2` is removed.
-
---------
 
 ===`reg.toggleClassName()`===
 
@@ -93,8 +79,6 @@ If the class list of `el` contains `cName` it's removed, otherwise it's added.
 
 ==Functions using CSS selectors==
 
---------
-
 ===`reg.elementMatchesSelector()`===
 
 {{{
@@ -104,8 +88,6 @@ matches(el, selString); // alias
 
 Returns true if `el` matches `selString`. Identical to `new reg.Selector(selString).matches(el)`.
 
---------
-
 ===`reg.getElementsBySelector()`===
 
 {{{
@@ -114,8 +96,6 @@ gebs(selString[, ctxNode]); // alias
 }}}
 
 Returns an array of elements matching `selString`. If `ctxNode` is present, just the subtree of `ctxNode` is searched, otherwise the entire document is searched. The list returned is not live, so mutations to the DOM after this function is called will not be reflected in the returned list. This function relies on native `node.querySelectorAll()` implementations whenever possible, otherwise falling back on slower search methods.
-
---------
 
 ===`reg.getParent()`===
 
@@ -149,8 +129,6 @@ var c = reg.getParent(span, 'div.baz > div.foo').className;
 
 ==Other functions==
 
---------
-
 ===`reg.elementText()`===
 
 {{{
@@ -174,8 +152,6 @@ var txt = elemText(h1);
 
 `h1.innerHTML` would have returned the EM tags, which may not have been desirable.
 
---------
-
 ===`reg.getElementById()`===
 
 {{{
@@ -184,8 +160,6 @@ gebi(id); // alias
 }}}
 
 Just a wrapper for `document.getElementById()`. It would be pointless to have this function except that its alias, `gebi()`, can save a lot of typing.
-
---------
 
 ===`reg.getElementsByTagName()`===
 
@@ -196,8 +170,6 @@ gebtn(tagName[, ctxNode]); // alias
 
 Just a wrapper for `document.getElementsByTagName()`. It would be pointless to have this function except that its alias, `gebtn()`, can save a lot of typing.
 
---------
-
 ===`reg.innerWrap()`===
 
 {{{
@@ -206,8 +178,6 @@ reg.innerWrap(el, wrapperEl);
 
 Makes `wrapperEl` the one and only child of `el`. All of the children of `el` become children of `wrapperEl`.
 
---------
-
 ===`reg.insertAfter()`===
 
 {{{
@@ -215,8 +185,6 @@ reg.insertAfter(insertMe, afterThis);
 }}}
 
 Inserts `insertMe` after `afterThis` in the DOM. This function only exists to fill a gap in the DOM spec, namely the lack if `Node.insertAfter(insertMe, afterThis)`.
-
---------
 
 ===`reg.newElement()`===
 
@@ -265,8 +233,6 @@ para.appendChild(document.createTextNode('Security '));
 para.appendChild(icon);
 }}}
 
---------
-
 ===`reg.nextElement()`===
 
 {{{
@@ -276,8 +242,6 @@ nextElem(el); // alias
 
 Returns the next sibling element of `el`, or `null` if not found. Differes from `Node.nextSibling` because it skips text nodes and returns only element nodes, i.e. nodes where `nodeType == 1`.
 
---------
-
 ===`reg.outerWrap()`===
 
 {{{
@@ -285,8 +249,6 @@ reg.outerWrap(el, wrapperEl);
 }}}
 
 Removes `el` from its parent and adds it as a child of `wrapperEl`.
-
---------
 
 ===`reg.previousElement()`===
 
