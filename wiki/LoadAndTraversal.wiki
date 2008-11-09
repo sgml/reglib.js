@@ -54,6 +54,7 @@ If `el` was added after the document ready event fired, you can use this method 
 {{{
 var johnnyComeLately = elem('div');
 johnnyComeLately.innerHTML = threeHundredKilobytesOfHtml;
+document.body.appendChild(johnnyComeLately);
 reg.rerun(johnnyComeLately);
 }}}
 
