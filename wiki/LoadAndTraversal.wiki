@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Despite its evils, the onload-traverse-modify model of JavaScript development is often unavoidable. For example, since form submit events don't bubble, reglib lacks a `reg.submit()` delegation method. Form elements must be hunted down and wrestled to the ground. reglib offers tools to make this as painless as possible.
+Despite its evils, the onload-traverse-modify model of JavaScript development is often unavoidable. For example, since form submit events don't bubble, reglib lacks a `reg.submit()` delegation method. Form elements must be hunted down and wrestled to the ground. reglib offers tools to make this as (relatively) painless as possible.
 
 =onload-traverse-modify methods=
 
@@ -12,7 +12,7 @@ Calling this method appends to a to-do list of actions to perform against DOM no
 
 {{{
 // reglib
-reg.setup('form.foo',function(e){
+reg.setup('form.foo',function(){
     addEvent(this, 'submit', function(e){
         // validate the form
         if (!isValid) {
@@ -36,9 +36,41 @@ $(document).ready(function(){
 });
 }}}
 
+Additions to the DOM by `setupFunction` will not be included in the DOM scan. For example:
+
+{{{
+reg.setup('p',function(){
+    document.body.appendChild(reg.newElement('p',null,'this is a paragraph'));
+    this.style.backgroundColor = 'red';
+});
+}}}
+
+Will result in a bunch of non-red paragraphs appearing at the end of the page.
+
 ==reg.rerun(el)==
 
+If `el` was added after the document ready event fired, you can use this method to re-execute the above-mentioned to-do list against `el` to make sure it doesn't miss out on any of the action.
 
+==reg.preSetup(function) and reg.postSetup(function)==
 
-==reg.preSetup(setupFunction)==
-==reg.postSetup(setupFunction)==
+These both also create to-do lists of actions to perform when the document ready event fires. Unlike `reg.setup()` however, they don't run against specific nodes, and the `this` object refers to the window. This makes for a total of three to-do lists that need to be performed onload. The first to get executed is the one for `reg.preSetup()`, the second for `reg.setup()` and the third for `reg.postSetup()`. This ordering comes in handy.
+
+Also, sometimes it is better to use these than to use `reg.setup()`:
+
+{{{
+// this works, but it's wasteful because
+// it initiates a DOM crawl. this is O(N) where
+// N is the number of elements in the document
+reg.setup('#foo', function(){
+    // do something with this
+});
+}}}
+
+{{{
+// this does the same thing, but
+// is O(1) rather than O(N)
+reg.postSetup(function(){
+    var el = document.getElementById('foo');
+    // do something with el
+});
+}}}
