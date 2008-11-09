@@ -10,7 +10,7 @@ reglib has a whole raft of DOM convenience functions. These can be called direct
 
 ==Functions for working with class attributes==
 
-These functions are predicated upon the notion of the "class list". An element's class list is represented in the attribute as a space-separated set of values. For example class="foo bar" represents a class list of ["foo","bar"]. Since it's an unordered set, `class="foo bar"`, `class="bar foo"` and `class="foo bar foo"` are all treated as having a class list of ["foo","bar"].
+These functions are predicated upon the notion of the "class list". An element's class list is represented in the attribute as a space-separated set of values. For example class="foo bar" represents a class list of ["foo","bar"]. Since it's an unordered set, `class="foo bar"`, `class="bar foo"` and `class="foo bar foo"` are all treated as having the indentical class list of ["foo","bar"].
 
 ===`reg.addClassName()`===
 
