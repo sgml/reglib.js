@@ -4,13 +4,12 @@ Copyright 2008
 Released under MIT license
 http://code.google.com/p/reglib/
 This lib contains:
- - Array prototype methods for JavaScript 1.6 compatibility
- - A CSS (ish) selector API
- - DOM helper functions
- - A cross-browser event adder/remover
- - Basic on(dom)load DOM traversal against selected elements
- - Event delegation against selected elements
- - A backup for old clients incase console.log() doesn't exist
+	* A CSS (ish) selector API
+	* DOM helper functions
+	* A cross-browser event adder/remover
+	* Basic onload-traverse-attach functionality
+	* Event delegation
+	* adds console.log() to old clients 
 */
 
 // you can rename window.reg to whatever you want
@@ -34,129 +33,6 @@ window.reg = (function(){
 	};
 	function globalError(name) {
 		return "reglib tried to add \""+name+"\" to global namespace but \""+name+"\" already existed.";
-	}
-
-// #############################################################################
-// #### ARRAY PROTOTYPE METHODS ################################################
-// #############################################################################
-
-	/*
-	JavaScript 1.6 adds functional methods for Array.
-	This just adds them in pre-1.6 environments.
-	Methods provided here are:
-	- Array.indexOf(someVal[, from])
-	- Array.lastIndexOf(someVal[, from])
-	- Array.every(func[, thisObj])
-	- Array.filter(func[, thisObj])
-	- Array.forEach(func[, thisObj])
-	- Array.map(func[, thisObj])
-	- Array.some(func[, thisObj])
-	More info: https://developer.mozilla.org/en/New_in_JavaScript_1.6#Array_extras
-	*/
-
-	function e(f){if(typeof f!="function"){throw new TypeError();}}
-
-	// ['z','x','y','z'].indexOf('z') == 0
-	// ['z','x','y','z'].indexOf('z',1) == 3
-	if (!Array.prototype.indexOf) {
-		Array.prototype.indexOf = function(elt) {
-			var len = this.length;
-			var from = Number(arguments[1]) || 0;
-			from = (from < 0) ? Math.ceil(from) : Math.floor(from);
-			if (from < 0) { from += len; }
-			for (; from<len; from++) {
-				if (from in this && this[from] === elt) { return from; }
-			}
-			return -1;
-		};
-	}
-
-	// ['z','x','y','z'].lastIndexOf('z') == 3
-	// ['z','x','y','z'].lastIndexOf('z',-2) == 0
-	if (!Array.prototype.lastIndexOf) {
-		Array.prototype.lastIndexOf = function(elt) {
-			var len = this.length;
-			var from = Number(arguments[1]);
-			if (isNaN(from)) { from = len - 1; }
-			else {
-				from = (from < 0) ? Math.ceil(from) : Math.floor(from);
-				if (from < 0) { from += len; }
-				else if (from >= len) { from = len - 1; }
-			}
-			for (; from>-1; from--) {
-				if (from in this && this[from] === elt) { return from; }
-			}
-			return -1;
-		};
-	}
-
-	// only return true if func returns true for every item in this array
-	if (!Array.prototype.every) {
-		Array.prototype.every = function(func) {
-			var len = this.length;
-			e(func);
-			var theThis = arguments[1];
-			for (var i=0; i<len; i++) {
-				if (i in this && !func.call(theThis, this[i], i, this)) { return false; }
-			}
-			return true;
-		};
-	}
-
-	// return a new array containing only items of this array func returns true on
-	if (!Array.prototype.filter) {
-		Array.prototype.filter = function(func) {
-			var len = this.length;
-			e(func);
-			var arr = new Array();
-			var theThis = arguments[1];
-			for (var i=0; i<len; i++) {
-				if (i in this) {
-					var val = this[i];//incase of mutation
-					if (func.call(theThis, val, i, this)) { arr.push(val); }
-				}
-			}
-			return arr;
-		};
-	}
-
-	// execute func against each item of this array
-	if (!Array.prototype.forEach) {
-		Array.prototype.forEach = function(func) {
-			var len = this.length;
-			e(func);
-			var theThis = arguments[1];
-			for (var i=0; i<len; i++) {
-				if (i in this) { func.call(theThis, this[i], i, this); }
-			}
-		};
-	}
-
-	// return a new array containing return values of func for each item in this array
-	if (!Array.prototype.map) {
-		Array.prototype.map = function(func) {
-			var len = this.length;
-			e(func);
-			var arr = new Array(len);
-			var theThis = arguments[1];
-			for (var i=0; i<len; i++) {
-				if (i in this) { arr[i] = func.call(theThis, this[i], i, this); }
-			}
-			return arr;
-		};
-	}
-
-	// return true if func returns true for at least one item in this array
-	if (!Array.prototype.some) {
-		Array.prototype.some = function(func) {
-			var len = this.length;
-			e(func);
-			var theThis = arguments[1];
-			for (var i=0; i<len; i++) {
-				if (i in this && func.call(theThis, this[i], i, this)) { return true; }
-			}
-			return false;
-		};
 	}
 
 // #############################################################################
