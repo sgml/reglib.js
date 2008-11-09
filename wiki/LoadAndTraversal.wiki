@@ -2,9 +2,9 @@
 
 = Introduction =
 
-Despite its evils, the onload-traverse-modify model of JavaScript development is often unavoidable. For example, since form submit events don't bubble, reglib lacks a `reg.submit()` delegation method. Form elements must be hunted down and wrestled to the ground. reglib offers tools to make this as (relatively) painless as possible.
+Despite its evils, the load-traverse-modify model of JavaScript development is often unavoidable. For example, since form submit events don't bubble, reglib lacks a `reg.submit()` delegation method. Form elements must be hunted down and wrestled to the ground. reglib offers tools to make this as (relatively) painless as possible.
 
-=onload-traverse-modify methods=
+=load-traverse-modify methods=
 
 ==reg.setup(selectorString, setupFunction)==
 
