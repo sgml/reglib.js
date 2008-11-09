@@ -8,7 +8,7 @@
 
 reg.importAll();
 
-// popup links
+// popup links <a class="popup 700x400" href="...">
 reg.click('a@href.popup', function(e){
     var target = (this.target) ? this.target : "_blank";
     var width = 600;
@@ -21,6 +21,7 @@ reg.click('a@href.popup', function(e){
     if (width > screen.width) { width = screen.width - 50; }
     if (height > screen.height) { height = screen.height - 50; }
     var pop = window.open(this.href, target, "scrollbars,status,resizable,width="+width+",height="+height);
+    return false;
 });
 
 </script>
