@@ -81,7 +81,7 @@ Three things to remember about the handler functions:
 
 Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
 
-===reg.click()===
+==reg.click()==
 
 {{{
 // in the JavaScript
@@ -100,7 +100,7 @@ reg.click('p.foo a', function(e){
 </p>
 }}}
 
-===reg.hover()===
+==reg.hover()==
 
 {{{
 // in the JavaScript
@@ -122,7 +122,7 @@ body.bar { background: yellow; }
 </p>
 }}}
 
-===reg.focus()===
+==reg.focus()==
 
 {{{
 /* in the css */
