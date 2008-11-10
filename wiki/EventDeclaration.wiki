@@ -1,0 +1,146 @@
+#summary Using reglib's event delegation methods
+
+<wiki:toc max_depth="3" />
+
+-----
+
+=Introduction=
+
+Suppose you wanted links with `class="popup"` to launch in new windows. In JQuery, using the load-traverse-modify methodology, you might do something like this:
+
+{{{
+// JQuery
+$(document).ready(function(){
+    $('a.popup').click(function(e){
+        window.open(this.href);
+        e.preventDefault();
+    });
+    document.body.innerHTML += "<p>Whoops, I just overwrote all the events I just attached!</p>";
+});
+}}}
+
+The downside of this is that the events won't work until the document is ready, i.e. the DOM finishes loading into memory. The other downside is shown in the code; overwrites to the DOM overwrite the events. Here's the roughly equivalent code in reglib:
+
+{{{
+// reglib
+reg.click('a.popup',function(e){
+    window.open(this.href);
+    return false;
+});
+addEvent(window, 'load', function(){
+    document.body.innerHTML += "<p>I just overwrote the DOM, but all my events still work!</p>";
+});
+}}}
+
+Not only is the event "live" before the document is ready, but overwriting the DOM doesn't overwrite the events.
+
+--------
+
+=The delegation methods=
+
+==reg.click(selectorString, clickHandler)==
+
+Registers a click event handler against selected elements.
+
+==reg.hover(selectorString, mouseOverHandler[, mouseOutHandler])==
+
+Registers a mouseover and/or mouseout event handler against selected elements. If only a mouseout handler is needed, `null` can be passed in for the mouseover handler.
+
+==reg.focus(selectorString, focusHandler[, blurHandler])==
+
+Registers a focus and/or blur handler against selected elements. If only a blur handler is needed, `null` can be passed in for the focus handler.
+
+Note: Even if elements like DIV and UL can't receive focus, reglib can still register focus and blur events against them, as long as they have focusable descendants like A and INPUT. As counterintuitive as it perhaps seems, this code works:
+
+{{{
+// all forms turn yellow when their inputs have focus
+reg.focus('form', function(e){
+    this.style.backgroundColor = "#ff0";
+}, function(e){
+    this.style.backgroundColor = "#fff";
+});
+}}}
+
+==reg.key(selectorString, keyDownHandler[, keyPressHandler[, keyUpHandler]])==
+
+Registers keyboard event handlers against selected elements. As wildly incompatible as keyboard events are across browsers and platforms, this can sometimes come in handy. Note that reglib makes no attempt to normalize keyboard event behavior across browsers and platforms. keydown is probably the most common event you'd want to handle, but you can pass functions for whichever events you want to handle and `null` for the rest.
+
+==A word about selector strings==
+
+See ReglibSelectors for info on how to write selectors.
+
+==A word about handler functions==
+
+Three things to remember about the handler functions:
+
+  # They take an event object as their only parameter.
+  # The `this` object always refers to the element matching the selector, even if the event target was an ancestor of that element.
+  # Returning `false` from them prevents the default action of the event.
+
+--------
+
+=Examples=
+
+Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
+
+==reg.click()==
+
+{{{
+// in the JavaScript
+reg.click('p.foo a', function(e){
+    alert(this.nodeName);
+    alert(reg.getTarget(e).nodeName);
+    return false;
+});
+}}}
+
+{{{
+<!-- in the html -->
+<p class="foo">
+    <!-- clicking this link will alert "A" and then alert "EM" and then nothing will happen -->
+    <a href="page.html"><em>clickme</em></a>
+</p>
+}}}
+
+==reg.hover()==
+
+{{{
+// in the JavaScript
+reg.hover('p.foo a', mOver, mOut);
+function mOver(e) { reg.addClassName(document.body, 'bar'); }
+function mOut(e) { reg.removeClassName(document.body, 'bar'); }
+}}}
+
+{{{
+/* in the css */
+body.bar { background: yellow; }
+}}}
+
+{{{
+<!-- in the html -->
+<p class="foo">
+    <!-- hovering this makes the whole page yellow -->
+    <a href="page.html">hoverme</a>
+</p>
+}}}
+
+==reg.focus()==
+
+{{{
+/* in the css */
+input.error { border: 2px solid red; }
+}}}
+
+{{{
+// in the JavaScript
+// we just want to validate the date format onblur,
+// no need to handle the focus event, so it can be null
+reg.focus('input.date', null, function(e){
+    if (!/^\d\d\/\d\d\/\d\d\d\d$/.test(this.value)) {
+        alert('invalid date');
+        reg.addClassName(this, 'error');
+    } else {
+        reg.removeClassName(this, 'error');
+    }
+});
+}}}
