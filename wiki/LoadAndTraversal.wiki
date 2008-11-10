@@ -73,7 +73,7 @@ These both also create to-do lists of actions to perform when the `onload` event
 // it initiates a DOM crawl. this is O(N) where
 // N is the number of elements in the document
 reg.setup('#foo', function(){
-    // do something with this
+    ...do something with this...
 });
 }}}
 
@@ -83,6 +83,6 @@ reg.setup('#foo', function(){
 reg.postSetup(function(){
     var el = document.getElementById('foo');
     if (!el) { return; }
-    // do something with el
+    ...do something with el...
 });
 }}}
