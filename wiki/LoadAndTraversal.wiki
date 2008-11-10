@@ -40,7 +40,7 @@ $(document).ready(function(){
 });
 }}}
 
-Additions to the DOM by `setupFunction` will not be included in the DOM scan. For example:
+*Note:* additions to the DOM by `setupFunction` will not be included in the DOM scan. For example:
 
 {{{
 reg.setup('p',function(){
@@ -53,7 +53,7 @@ Will result in a bunch of non-red paragraphs appearing at the end of the page.
 
 ==reg.rerun(el)==
 
-If `el` was added after the `onload` event fired, you can use this method to re-execute the to-do list against `el` (and its descendants) to make sure it too gets the behavior it needs.
+If `el` was added after the `onload` event fired, you can use this method to re-execute the `reg.setup()` to-do list against `el` (and its descendants) to make sure it too gets the behavior it needs.
 
 {{{
 var johnnyComeLately = elem('div');
@@ -64,9 +64,9 @@ reg.rerun(johnnyComeLately);
 
 ==reg.preSetup(function) and reg.postSetup(function)==
 
-These both also create to-do lists of actions to perform when the `onload` event fires. Unlike `reg.setup()` however, they don't run against specific nodes, they just blindly run onload. This makes for a grand total of three to-do lists that need to be executed onload. The `reg.preSetup()` list goes first, the `reg.setup()` list goes second, the `reg.postSetup()` goes third. This ordering comes in handy.
+These both also create to-do lists of actions to perform when the `onload` event fires. Unlike `reg.setup()` however, they don't run against specific nodes, they just blindly run onload. This makes for a grand total of _three_ to-do lists that need to be executed onload. The `reg.preSetup()` list goes first, the `reg.setup()` list goes second, the `reg.postSetup()` goes third. This guaranteed ordering can come in handy.
 
-Also, sometimes it is better to use these than to use `reg.setup()`:
+`reg.preSetup()` and `reg.postSetup()` are often preferable to `reg.setup()`:
 
 {{{
 // this works, but it's wasteful because
