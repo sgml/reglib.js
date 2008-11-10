@@ -4,7 +4,7 @@
 
 -----
 
-=Introduction=
+=Procedural vs. Declarative Event Handling=
 
 Suppose you wanted links with `class="popup"` to launch in new windows. In JQuery, using the load-traverse-modify methodology, you might do something like this:
 
@@ -19,7 +19,7 @@ $(document).ready(function(){
 });
 }}}
 
-The downside of this is that the events won't work until the document is ready, i.e. the DOM finishes loading into memory. The other downside is shown in the code; overwrites to the DOM overwrite the events. Here's the roughly equivalent code in reglib:
+This is a decidedly procedural methodology. The downside of it is that the events won't work until the document is ready, i.e. the DOM finishes loading off the network and into memory. The other downside is shown in the code: overwrites to the DOM overwrite the events. Here's the reglib approach:
 
 {{{
 // reglib
@@ -32,11 +32,11 @@ addEvent(window, 'load', function(){
 });
 }}}
 
-Not only is the event "live" before the document is ready, but overwriting the DOM doesn't overwrite the events.
+`reg.click()` does not trigger a procedural scan of the DOM. It just declares how clicks on certain elements should be handled. Not only is the event "live" before the document is ready, but overwriting the DOM doesn't overwrite the events. Internally, this is accomplished through a form of event delegation.
 
 --------
 
-=The delegation methods=
+=reglib's declarative event handling methods=
 
 ==reg.click(selectorString, clickHandler)==
 
