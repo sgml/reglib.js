@@ -28,7 +28,7 @@ reg.setup('form.foo',function(){
 }}}
 
 {{{
-/// JQuery
+// JQuery
 $(document).ready(function(){
     $('form.foo').submit(function(e){
         ...validate the form...
