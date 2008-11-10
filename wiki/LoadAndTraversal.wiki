@@ -8,7 +8,7 @@ Despite its evils, the load-traverse-modify model of JavaScript development is o
 
 ==reg.setup(selectorString, setupFunction)==
 
-Calling this method appends to a to-do list of actions to perform against DOM nodes during the `onload` event. When the document ready event fires, `reg` looks at the to-do list. If it contains anything, it crawls the DOM looking for nodes that match `selectorString`. If it finds any, it calls `setupFunction` against them. Within `setupFunction`, the `this` object refers to the matched node. Here's an example, and roughly equivalent code in JQuery:
+Calling this method appends to a to-do list of actions to perform against DOM nodes during the `onload` event. When the `onload` event fires, `reg` looks at the to-do list. If it contains anything, it crawls the DOM looking for nodes that match `selectorString`. If it finds any, it calls `setupFunction` against them. Within `setupFunction`, the `this` object refers to the matched node. Here's an example, and roughly equivalent code in JQuery:
 
 {{{
 // reglib
