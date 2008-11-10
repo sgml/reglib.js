@@ -2,13 +2,13 @@
 
 = Introduction =
 
-Despite its evils, the load-traverse-modify model of JavaScript development is often unavoidable. For example, since form submit events don't bubble, reglib lacks a `reg.submit()` delegation method. Form elements must be hunted down and wrestled to the ground. reglib offers tools to make this as (relatively) painless as possible.
+Despite its evils, the load-traverse-modify model of JavaScript development is often unavoidable. For example, since form submit events don't bubble, reglib lacks a `reg.submit()` method. Form elements must therefore be hunted down and wrestled to the ground in order to get them to submit. reglib offers tools to make this as (relatively) painless as possible.
 
 =load-traverse-modify methods=
 
 ==reg.setup(selectorString, setupFunction)==
 
-Calling this method appends to a to-do list of actions to perform against DOM nodes during the `onload` event. Within `setupFunction`, the `this` object refers to the element matching the selector you provided. Here's an example, and roughly equivalent code in JQuery for reference:
+Calling this method queries the DOM for elements matching `selectorString`, and runs `setupFunction` against those elements. *Important:* the query does not run when you call `reg.setup()` but rather when the `onload` event fires (or `DOMContentLoaded` if available). When you call `reg.setup()` you're queuing up a to-do list if items to search for when it comes time to scan the DOM. Here's an example, and roughly equivalent code in JQuery for reference:
 
 {{{
 // reglib
