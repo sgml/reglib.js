@@ -14,7 +14,7 @@ Calling this method appends to a to-do list of actions to perform against DOM no
 // reglib
 reg.setup('form.foo',function(){
     addEvent(this, 'submit', function(e){
-        // validate the form
+        ...validate the form...
         if (!isValid) {
             alert("foo form is not valid");
             cancelDefault(e);
@@ -27,7 +27,7 @@ reg.setup('form.foo',function(){
 /// JQuery
 $(document).ready(function(){
     $('form.foo').submit(function(e){
-        // validate the form
+        ...validate the form...
         if (!isValid) {
             alert("foo form is not valid");
             e.preventDefault();
