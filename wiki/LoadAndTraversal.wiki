@@ -60,7 +60,7 @@ reg.rerun(johnnyComeLately);
 
 ==reg.preSetup(function) and reg.postSetup(function)==
 
-These both also create to-do lists of actions to perform when the document ready event fires. Unlike `reg.setup()` however, they don't run against specific nodes, they just blindly run onload. This makes for a grand total of three to-do lists that need to be executed onload. The `reg.preSetup()` list goes first, the `reg.setup()` list goes second, the `reg.postSetup()` goes third. This ordering comes in handy.
+These both also create to-do lists of actions to perform when the `onload` event fires. Unlike `reg.setup()` however, they don't run against specific nodes, they just blindly run onload. This makes for a grand total of three to-do lists that need to be executed onload. The `reg.preSetup()` list goes first, the `reg.setup()` list goes second, the `reg.postSetup()` goes third. This ordering comes in handy.
 
 Also, sometimes it is better to use these than to use `reg.setup()`:
 
