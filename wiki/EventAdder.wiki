@@ -14,7 +14,7 @@ reg.addEvent(element, event, handler, capture);
 
 *`event`* is a string representing the event, such as "click" or "focus".
 
-*`handler`* is a function that accepts an event object as its only parameter.
+*`handler`* is a function that accepts an event object as its only parameter. Within `handler`, `this` always refers to the element the event was added to, which may be the same or an ancestor of the element returned by `reg.getTarget(event)`.
 
 *`capture`* is an optional boolean which defaults to false. If true it causes the event to be handled in the capturing phase (on clients that support it).
 
