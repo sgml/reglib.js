@@ -1,0 +1,35 @@
+#summary reglib's cross-browser event adder
+
+=The Event Adder=
+
+Reglib has a cross-browser event adder that uses object detection to either call `Element.addEventListener()` or `Element.attachEvent()`. It keeps an internal cache of added events and removes them `onunload` in order to reduce the likelihood of memory leaks. Here are the event functions:
+
+==reg.addEvent()==
+
+{{{
+reg.addEvent(element, event, handler, capture);
+}}}
+
+*`element`* is the element node to add the event to.
+
+*`event`* is a string representing the event, such as "click" or "focus".
+
+*`handler`* is a function that accepts an event object as its only parameter.
+
+*`capture`* is an optional boolean which defaults to false. If true it causes the event to be handled in the capturing phase (on clients that support it).
+
+==reg.getTarget()==
+
+{{{
+reg.getTarget(eventObject);
+}}}
+
+Returns the target element of the event. Uses object detection to return the appropriate result since clients differ on how to get the target.
+
+==reg.cancelDefault()==
+
+{{{
+reg.cancelDefault(eventObject);
+}}}
+
+Cancels the default action, such as a link causing the page to be replaced by a new URL. Uses object detection to call the appropriate method since clients differ on how to do this.
