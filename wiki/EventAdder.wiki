@@ -4,6 +4,8 @@
 
 Reglib has a cross-browser event adder that uses object detection to either call `Element.addEventListener()` or `Element.attachEvent()`. It keeps an internal cache of added events and removes them `onunload` in order to reduce the likelihood of memory leaks. Here are the event functions:
 
+-----
+
 ==reg.addEvent()==
 
 {{{
@@ -18,6 +20,8 @@ reg.addEvent(element, event, handler, capture);
 
 *`capture`* is an optional boolean which defaults to false. If true it causes the event to be handled in the capturing phase (on clients that support it).
 
+-----
+
 ==reg.getTarget()==
 
 {{{
@@ -25,6 +29,8 @@ reg.getTarget(eventObject);
 }}}
 
 Returns the target element of the event. Uses object detection to return the appropriate result since clients differ on how to get the target.
+
+-----
 
 ==reg.cancelDefault()==
 
