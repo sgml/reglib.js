@@ -1,5 +1,5 @@
 /*
-reglib version 1.0.1
+reglib version 1.0.2
 Copyright 2008
 Released under MIT license
 http://code.google.com/p/reglib/
@@ -244,8 +244,8 @@ window.reg = (function(){
 						else { continue commas; } // fail this one
 					}
 				}
-				else if (itm.name == 'nextSib') { tempEl = prevElem(tempEl); }
-				else if (itm.name == 'followingSib') { tempEl = prevElem(tempEl); }
+				else if (itm.name == 'nextSib') { tempEl = previousElement(tempEl); }
+				else if (itm.name == 'followingSib') { tempEl = previousElement(tempEl); }
 				else if (itm.name == 'child') { tempEl = tempEl.parentNode; }
 				else if (itm.name == 'descendant') { tempEl = tempEl.parentNode; }
 			}
@@ -299,11 +299,6 @@ window.reg = (function(){
 		var result = [];
 		for (var tag in hash){if(hash.hasOwnProperty(tag)){result.push(tag);}}
 		return result;
-	}
-
-	// is a selector simple?
-	function isSimple(sel) {
-		return (sel.items.length == 1 && sel.items[0].length == 1);
 	}
 
 	reg.importSelectorAPI = function() {
@@ -493,11 +488,11 @@ window.reg = (function(){
 	// GRAB JUST THE TEXTUAL DATA OF AN ELEMENT
 	function elementText(el) {
 		// <a id="foo" href="page.html">click <b>here</b></a>
-		// elemText(document.getElementById('foo')) == "click here"
+		// elementText(document.getElementById('foo')) == "click here"
 		var r = '';
 		if (el.alt) { r += el.alt; }
 		r += el.innerHTML.replace(/<[a-z0-9_-]+ [^>]+alt="([^">]+)[^>]+>/ig,'$1').replace(/<[^>]+>/ig,'');
-		var d = elem('div');
+		var d = newElement('div');
 		d.innerHTML = r;
 		r = (d.childNodes[0]) ? d.childNodes[0].data : '';
 		d = null;
@@ -525,7 +520,7 @@ window.reg = (function(){
 			result = [];
 			var tagNames = getTagNames(sel);
 			for (var a=0; a<tagNames.length; a++) {
-				var els = gebtn(tagNames[a], contextNode);
+				var els = getElementsByTagName(tagNames[a], contextNode);
 				for (var b=0, el; el=els[b++];) {
 					if (el.nodeType!=1) { continue; }
 					if (sel.matches(el)) { result.push(el); }
@@ -569,7 +564,7 @@ window.reg = (function(){
 				}
 			} else {
 				// traverse w/ dom
-				var els = (tag=='*'&&contextNode.all) ? contextNode.all : gebtn(tag,contextNode);
+				var els = (tag=='*'&&contextNode.all) ? contextNode.all : getElementsByTagName(tag,contextNode);
 				elements:for (var i=0,el;el=els[i++];) {
 					for (var j=0; j<classNames.length; j++) {
 						if (!hasClassName(el, classNames[j])) { continue elements; }
@@ -751,7 +746,6 @@ window.reg = (function(){
 			setup:setup,
 			ran:false,
 			firstTimeOnly:firstTimeOnly,
-			isSimple:isSimple(parsedSel) // 'div.foo' is simple, 'div.foo > p' is not
 		};
 		for(var a=0;a<tagNames.length;a++){
 			var tagName = tagNames[a];
@@ -809,11 +803,7 @@ window.reg = (function(){
 			//####################################
 			//old branch
 
-			function shouldIgnore(el){
-				// helps to not waste cycles checking simple elements like <p>
-				return (!el.className && !el.id && el.nodeName != 'img');
-			}
-			var elsList=gebtn('*',doc);
+			var elsList=getElementsByTagName('*',doc);
 
 			//dump live list to static list
 			for (var i=elsList.length-1, els=[]; i>=0; i--) {
@@ -826,13 +816,11 @@ window.reg = (function(){
 				var lcNodeName=elmt.nodeName.toLowerCase();
 				var regObjArrayAll=sq['*'];
 				var regObjArrayTag=sq[lcNodeName];
-				var uninteresting = shouldIgnore(elmt);
 
 				// any wildcards?
 				if(regObjArrayAll){
 					for(var b=0;b<regObjArrayAll.length;b++){
 						var regObj=regObjArrayAll[b];
-						if(uninteresting && regObj.isSimple){continue;}
 						if(regObj.firstTimeOnly && regObj.ran){continue;}
 						var matches = regObj.selector.matches(elmt);
 						if(matches){runIt(elmt, regObj);}
@@ -843,7 +831,6 @@ window.reg = (function(){
 				if(regObjArrayTag){
 					for(var b=0;b<regObjArrayTag.length;b++){
 						var regObj=regObjArrayTag[b];
-						if(uninteresting && regObj.isSimple){continue;}
 						if(regObj.firstTimeOnly && regObj.ran){continue;}
 						var matches = regObj.selector.matches(elmt);
 						if(matches){runIt(elmt, regObj);}
