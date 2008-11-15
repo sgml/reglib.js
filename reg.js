@@ -3,13 +3,6 @@ reglib version 1.0
 Copyright 2008
 Released under MIT license
 http://code.google.com/p/reglib/
-This lib contains:
-	* A CSS (ish) selector API
-	* DOM helper functions
-	* A cross-browser event adder/remover
-	* Basic onload-traverse-modify functionality
-	* Event delegation
-	* adds console.log() to old clients 
 */
 
 // you can rename window.reg to whatever you want
@@ -45,7 +38,7 @@ window.reg = (function(){
 	- new reg.Selector(selectorString).matches(someElement)
 
 	For example:
-	var sel = new Selector('div#foo > ul.bar > li');
+	var sel = new reg.Selector('div#foo > ul.bar > li');
 	var item = document.getElementById('myListItem');
 	if (sel.matches(item)) { ... }
 	*/
@@ -512,7 +505,7 @@ window.reg = (function(){
 	}
 
 	// GET ELEMENT BY ID
-	function getElementById(id) { return document.getElementById(id); };
+	function getElementById(id) { return document.getElementById(id); }
 
 	// GET ELEMENTS BY TAG NAME
 	function getElementsByTagName(tag, contextNode) {
@@ -930,7 +923,7 @@ window.reg = (function(){
 	function pushFunc(selStr, handlerFunc, depth, handlers) {
 		if(!handlerFunc){return;}
 		depth=getDepth(depth);
-		var parsedSel = new Selector(selStr);
+		var parsedSel = new reg.Selector(selStr);
 		if(!handlers[selStr]) {handlers[selStr]=[];}
 		handlers[selStr].push({selector:parsedSel,handle:handlerFunc,depth:depth});
 	}
