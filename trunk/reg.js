@@ -204,7 +204,7 @@ window.reg = (function(){
 					var des = item[j];
 					if (des.name=='tag') {
 						result += des.tagName;
-						if (des.className) { result += "." + des.classNames.join("."); }
+						if (des.classNames) { result += "." + des.classNames.join("."); }
 						if (des.id) { result += '#' + des.id; }
 						if (des.targeted) {  result += ':target'; }
 						if (des.attributeName) {
@@ -824,7 +824,8 @@ window.reg = (function(){
 		var sqIsEmpty=true;
 		for (var tagName in sq) {
 			if(!sq.hasOwnProperty(tagName)) { continue; }
-			sqIsEmpty = false; break;
+			sqIsEmpty = false;
+			break;
 		}
 
 		if (el.querySelector) {
@@ -832,6 +833,7 @@ window.reg = (function(){
 			//####################################
 			//querySelector() branch
 
+			var qSelResults = [];
 			for (var tagName in sq) {
 				if(!sq.hasOwnProperty(tagName)) { continue; }
 				var regObjArray = sq[tagName];
@@ -841,15 +843,18 @@ window.reg = (function(){
 						if (regObj.ran) { continue; }
 						try { var elmt = el.querySelector(toQuerySelectorString(regObj.selector)); }
 						catch (ex) { console.log(ex); }
-						if (elmt) {runIt(elmt, regObj);}
+						if (elmt) { qSelResults.push({el:elmt,regObj:regObj}); }
 					} else {
 						try { var elmts = el.querySelectorAll(toQuerySelectorString(regObj.selector)); }
 						catch (ex) { console.log(ex); }
 						for (var j=0; j<elmts.length; j++) {
-							runIt(elmts[j], regObj);
+							qSelResults.push({el:elmts[j],regObj:regObj});
 						}
 					}
 				}
+			}
+			for (var i=0; i<qSelResults.length; i++) {
+				runIt(qSelResults[i].el, qSelResults[i].regObj);
 			}
 		} else if (!sqIsEmpty) {
 
