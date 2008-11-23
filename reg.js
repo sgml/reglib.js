@@ -1,5 +1,5 @@
 /*
-reglib version 1.0.2
+reglib version 1.0.3
 Copyright 2008
 Released under MIT license
 http://code.google.com/p/reglib/
@@ -26,6 +26,11 @@ window.reg = (function(){
 	};
 	function globalError(name) {
 		return "reglib tried to add \""+name+"\" to global namespace but \""+name+"\" already existed.";
+	}
+	if (window.Node && Node.prototype && !Node.prototype.contains) {
+		Node.prototype.contains = function (arg) {
+			return !!(this.compareDocumentPosition(arg) & 16);
+		}
 	}
 
 // #############################################################################
@@ -98,7 +103,11 @@ window.reg = (function(){
 				var lastTag = itms[itms.length-1];
 				// find class name, like .entry
 				if (classMatch) {
-					lastTag.className=classMatch[2];
+					if (!lastTag.classNames) {
+						lastTag.classNames = [classMatch[2]];
+					} else {
+						lastTag.classNames.push(classMatch[2]);
+					}
 					selString=selString.substring(classMatch[1].length);
 					classMatch=null;
 					continue;
@@ -195,8 +204,8 @@ window.reg = (function(){
 					var des = item[j];
 					if (des.name=='tag') {
 						result += des.tagName;
-						if (des.className) { result += '.' + des.className; }
-						if (des.id) {        result += '#' + des.id; }
+						if (des.className) { result += "." + des.classNames.join("."); }
+						if (des.id) { result += '#' + des.id; }
 						if (des.targeted) {  result += ':target'; }
 						if (des.attributeName) {
 							result += '[' + des.attributeName;
@@ -259,7 +268,13 @@ window.reg = (function(){
 		// try to falsify as soon as possible
 		if (!el) { return false; }
 		if (el.nodeName.toLowerCase()!=itm.tagName && itm.tagName!='*') { return false; }
-		if (itm.className && !hasClassName(el,itm.className)) { return false; }
+		if (itm.classNames) {
+			 for (var i=0; i<itm.classNames.length; i++) {
+			 	if (!hasClassName(el, itm.classNames[i])) {
+					return false;
+				}
+			}
+		}
 		if (itm.id && el.id != itm.id) { return false; }
 		if (itm.attributeName) {
 			if (typeof el.hasAttribute != 'undefined') {
@@ -509,25 +524,41 @@ window.reg = (function(){
 	}
 
 	// GET ELEMENTS BY SELECTOR
+	var classTest = /^\s*([a-z0-9_-]+)?\.([a-z0-9_-]+)\s*$/i;
+	var idTest = /^\s*([a-z0-9_-]+)?\#([a-z0-9_-]+)\s*$/i;
 	function getElementsBySelector(selString, contextNode) {
-		if (!cSels[selString]) { cSels[selString] = new reg.Selector(selString); }
-		var sel = cSels[selString];
-		if (!contextNode) { contextNode = window.document; }
-		var result;
-		if (contextNode.querySelectorAll) {
-			result = contextNode.querySelectorAll(toQuerySelectorString(sel));
+		if (!contextNode) { contextNode = window.document.documentElement; }
+		var result = [];
+		var cMat, iMat;
+		if (cMat = selString.match(classTest)) {
+			var cl = cMat[2];
+			var tg = cMat[1];
+			result = reg.gebcn(cl, contextNode, tg);
+		} else if (iMat = selString.match(idTest)) {
+			var id = iMat[2];
+			var tg = iMat[1];
+			var el = reg.gebi(id);
+			if (el && contextNode.contains(el) && reg.matches(el, selString)) { result[0] = el; }
 		} else {
-			result = [];
-			var tagNames = getTagNames(sel);
-			for (var a=0; a<tagNames.length; a++) {
-				var els = getElementsByTagName(tagNames[a], contextNode);
-				for (var b=0, el; el=els[b++];) {
-					if (el.nodeType!=1) { continue; }
-					if (sel.matches(el)) { result.push(el); }
+			if (!cSels[selString]) { cSels[selString] = new reg.Selector(selString); }
+			var sel = cSels[selString];
+			if (contextNode.querySelectorAll) {
+				var qlist = contextNode.querySelectorAll(toQuerySelectorString(sel));
+				for (var i=0, node; node = qlist[i++];) {
+					result[result.length] = node;
+				}
+			} else {
+				var tagNames = getTagNames(sel);
+				for (var a=0; a<tagNames.length; a++) {
+					var els = getElementsByTagName(tagNames[a], contextNode);
+					for (var b=0, el; el=els[b++];) {
+						if (el.nodeType!=1) { continue; }
+						if (sel.matches(el)) { result.push(el); }
+					}
 				}
 			}
 		}
-		return (result.length > 0) ? result : null;
+		return result;
 	}
 
 	// GET ELEMENTS BY CLASS NAME
@@ -644,13 +675,17 @@ window.reg = (function(){
 	- reg.getTarget(evt)
 	*/
 
-	var evtLst = [];
+	var memEvents = {};
+	var memInd = 0;
 	function rememberEvent(elmt,evt,handler,cptr){
-		evtLst.push([elmt,evt,handler,cptr]);
+		var key = "mem"+memInd;
+		memEvents[key] = [elmt,evt,handler,cptr];
+		return memInd++;
 	}
 	function cleanup(){
-		for(var a=0; a<evtLst.length; a++){
-			var evt = evtLst[a];
+		for (var key in memEvents) {
+			if (!memEvents.hasOwnProperty(key)) { continue; }
+			var evt = memEvents[key];
 			var elmt=evt[0];
 			if(elmt.removeEventListener){
 				elmt.removeEventListener(evt[1], evt[2], evt[3]);
@@ -677,15 +712,33 @@ window.reg = (function(){
 	}
 
 	// generic event adder, plus memory leak prevention
+	// returns an int mem that you can use to later remove that event removeEvent(mem)
 	function addEvent(elmt,evt,handler,cptr) {
 		cptr=(cptr)?true:false;
 		if(elmt.addEventListener){
 			elmt.addEventListener(evt,handler,cptr);
-			rememberEvent(elmt,evt,handler,cptr);
+			return rememberEvent(elmt,evt,handler,cptr);
 		}else if(elmt.attachEvent){
 			elmt.attachEvent("on"+evt,function(){handler.call(elmt,window.event);});
-			rememberEvent(elmt,evt,handler);
+			return rememberEvent(elmt,evt,handler);
 		}
+	}
+
+	// event remover
+	function removeEvent(memInt) {
+		var evt = memEvents["mem"+memInt];
+		if (evt) {
+			var elmt=evt[0];
+			if(elmt.removeEventListener){
+				elmt.removeEventListener(evt[1], evt[2], evt[3]);
+				return true;
+			}
+			if(elmt.detachEvent){
+				elmt.detachEvent('on'+evt[1], evt[2]);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// fight memory leaks in ie
@@ -745,7 +798,7 @@ window.reg = (function(){
 			selector:parsedSel,
 			setup:setup,
 			ran:false,
-			firstTimeOnly:firstTimeOnly,
+			firstTimeOnly:firstTimeOnly
 		};
 		for(var a=0;a<tagNames.length;a++){
 			var tagName = tagNames[a];
@@ -888,6 +941,9 @@ window.reg = (function(){
 
 	// these contain the event handling functions
 	var clickHandlers = {};
+	var mouseDownHandlers = {};
+	var mouseUpHandlers = {};
+	var doubleClickHandlers = {};
 	var mouseOverHandlers = {};
 	var mouseOutHandlers = {};
 	var focusHandlers = {};
@@ -896,44 +952,54 @@ window.reg = (function(){
 	var keyPressHandlers = {};
 	var keyUpHandlers = {};
 
-	// scrubber for convenience and consistency
-	function getDepth(d){
-		var result=d;
-		if(result===null||result===undefined){result=-1;}
-		result=parseInt(result);
-		if(isNaN(result)){throw "bad arg for depth, "+d+" is not a number";}
-		if(result<-1){throw "bad arg for depth, "+d+" is invalid, must be -1 or higher";}
+	// returns first arg that's a number
+	function getDepth(fargs){
+		var result = null;
+		for (var i=2; i<fargs.length; i++) {
+			if (!isNaN(parseInt(fargs[i]))) {
+				result = fargs[i];
+				break;
+			}
+		}
+		if(result===null){result=-1;}
+		if(result<-1){throw "bad arg for depth, must be -1 or higher";}
 		return result;
 	}
 
 	// add a handler function
 	function pushFunc(selStr, handlerFunc, depth, handlers) {
-		if(!handlerFunc){return;}
-		depth=getDepth(depth);
+		if(!handlerFunc || typeof handlerFunc != "function"){return;}
 		var parsedSel = new reg.Selector(selStr);
 		if(!handlers[selStr]) {handlers[selStr]=[];}
 		handlers[selStr].push({selector:parsedSel,handle:handlerFunc,depth:depth});
 	}
 
 	// click
-	reg.click=function(selStr, handlerFunction, depth){
-		pushFunc(selStr, handlerFunction, depth, clickHandlers);
+	reg.click=function(selStr, clickFunc, downFunc, upFunc, doubleFunc){
+		var depth = getDepth(arguments);
+		pushFunc(selStr, clickFunc, depth, clickHandlers);
+		pushFunc(selStr, downFunc, depth, mouseDownHandlers);
+		pushFunc(selStr, upFunc, depth, mouseUpHandlers);
+		pushFunc(selStr, doubleFunc, depth, doubleClickHandlers);
 	};
 
 	// mouse over and out
-	reg.hover=function(selStr, overFunc, outFunc, depth){
+	reg.hover=function(selStr, overFunc, outFunc){
+		var depth = getDepth(arguments);
 		pushFunc(selStr, overFunc, depth, mouseOverHandlers);
 		pushFunc(selStr, outFunc, depth, mouseOutHandlers);
 	};
 
 	// focus and blur
-	reg.focus=function(selStr, focusFunc, blurFunc, depth){
+	reg.focus=function(selStr, focusFunc, blurFunc){
+		var depth = getDepth(arguments);
 		pushFunc(selStr, focusFunc, depth, focusHandlers);
 		pushFunc(selStr, blurFunc, depth, blurHandlers);
 	};
 
 	// key press
-	reg.key=function(selStr, downFunc, pressFunc, upFunc, depth){
+	reg.key=function(selStr, downFunc, pressFunc, upFunc){
+		var depth = getDepth(arguments);
 		pushFunc(selStr, downFunc, depth, keyDownHandlers);
 		pushFunc(selStr, pressFunc, depth, keyPressHandlers);
 		pushFunc(selStr, upFunc, depth, keyUpHandlers);
@@ -965,22 +1031,25 @@ window.reg = (function(){
 	}
 
 	if(typeof document.onactivate == 'object'){
-		var focus = 'activate';
-		var blur = 'deactivate';
+		var focusEventType = 'activate';
+		var blurEventType = 'deactivate';
 	}else{
-		var focus = 'focus';
-		var blur = 'blur';
+		var focusEventType = 'focus';
+		var blurEventType = 'blur';
 	}
 
 	// attach the events
-	addEvent(document.documentElement,'click',    function(e){delegate(clickHandlers,     e);});
-	addEvent(document.documentElement,'keydown',  function(e){delegate(keyDownHandlers,   e);});
-	addEvent(document.documentElement,'keypress', function(e){delegate(keyPressHandlers,  e);});
-	addEvent(document.documentElement,'keyup',    function(e){delegate(keyUpHandlers,     e);});
-	addEvent(document.documentElement,'mouseover',function(e){delegate(mouseOverHandlers, e);});
-	addEvent(document.documentElement,'mouseout', function(e){delegate(mouseOutHandlers,  e);});
-	addEvent(document.documentElement, focus,     function(e){delegate(focusHandlers,     e);},true);
-	addEvent(document.documentElement, blur,      function(e){delegate(blurHandlers,      e);},true);
+	addEvent(document.documentElement,'click',        function(e){delegate(clickHandlers,      e);});
+	addEvent(document.documentElement,'mousedown',    function(e){delegate(mouseDownHandlers,  e);});
+	addEvent(document.documentElement,'mouseup',      function(e){delegate(mouseUpHandlers,    e);});
+	addEvent(document.documentElement,'dblclick',     function(e){delegate(doubleClickHandlers,e);});
+	addEvent(document.documentElement,'keydown',      function(e){delegate(keyDownHandlers,    e);});
+	addEvent(document.documentElement,'keypress',     function(e){delegate(keyPressHandlers,   e);});
+	addEvent(document.documentElement,'keyup',        function(e){delegate(keyUpHandlers,      e);});
+	addEvent(document.documentElement,'mouseover',    function(e){delegate(mouseOverHandlers,  e);});
+	addEvent(document.documentElement,'mouseout',     function(e){delegate(mouseOutHandlers,   e);});
+	addEvent(document.documentElement, focusEventType,function(e){delegate(focusHandlers,      e);},true);
+	addEvent(document.documentElement, blurEventType, function(e){delegate(blurHandlers,       e);},true);
 
 	// handy for css
 	addClassName(document.documentElement, 'regenabled');
