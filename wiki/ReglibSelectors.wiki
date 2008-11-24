@@ -51,6 +51,7 @@ Here's a rundown of the selection options:
 || `a:target` || `a` elements whose id matches the URL hash ||
 || `#foo` or `*#foo` || any element with an id that equals `foo` ||
 || `.foo` or `*.foo` || any element with a class attribute that equals `foo`, or contains `foo` in a space-separated list ||
+|| `.foo.bar` || any element with a class attribute that contains both `foo` and `bar` in a space-separated list, order-agnostic ||
 || `:target` or `*:target` || any element whose id matches the URL hash ||
 
 
