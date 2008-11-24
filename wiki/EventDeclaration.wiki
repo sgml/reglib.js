@@ -38,15 +38,15 @@ addEvent(window, 'load', function(){
 
 =reglib's declarative event handling methods=
 
-==reg.click(selectorString, clickHandler)==
+==reg.click(selectorString, clickHandler, mouseDownHandler, mouseUpHandler, doubleClickHandler)==
 
-Registers a click event handler against selected elements.
+Registers click and other mouse events against selected elements. All functions can optionally be `null` or `undefined`. Most common use case is `reg.click(sel, clickFunc)`.
 
-==reg.hover(selectorString, mouseOverHandler[, mouseOutHandler])==
+==reg.hover(selectorString, mouseOverHandler, mouseOutHandler)==
 
 Registers a mouseover and/or mouseout event handler against selected elements. If only a mouseout handler is needed, `null` can be passed in for the mouseover handler.
 
-==reg.focus(selectorString, focusHandler[, blurHandler])==
+==reg.focus(selectorString, focusHandler, blurHandler)==
 
 Registers a focus and/or blur handler against selected elements. If only a blur handler is needed, `null` can be passed in for the focus handler.
 
@@ -61,7 +61,7 @@ reg.focus('form', function(e){
 });
 }}}
 
-==reg.key(selectorString, keyDownHandler[, keyPressHandler[, keyUpHandler]])==
+==reg.key(selectorString, keyDownHandler, keyPressHandler, keyUpHandler)==
 
 Registers keyboard event handlers against selected elements. As wildly incompatible as keyboard events are across browsers and platforms, this can sometimes come in handy. Note that reglib makes no attempt to normalize keyboard event behavior across browsers and platforms. keydown is probably the most common event you'd want to handle, but you can pass functions for whichever events you want to handle and `null` for the rest.
 
