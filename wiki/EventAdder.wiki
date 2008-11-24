@@ -9,7 +9,7 @@ Reglib has a cross-browser event adder that uses object detection to either call
 ==reg.addEvent()==
 
 {{{
-reg.addEvent(element, event, handler, capture);
+var mem = reg.addEvent(element, event, handler, capture);
 }}}
 
 *`element`* is the element node to add the event to.
@@ -19,6 +19,18 @@ reg.addEvent(element, event, handler, capture);
 *`handler`* is a function that accepts an event object as its only parameter. Within `handler`, `this` always refers to the element the event was added to, which may be the same or an ancestor of the element returned by `reg.getTarget(event)`.
 
 *`capture`* is an optional boolean which defaults to false. If true it causes the event to be handled in the capturing phase (on clients that support it).
+
+*`mem`* is a signifier value that can be used later to remove this event.
+
+-----
+
+==reg.removeEvent()==
+
+{{{
+reg.removeEvent(mem);
+}}}
+
+*`mem`* is a signifier value that was returned from `addEvent()` which will remove that event.
 
 -----
 
@@ -39,3 +51,13 @@ reg.cancelDefault(eventObject);
 }}}
 
 Cancels the default action, such as a link causing the page to be replaced by a new URL. Uses object detection to call the appropriate method since clients differ on how to do this.
+
+-----
+
+==reg.cancelBubble()==
+
+{{{
+reg.cancelBubble(eventObject);
+}}}
+
+Prevents the event object from further bubbling.
