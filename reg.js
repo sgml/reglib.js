@@ -476,7 +476,7 @@ window.reg = (function(){
 			for (var key in atts) {
 				// setAttribute() has shaky support, try direct methods first
 				if (!atts.hasOwnProperty(key)) { continue; }
-				if (key == 'class') { e.className = atts[key]; }
+				if (key == 'class') { e.className = e.className ? e.className += ' ' + atts[key] : atts[key]; }
 				else if (key == 'for') { e.htmlFor = atts[key]; }
 				else if (key.indexOf('on') == 0) { e[key] = atts[key]; }
 				else {
@@ -677,22 +677,22 @@ window.reg = (function(){
 
 	var memEvents = {};
 	var memInd = 0;
-	function rememberEvent(elmt,evt,handler,cptr){
-		var key = "mem"+memInd;
-		memEvents[key] = [elmt,evt,handler,cptr];
-		return memInd++;
+	function rememberEvent(elmt,evt,handle,cptr){
+		var thisInd = memInd++;
+		var key = "mem"+thisInd;
+		memEvents[key] = {
+			element: elmt,
+			event: evt,
+			handler: handle,
+			capture: cptr
+		};
+		return thisInd;
 	}
-	function cleanup(){
+	function cleanup(){return;
 		for (var key in memEvents) {
-			if (!memEvents.hasOwnProperty(key)) { continue; }
-			var evt = memEvents[key];
-			var elmt=evt[0];
-			if(elmt.removeEventListener){
-				elmt.removeEventListener(evt[1], evt[2], evt[3]);
-			}
-			if(elmt.detachEvent){
-				elmt.detachEvent('on'+evt[1], evt[2]);
-			}
+			var matches = key.match(/^mem(\d+)$/);
+			if (!matches) { continue; }
+			removeEvent(parseInt(matches[1]));
 		}
 	}
 
@@ -711,6 +711,12 @@ window.reg = (function(){
 		e.returnValue=false;
 	}
 
+	// cancel bubble
+	function cancelBubble(e) {
+		if (typeof e.stopPropagation != 'undefined') { e.stopPropagation(); return; }
+		e.cancelBubble=true;
+	}
+
 	// generic event adder, plus memory leak prevention
 	// returns an int mem that you can use to later remove that event removeEvent(mem)
 	function addEvent(elmt,evt,handler,cptr) {
@@ -719,22 +725,22 @@ window.reg = (function(){
 			elmt.addEventListener(evt,handler,cptr);
 			return rememberEvent(elmt,evt,handler,cptr);
 		}else if(elmt.attachEvent){
-			elmt.attachEvent("on"+evt,function(){handler.call(elmt,window.event);});
-			return rememberEvent(elmt,evt,handler);
+			var actualHandler = function(){handler.call(elmt,window.event);};
+			elmt.attachEvent("on"+evt,actualHandler);
+			return rememberEvent(elmt,evt,actualHandler);
 		}
 	}
 
 	// event remover
 	function removeEvent(memInt) {
-		var evt = memEvents["mem"+memInt];
-		if (evt) {
-			var elmt=evt[0];
-			if(elmt.removeEventListener){
-				elmt.removeEventListener(evt[1], evt[2], evt[3]);
+		var eo = memEvents["mem"+memInt];
+		if (eo) {
+			var el=eo.element;
+			if(el.removeEventListener) {
+				el.removeEventListener(eo.event, eo.handler, eo.capture);
 				return true;
-			}
-			if(elmt.detachEvent){
-				elmt.detachEvent('on'+evt[1], evt[2]);
+			} else if(el.detachEvent) {
+				el.detachEvent('on'+eo.event, eo.handler);
 				return true;
 			}
 		}
@@ -747,7 +753,9 @@ window.reg = (function(){
 	var events = {
 		getTarget:     getTarget,
 		cancelDefault: cancelDefault,
-		addEvent:      addEvent
+		addEvent:      addEvent,
+		removeEvent:   removeEvent,
+		cancelBubble:  cancelBubble
 	};
 
 	reg.importEventFunctions = function() {
