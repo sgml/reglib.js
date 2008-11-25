@@ -121,3 +121,31 @@ table.changeme td.changed{
 	background:green;
 }
 
+
+
+
+
+
+
+.test{
+border:10px solid;
+padding:20px 25px;
+text-align:center;
+font-size:30px;
+font-weight:bold;
+margin:10px 0px;
+cursor:pointer;
+}
+.unconfirmed{
+background:#ff6;
+color:#990;
+}
+.confirmed{
+background:#cfc;
+color:#090;
+}
+.failed{
+background:#fcc;
+color:#c00;
+}
+

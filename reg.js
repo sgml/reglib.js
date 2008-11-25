@@ -1,5 +1,5 @@
 /*
-reglib version 1.0.4
+reglib version 1.0.5
 Copyright 2008
 Released under MIT license
 http://code.google.com/p/reglib/
@@ -705,6 +705,17 @@ window.reg = (function(){
 		return targ;
 	}
 
+	// get the element on which the event occurred
+	function getRelatedTarget(e) {
+		if (!e) { e = window.event; }
+		var rTarg = e.relatedTarget;
+		if (!rTarg) {
+			if ('mouseover'==e.type) { rTarg = e.fromElement; }
+			if ('mouseout'==e.type) { rTarg = e.toElement; }
+		}
+		return rTarg;
+	}
+
 	// cancel default action
 	function cancelDefault(e) {
 		if (typeof e.preventDefault != 'undefined') { e.preventDefault(); return; }
@@ -751,11 +762,12 @@ window.reg = (function(){
 	addEvent(window,'unload',cleanup);
 
 	var events = {
-		getTarget:     getTarget,
-		cancelDefault: cancelDefault,
-		addEvent:      addEvent,
-		removeEvent:   removeEvent,
-		cancelBubble:  cancelBubble
+		getTarget:        getTarget,
+		getRelatedTarget: getRelatedTarget,
+		cancelDefault:    cancelDefault,
+		addEvent:         addEvent,
+		removeEvent:      removeEvent,
+		cancelBubble:     cancelBubble
 	};
 
 	reg.importEventFunctions = function() {
@@ -980,42 +992,77 @@ window.reg = (function(){
 	}
 
 	// add a handler function
-	function pushFunc(selStr, handlerFunc, depth, handlers) {
+	function pushFunc(selStr, handlerFunc, depth, handlers, hoverFlag, ix) {
 		if(!handlerFunc || typeof handlerFunc != "function"){return;}
 		var parsedSel = new reg.Selector(selStr);
 		if(!handlers[selStr]) {handlers[selStr]=[];}
-		handlers[selStr].push({selector:parsedSel,handle:handlerFunc,depth:depth});
+		var selHandler = {
+			selector:parsedSel,
+			handle:handlerFunc,
+			depth:depth,
+			hoverFlag:hoverFlag,
+			paused:false
+		};
+		handlers[selStr].push(selHandler);
+		if (!selHandlerArr[ix]) { selHandlerArr[ix] = []; }
+		selHandlerArr[ix].push(selHandler);
 	}
+
+	// to keep track of events for later pause and resume
+	var selHandlerInd = 0;
+	var selHandlerArr = [];
 
 	// click
 	reg.click=function(selStr, clickFunc, downFunc, upFunc, doubleFunc){
 		var depth = getDepth(arguments);
-		pushFunc(selStr, clickFunc, depth, clickHandlers);
-		pushFunc(selStr, downFunc, depth, mouseDownHandlers);
-		pushFunc(selStr, upFunc, depth, mouseUpHandlers);
-		pushFunc(selStr, doubleFunc, depth, doubleClickHandlers);
+		var ix = selHandlerInd++;
+		pushFunc(selStr, clickFunc,  depth, clickHandlers,       false, ix);
+		pushFunc(selStr, downFunc,   depth, mouseDownHandlers,   false, ix);
+		pushFunc(selStr, upFunc,     depth, mouseUpHandlers,     false, ix);
+		pushFunc(selStr, doubleFunc, depth, doubleClickHandlers, false, ix);
+		return ix;
 	};
 
 	// mouse over and out
 	reg.hover=function(selStr, overFunc, outFunc){
 		var depth = getDepth(arguments);
-		pushFunc(selStr, overFunc, depth, mouseOverHandlers);
-		pushFunc(selStr, outFunc, depth, mouseOutHandlers);
+		var ix = selHandlerInd++;
+		pushFunc(selStr, overFunc, depth, mouseOverHandlers, true, ix);
+		pushFunc(selStr, outFunc,  depth, mouseOutHandlers,  true, ix);
+		return ix;
 	};
 
 	// focus and blur
 	reg.focus=function(selStr, focusFunc, blurFunc){
 		var depth = getDepth(arguments);
-		pushFunc(selStr, focusFunc, depth, focusHandlers);
-		pushFunc(selStr, blurFunc, depth, blurHandlers);
+		var ix = selHandlerInd++;
+		pushFunc(selStr, focusFunc, depth, focusHandlers, false, ix);
+		pushFunc(selStr, blurFunc,  depth, blurHandlers,  false, ix);
+		return ix;
 	};
 
 	// key press
 	reg.key=function(selStr, downFunc, pressFunc, upFunc){
 		var depth = getDepth(arguments);
-		pushFunc(selStr, downFunc, depth, keyDownHandlers);
-		pushFunc(selStr, pressFunc, depth, keyPressHandlers);
-		pushFunc(selStr, upFunc, depth, keyUpHandlers);
+		var ix = selHandlerInd++;
+		pushFunc(selStr, downFunc,  depth, keyDownHandlers,  false, ix);
+		pushFunc(selStr, pressFunc, depth, keyPressHandlers, false, ix);
+		pushFunc(selStr, upFunc,    depth, keyUpHandlers,    false, ix);
+		return ix;
+	};
+
+	// stops execution of event
+	reg.pause = function(memInd) {
+		if (!(memInd in selHandlerArr)) { return; }
+		var arr = selHandlerArr[memInd];
+		for (var i=0; i<arr.length; i++) { arr[i].paused = true; }
+	};
+
+	// starts execution of event
+	reg.resume = function(memInd) {
+		if (!(memInd in selHandlerArr)) { return; }
+		var arr = selHandlerArr[memInd];
+		for (var i=0; i<arr.length; i++) { arr[i].paused = false; }
 	};
 
 	// the delegator
@@ -1024,15 +1071,23 @@ window.reg = (function(){
 		if (selectionHandlers) {
 			selectors:for (var sel in selectionHandlers) {
 				if(!selectionHandlers.hasOwnProperty(sel)) { continue; }
-				for(var a=0; a<selectionHandlers[sel].length; a++){
+				for(var a=0; a<selectionHandlers[sel].length; a++) {
 					var selHandler=selectionHandlers[sel][a];
+					if (selHandler.paused) { continue; }
 					var depth = (selHandler.depth==-1) ? 100 : selHandler.depth;
 					var el = targ;
 					for (var b=-1; b<depth && el && el.nodeType == 1; b++, el=el.parentNode) {
 						if (selHandler.selector.matches(el)) {
+							// replicate mouse enter/leave
+							if (selHandler.hoverFlag) {
+								var relTarg = getRelatedTarget(event);
+								if (relTarg && (el.contains(relTarg) || el == relTarg)) {
+									break;
+								}
+							}
 							var retVal=selHandler.handle.call(el,event);
 							// if they return false from the handler, cancel default
-							if(retVal!==undefined && !retVal){
+							if(retVal!==undefined && !retVal) {
 								cancelDefault(event);
 							}
 							break;
@@ -1059,10 +1114,10 @@ window.reg = (function(){
 	addEvent(document.documentElement,'keydown',      function(e){delegate(keyDownHandlers,    e);});
 	addEvent(document.documentElement,'keypress',     function(e){delegate(keyPressHandlers,   e);});
 	addEvent(document.documentElement,'keyup',        function(e){delegate(keyUpHandlers,      e);});
-	addEvent(document.documentElement,'mouseover',    function(e){delegate(mouseOverHandlers,  e);});
-	addEvent(document.documentElement,'mouseout',     function(e){delegate(mouseOutHandlers,   e);});
 	addEvent(document.documentElement, focusEventType,function(e){delegate(focusHandlers,      e);},true);
 	addEvent(document.documentElement, blurEventType, function(e){delegate(blurHandlers,       e);},true);
+	addEvent(document.documentElement,'mouseover',    function(e){delegate(mouseOverHandlers,  e);});
+	addEvent(document.documentElement,'mouseout',     function(e){delegate(mouseOutHandlers,   e);});
 
 	// handy for css
 	addClassName(document.documentElement, 'regenabled');

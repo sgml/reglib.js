@@ -5,26 +5,16 @@
 <title>Testing Event Delegation</title>
 <link rel="stylesheet" type="text/css" href="test.css"/>
 <style type="text/css">
-.test{
-border:10px solid;
-padding:20px 25px;
+.biz .baz{
+background:#ccc;
 text-align:center;
-font-size:30px;
-font-weight:bold;
-margin:20px 0px;
-cursor:pointer;
+border:1px solid black;
+border-color:#fff #777 #777 #fff;
+margin:10px 0px;
+padding:0px 10px;
 }
-.unconfirmed{
-background:#ff6;
-color:#990;
-}
-.confirmed{
-background:#cfc;
-color:#090;
-}
-.failed{
-background:#fcc;
-color:#c00;
+.biz2 .baz{
+background:#ccc;
 }
 </style>
 <script type="text/javascript" src="../reg.js"></script>
@@ -194,6 +184,36 @@ reg.focus('div#testfocus', function(e){
 	}
 });
 
+var over = false;
+reg.hover('#baz',function(e){
+	var el = gebcn('test',this)[0];
+	if (over) {
+		rcn(el, 'confirmed');
+		rcn(el, 'unconfirmed');
+		acn(el, 'failed');
+		el.innerHTML = 'failed mouseover';
+	} else {
+		el.innerHTML = 'now mouseout...';
+	}
+	over = true;
+	console.log('over');
+},function(e){
+	var el = gebcn('test',this)[0];
+	if (!over) {
+		rcn(el, 'confirmed');
+		rcn(el, 'unconfirmed');
+		acn(el, 'failed');
+		el.innerHTML = 'failed mouseout';
+	} else {
+		rcn(el, 'failed');
+		rcn(el, 'unconfirmed');
+		acn(el, 'confirmed');
+		el.innerHTML = 'passed mouseover and mouseout';
+	}
+	over = false;
+	console.log('out');
+});
+
 reg.postSetup(function(){ document.body.innerHTML += ''; });
 
 </script>
@@ -228,6 +248,30 @@ hover to test
 <div id="testdepth">
 <div id="testdepth_inner" class="test unconfirmed">
 click to test depth
+</div>
+</div>
+
+<div class="biz">
+<div id="baz" class="baz 1">
+<div class="baz 2">
+<div class="baz 3">
+<div class="test unconfirmed">
+mouseover me
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="biz2">
+<div id="baz" class="baz 1">
+<div class="baz 2">
+<div class="baz 3">
+<div class="test unconfirmed">
+mouseover me
+</div>
+</div>
+</div>
 </div>
 </div>
 
