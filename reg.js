@@ -56,7 +56,7 @@ window.reg = (function(){
 		className:  new RegExp("^(\\.([a-z0-9_-]+))","i"),
 		id:         new RegExp("^(#([a-z0-9_-]+))","i"),
 		att:        new RegExp("^(@([a-z0-9_-]+))","i"),
-		matchType:  new RegExp("(^\\^=)|(^\\$=)|(^\\*=)|(^=)"),
+		matchType:  new RegExp("(^\\^=)|(^\\$=)|(^\\*=)|(^~=)|(^\\|=)|(^=)"),
 		spaceQuote: new RegExp("^\\s+['\"]")
 	};
 
@@ -131,7 +131,7 @@ window.reg = (function(){
 			var mTypeMatch=exp.matchType.exec(selString);
 			if (mTypeMatch) {
 				// this will determine how the matching is done
-				lastTag.matchType = mTypeMatch[1] || mTypeMatch[2] || mTypeMatch[3] || mTypeMatch[4];
+				lastTag.matchType = mTypeMatch[1] || mTypeMatch[2] || mTypeMatch[3] || mTypeMatch[4] || mTypeMatch[5] || mTypeMatch[6];
 				if(typeof lastTag.attributeName!='undefined'){
 					selString=selString.substring(lastTag.matchType.length);
 					if(selString.charAt(0)!='"'&&selString.charAt(0)!="'"){
@@ -146,8 +146,10 @@ window.reg = (function(){
 						lastQInd=selString.indexOf(q,lastQInd+1);
 						if(lastQInd==-1){throw origSel+" is invalid, missing closing quote";}
 					}
-					lastTag.attributePattern=selString.substring(1,lastQInd);// lastTag should still be hanging around
-					selString=selString.substring(lastTag.attributePattern.length+2);// +2 for the quotes
+					lastTag.attString=selString.substring(1,lastQInd);// lastTag should still be hanging around
+					if      ('~=' == lastTag.matchType) { lastTag.attPatt = new RegExp("(^|\\s)"+lastTag.attString+"($|\\s)"); }
+					else if ('|=' == lastTag.matchType) { lastTag.attPatt = new RegExp("(^|\\-)"+lastTag.attString+"($|\\-)"); }
+					selString=selString.substring(lastTag.attString.length+2);// +2 for the quotes
 					continue;
 				}
 				mTypeMatch=null;
@@ -211,7 +213,7 @@ window.reg = (function(){
 							result += '[' + des.attributeName;
 							if (des.matchType) {
 								result += des.matchType;
-								result += '"'+des.attributePattern.replace(/"/,'\\"')+'"';
+								result += '"'+des.attString.replace(/"/,'\\"')+'"';
 							}
 							result += ']';
 						}
@@ -287,15 +289,17 @@ window.reg = (function(){
 				else if(itm.attributeName=='for'){att=el.htmlFor;}
 				if(!att){return false;}
 			}
-			if (itm.attributePattern) {
+			if (itm.attString) {
 				if (itm.matchType=='^='){
-					if (att.indexOf(itm.attributePattern)!=0){return false;}
+					if (att.indexOf(itm.attString)!=0){return false;}
 				} else if (itm.matchType=='*='){
-					if (att.indexOf(itm.attributePattern)==-1){return false;}
+					if (att.indexOf(itm.attString)==-1){return false;}
 				} else if (itm.matchType=='$='){
-					if (att.indexOf(itm.attributePattern)!=att.length-itm.attributePattern.length){return false;}
+					if (att.indexOf(itm.attString)!=att.length-itm.attString.length){return false;}
 				} else if (itm.matchType=='='){
-					if (att!=itm.attributePattern){return false;}
+					if (att!=itm.attString){return false;}
+				} else if (itm.attPatt){
+					if (!itm.attPatt.test(att)){return false;}
 				}else{
 					if(!itm.matchType){throw "illegal structure, parsed selector cannot have null or empty attribute match type";}
 					else{throw "illegal structure, parsed selector cannot have '"+itm.matchType+"' as an attribute match type";}
