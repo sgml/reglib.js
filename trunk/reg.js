@@ -128,10 +128,10 @@ window.reg = (function(){
 				}
 			}
 			// find attribute value specifier
-			var matchTypeMatch=exp.matchType.exec(selString);
-			if (matchTypeMatch) {
+			var mTypeMatch=exp.matchType.exec(selString);
+			if (mTypeMatch) {
 				// this will determine how the matching is done
-				lastTag.matchType = matchTypeMatch[1] || matchTypeMatch[2] || matchTypeMatch[3] || matchTypeMatch[4];
+				lastTag.matchType = mTypeMatch[1] || mTypeMatch[2] || mTypeMatch[3] || mTypeMatch[4];
 				if(typeof lastTag.attributeName!='undefined'){
 					selString=selString.substring(lastTag.matchType.length);
 					if(selString.charAt(0)!='"'&&selString.charAt(0)!="'"){
@@ -150,7 +150,7 @@ window.reg = (function(){
 					selString=selString.substring(lastTag.attributePattern.length+2);// +2 for the quotes
 					continue;
 				}
-				matchTypeMatch=null;
+				mTypeMatch=null;
 			}
 			// find child selector
 			if (selString.charAt(0) == '>') {
@@ -676,17 +676,17 @@ window.reg = (function(){
 	*/
 
 	var memEvents = {};
-	var memInd = 0;
+	var aMemInd = 0;
 	function rememberEvent(elmt,evt,handle,cptr){
-		var thisInd = memInd++;
-		var key = "mem"+thisInd;
+		var memInd = aMemInd++;
+		var key = "mem"+memInd;
 		memEvents[key] = {
 			element: elmt,
 			event: evt,
 			handler: handle,
 			capture: cptr
 		};
-		return thisInd;
+		return memInd;
 	}
 	function cleanup(){return;
 		for (var key in memEvents) {
@@ -861,14 +861,22 @@ window.reg = (function(){
 					var regObj = regObjArray[i];
 					if (regObj.firstTimeOnly) {
 						if (regObj.ran) { continue; }
-						try { var elmt = el.querySelector(toQuerySelectorString(regObj.selector)); }
-						catch (ex) { console.log(ex); }
-						if (elmt) { qSelResults.push({el:elmt,regObj:regObj}); }
+						try {
+							var elmt = el.querySelector(toQuerySelectorString(regObj.selector));
+							if (elmt) { qSelResults.push({el:elmt,regObj:regObj}); }
+						} catch (ex) {
+							console.log("querySelector('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
+							continue;
+						}
 					} else {
-						try { var elmts = el.querySelectorAll(toQuerySelectorString(regObj.selector)); }
-						catch (ex) { console.log(ex); }
-						for (var j=0; j<elmts.length; j++) {
-							qSelResults.push({el:elmts[j],regObj:regObj});
+						try {
+							var elmts = el.querySelectorAll(toQuerySelectorString(regObj.selector));
+							for (var j=0; j<elmts.length; j++) {
+								qSelResults.push({el:elmts[j],regObj:regObj});
+							}
+						} catch (ex) {
+							console.log("querySelectorAll('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
+							continue;
 						}
 					}
 				}
@@ -992,7 +1000,7 @@ window.reg = (function(){
 	}
 
 	// add a handler function
-	function pushFunc(selStr, handlerFunc, depth, handlers, hoverFlag, ix) {
+	function pushFunc(selStr, handlerFunc, depth, handlers, hoverFlag, memInd) {
 		if(!handlerFunc || typeof handlerFunc != "function"){return;}
 		var parsedSel = new reg.Selector(selStr);
 		if(!handlers[selStr]) {handlers[selStr]=[];}
@@ -1004,64 +1012,64 @@ window.reg = (function(){
 			paused:false
 		};
 		handlers[selStr].push(selHandler);
-		if (!selHandlerArr[ix]) { selHandlerArr[ix] = []; }
-		selHandlerArr[ix].push(selHandler);
+		if (!pauseResumeArray[memInd]) { pauseResumeArray[memInd] = []; }
+		pauseResumeArray[memInd].push(selHandler);
 	}
 
 	// to keep track of events for later pause and resume
-	var selHandlerInd = 0;
-	var selHandlerArr = [];
+	var dMemInd = 0;
+	var pauseResumeArray = [];
 
 	// click
 	reg.click=function(selStr, clickFunc, downFunc, upFunc, doubleFunc){
 		var depth = getDepth(arguments);
-		var ix = selHandlerInd++;
-		pushFunc(selStr, clickFunc,  depth, clickHandlers,       false, ix);
-		pushFunc(selStr, downFunc,   depth, mouseDownHandlers,   false, ix);
-		pushFunc(selStr, upFunc,     depth, mouseUpHandlers,     false, ix);
-		pushFunc(selStr, doubleFunc, depth, doubleClickHandlers, false, ix);
-		return ix;
+		var memInd = dMemInd++;
+		pushFunc(selStr, clickFunc,  depth, clickHandlers,       false, memInd);
+		pushFunc(selStr, downFunc,   depth, mouseDownHandlers,   false, memInd);
+		pushFunc(selStr, upFunc,     depth, mouseUpHandlers,     false, memInd);
+		pushFunc(selStr, doubleFunc, depth, doubleClickHandlers, false, memInd);
+		return memInd;
 	};
 
 	// mouse over and out
 	reg.hover=function(selStr, overFunc, outFunc){
 		var depth = getDepth(arguments);
-		var ix = selHandlerInd++;
-		pushFunc(selStr, overFunc, depth, mouseOverHandlers, true, ix);
-		pushFunc(selStr, outFunc,  depth, mouseOutHandlers,  true, ix);
-		return ix;
+		var memInd = dMemInd++;
+		pushFunc(selStr, overFunc, depth, mouseOverHandlers, true, memInd);
+		pushFunc(selStr, outFunc,  depth, mouseOutHandlers,  true, memInd);
+		return memInd;
 	};
 
 	// focus and blur
 	reg.focus=function(selStr, focusFunc, blurFunc){
 		var depth = getDepth(arguments);
-		var ix = selHandlerInd++;
-		pushFunc(selStr, focusFunc, depth, focusHandlers, false, ix);
-		pushFunc(selStr, blurFunc,  depth, blurHandlers,  false, ix);
-		return ix;
+		var memInd = dMemInd++;
+		pushFunc(selStr, focusFunc, depth, focusHandlers, false, memInd);
+		pushFunc(selStr, blurFunc,  depth, blurHandlers,  false, memInd);
+		return memInd;
 	};
 
 	// key press
 	reg.key=function(selStr, downFunc, pressFunc, upFunc){
 		var depth = getDepth(arguments);
-		var ix = selHandlerInd++;
-		pushFunc(selStr, downFunc,  depth, keyDownHandlers,  false, ix);
-		pushFunc(selStr, pressFunc, depth, keyPressHandlers, false, ix);
-		pushFunc(selStr, upFunc,    depth, keyUpHandlers,    false, ix);
-		return ix;
+		var memInd = dMemInd++;
+		pushFunc(selStr, downFunc,  depth, keyDownHandlers,  false, memInd);
+		pushFunc(selStr, pressFunc, depth, keyPressHandlers, false, memInd);
+		pushFunc(selStr, upFunc,    depth, keyUpHandlers,    false, memInd);
+		return memInd;
 	};
 
 	// stops execution of event
 	reg.pause = function(memInd) {
-		if (!(memInd in selHandlerArr)) { return; }
-		var arr = selHandlerArr[memInd];
+		if (!(memInd in pauseResumeArray)) { return; }
+		var arr = pauseResumeArray[memInd];
 		for (var i=0; i<arr.length; i++) { arr[i].paused = true; }
 	};
 
 	// starts execution of event
 	reg.resume = function(memInd) {
-		if (!(memInd in selHandlerArr)) { return; }
-		var arr = selHandlerArr[memInd];
+		if (!(memInd in pauseResumeArray)) { return; }
+		var arr = pauseResumeArray[memInd];
 		for (var i=0; i<arr.length; i++) { arr[i].paused = false; }
 	};
 
