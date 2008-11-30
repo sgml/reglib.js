@@ -121,7 +121,11 @@ window.reg = (function(){
 				}
 				// find attribute selector, like @src
 				if (attMatch) {
-					lastTag.attributeName=attMatch[2];
+					if (!lastTag.attributes) {
+						lastTag.attributes = [{name:attMatch[2]}];
+					} else {
+						lastTag.attributes.push({name:attMatch[2]});
+					}
 					selString=selString.substring(attMatch[1].length);
 					attMatch=null;
 					continue;
@@ -131,9 +135,13 @@ window.reg = (function(){
 			var mTypeMatch=exp.matchType.exec(selString);
 			if (mTypeMatch) {
 				// this will determine how the matching is done
-				lastTag.matchType = mTypeMatch[1] || mTypeMatch[2] || mTypeMatch[3] || mTypeMatch[4] || mTypeMatch[5] || mTypeMatch[6];
-				if(typeof lastTag.attributeName!='undefined'){
-					selString=selString.substring(lastTag.matchType.length);
+				// (lastTag should still be hanging around)
+				if(lastTag && lastTag.attributes && !lastTag.attributes[lastTag.attributes.length-1].value){
+
+					var lastAttribute = lastTag.attributes[lastTag.attributes.length-1];
+					lastAttribute.matchType = mTypeMatch[0];
+					
+					selString=selString.substring(lastAttribute.matchType.length);
 					if(selString.charAt(0)!='"'&&selString.charAt(0)!="'"){
 						if(exp.spaceQuote.test(selString)){selString=selString.replace(exp.leadSpace,'');}
 						else{throw origSel+" is invalid, single or double quotes required around attribute values";}
@@ -146,11 +154,13 @@ window.reg = (function(){
 						lastQInd=selString.indexOf(q,lastQInd+1);
 						if(lastQInd==-1){throw origSel+" is invalid, missing closing quote";}
 					}
-					lastTag.attString=selString.substring(1,lastQInd);// lastTag should still be hanging around
-					if      ('~=' == lastTag.matchType) { lastTag.attPatt = new RegExp("(^|\\s)"+lastTag.attString+"($|\\s)"); }
-					else if ('|=' == lastTag.matchType) { lastTag.attPatt = new RegExp("(^|\\-)"+lastTag.attString+"($|\\-)"); }
-					selString=selString.substring(lastTag.attString.length+2);// +2 for the quotes
+					lastAttribute.value=selString.substring(1,lastQInd);
+					if      ('~=' == lastAttribute.matchType) { lastAttribute.valuePatt = new RegExp("(^|\\s)"+lastAttribute.value+"($|\\s)"); }
+					else if ('|=' == lastAttribute.matchType) { lastAttribute.valuePatt = new RegExp("^"+lastAttribute.value+"($|\\-)"); }
+					selString=selString.substring(lastAttribute.value.length+2);// +2 for the quotes
 					continue;
+				} else {
+					throw origSel+" is invalid, "+mTypeMatch[0]+" appeared without preceding attribute identifier";
 				}
 				mTypeMatch=null;
 			}
@@ -209,13 +219,17 @@ window.reg = (function(){
 						if (des.classNames) { result += "." + des.classNames.join("."); }
 						if (des.id) { result += '#' + des.id; }
 						if (des.targeted) {  result += ':target'; }
-						if (des.attributeName) {
-							result += '[' + des.attributeName;
-							if (des.matchType) {
-								result += des.matchType;
-								result += '"'+des.attString.replace(/"/,'\\"')+'"';
+						if (des.attributes) {
+							
+							for (var k=0; k<des.attributes.length; k++) {
+								result += '[' + des.attributes[k].name;
+								if (des.attributes[k].matchType) {
+									result += des.attributes[k].matchType;
+									result += '"'+des.attributes[k].value.replace(/"/,'\\"')+'"';
+								}
+								result += ']';
 							}
-							result += ']';
+							
 						}
 					} else if (des.name=='descendant') {
 						result += ' ';
@@ -235,6 +249,7 @@ window.reg = (function(){
 			}
 			sel.qss = itemStrings.join(', ');
 		}
+		console.log(sel.qss);
 		return sel.qss;
 	}
 
@@ -278,31 +293,34 @@ window.reg = (function(){
 			}
 		}
 		if (itm.id && el.id != itm.id) { return false; }
-		if (itm.attributeName) {
-			if (typeof el.hasAttribute != 'undefined') {
-				if (!el.hasAttribute(itm.attributeName)) { return false; }
-				var att = el.getAttribute(itm.attributeName);
-			}else{
-				if(el.nodeType!=1) {return false;}
-				var att = el.getAttribute(itm.attributeName);
-				if(itm.attributeName=='class'){att=el.className;}
-				else if(itm.attributeName=='for'){att=el.htmlFor;}
-				if(!att){return false;}
-			}
-			if (itm.attString) {
-				if (itm.matchType=='^='){
-					if (att.indexOf(itm.attString)!=0){return false;}
-				} else if (itm.matchType=='*='){
-					if (att.indexOf(itm.attString)==-1){return false;}
-				} else if (itm.matchType=='$='){
-					if (att.indexOf(itm.attString)!=att.length-itm.attString.length){return false;}
-				} else if (itm.matchType=='='){
-					if (att!=itm.attString){return false;}
-				} else if (itm.attPatt){
-					if (!itm.attPatt.test(att)){return false;}
+		if (itm.attributes) {
+			for (var i=0; i<itm.attributes.length; i++) {
+				var itmAtt = itm.attributes[i];
+				if (typeof el.hasAttribute != 'undefined') {
+					if (!el.hasAttribute(itmAtt.name)) { return false; }
+					var att = el.getAttribute(itmAtt.name);
 				}else{
-					if(!itm.matchType){throw "illegal structure, parsed selector cannot have null or empty attribute match type";}
-					else{throw "illegal structure, parsed selector cannot have '"+itm.matchType+"' as an attribute match type";}
+					if(el.nodeType!=1) {return false;}
+					var att = el.getAttribute(itmAtt.name);
+					if(itmAtt.name=='class'){att=el.className;}
+					else if(itmAtt.name=='for'){att=el.htmlFor;}
+					if(!att){return false;}
+				}
+				if (itmAtt.value) {
+					if (itmAtt.matchType=='^='){
+						if (att.indexOf(itmAtt.value)!=0){return false;}
+					} else if (itmAtt.matchType=='*='){
+						if (att.indexOf(itmAtt.value)==-1){return false;}
+					} else if (itmAtt.matchType=='$='){
+						if (att.indexOf(itmAtt.value)!=att.length-itmAtt.value.length){return false;}
+					} else if (itmAtt.matchType=='='){
+						if (att!=itmAtt.value){return false;}
+					} else if ('|='==itmAtt.matchType || '~='==itmAtt.matchType){
+						if (!itmAtt.valuePatt.test(att)){return false;}
+					}else{
+						if(!itmAtt.matchType){throw "illegal structure, parsed selector cannot have null or empty attribute match type";}
+						else{throw "illegal structure, parsed selector cannot have '"+itm.matchType+"' as an attribute match type";}
+					}
 				}
 			}
 		}
