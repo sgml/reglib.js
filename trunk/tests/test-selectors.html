@@ -37,10 +37,9 @@ reg.setup(".att8a@title~='foo'",switchYesNo);
 reg.setup(".att8b@title~='bar'",switchYesNo);
 reg.setup(".att8c@title~='baz'",switchYesNo);
 
-reg.setup(".att9@title|='wob'",switchYesNo);
-reg.setup(".att9a@title|='foo'",switchYesNo);
-reg.setup(".att9b@title|='bar'",switchYesNo);
-reg.setup(".att9c@title|='baz'",switchYesNo);
+reg.setup(".att9@title|='en'",switchYesNo);
+
+reg.setup(".att10@title~='foo'@title~='bar'",switchYesNo);
 
 reg.setup('div.descendant1 div.descendant1',switchYesNo);
 reg.setup('div.descendant2 div.descendant2',switchYesNo);
@@ -88,6 +87,7 @@ try{reg.setup('b@foo="bar\'',noToYes);} catch(exp){reg.setup('div.err-p',functio
 try{reg.setup('b@foo=\'bar"',noToYes);} catch(exq){reg.setup('div.err-q',function(){noToYes.call(this);this.innerHTML += ' ... ' + exq});}
 try{reg.setup('b@foo="bar\\"',noToYes);}catch(exr){reg.setup('div.err-r',function(){noToYes.call(this);this.innerHTML += ' ... ' + exr});}
 try{reg.setup('',noToYes);}             catch(exs){reg.setup('div.err-s',function(){noToYes.call(this);this.innerHTML += ' ... ' + exs});}
+try{reg.setup('div+b~="bar"',noToYes);} catch(exr){reg.setup('div.err-t',function(){noToYes.call(this);this.innerHTML += ' ... ' + exr});}
 
 </script>
 </head>
@@ -125,17 +125,15 @@ try{reg.setup('',noToYes);}             catch(exs){reg.setup('div.err-s',functio
 	| <span class="no att8c"  title="foo bar baz"  >attribute, space separated 7</span>
 	| <span class="no att8c"  title=" foo bar baz ">attribute, space separated 8</span>
 	| <span class="yes att8c" title="-foo bar baz-">attribute, space separated 9</span>
-	| <span class="yes att9"  title="foo-bar-baz"  >attribute, dash  separated 0</span>
-	| <span class="no att9a"  title="foo-bar-baz"  >attribute, dash  separated 1</span>
-	| <span class="no att9a"  title="-foo-bar-baz-">attribute, dash  separated 2</span>
-	| <span class="yes att9a" title=" foo-bar-baz ">attribute, dash  separated 3</span>
-	| <span class="no att9b"  title="foo-bar-baz"  >attribute, dash  separated 4</span>
-	| <span class="no att9b"  title="-foo-bar-baz-">attribute, dash  separated 5</span>
-	| <span class="yes att9b" title=" foo bar baz ">attribute, dash  separated 6</span>
-	| <span class="no att9c"  title="foo-bar-baz"  >attribute, dash  separated 7</span>
-	| <span class="no att9c"  title="-foo-bar-baz-">attribute, dash  separated 8</span>
-	| <span class="yes att9c" title=" foo-bar-baz ">attribute, dash  separated 9</span>
+
+	| <span class="no att9"  title="en-us"  >attribute, dash  separated 0</span>
+	| <span class="no att9"  title="en"  >attribute, dash  separated 1</span>
+	| <span class="no att9"  title="en-">attribute, dash  separated 2</span>
+	| <span class="yes att9" title="-en-us">attribute, dash  separated 3</span>
+	| <span class="yes att9"  title=" en-us"  >attribute, dash  separated 4</span>
 </div>
+
+<div class="no att10" title="foo wob bar baz">multiple attributes</div>
 
 <div class="descendant1"><div class="no descendant1">descendant 1</div></div>
 <div class="descendant2"><div><div class="no descendant2">descendant 2</div></div></div>
@@ -194,6 +192,7 @@ try{reg.setup('',noToYes);}             catch(exs){reg.setup('div.err-s',functio
 <div class="err-q no">malformed selector</div>
 <div class="err-r no">malformed selector</div>
 <div class="err-s no">malformed selector</div>
+<div class="err-t no">malformed selector</div>
 </div>
 </body>
 </html>
