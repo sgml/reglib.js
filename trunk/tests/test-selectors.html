@@ -31,6 +31,17 @@ reg.setup("div@title='attributeTest3'",noToYes);
 reg.setup("div.att5@title ^= 'attributeTest5'",noToYes);
 reg.setup("div.att6@title*='attributeTest6'",noToYes);
 reg.setup("div.att7@title$='attributeTest7'",noToYes);
+
+reg.setup(".att8@title~='wob'",switchYesNo);
+reg.setup(".att8a@title~='foo'",switchYesNo);
+reg.setup(".att8b@title~='bar'",switchYesNo);
+reg.setup(".att8c@title~='baz'",switchYesNo);
+
+reg.setup(".att9@title|='wob'",switchYesNo);
+reg.setup(".att9a@title|='foo'",switchYesNo);
+reg.setup(".att9b@title|='bar'",switchYesNo);
+reg.setup(".att9c@title|='baz'",switchYesNo);
+
 reg.setup('div.descendant1 div.descendant1',switchYesNo);
 reg.setup('div.descendant2 div.descendant2',switchYesNo);
 reg.setup('div.descendant3 div.descendant3',switchYesNo);
@@ -102,6 +113,29 @@ try{reg.setup('',noToYes);}             catch(exs){reg.setup('div.err-s',functio
 <div class="no att5" title="attributeTest5cc">attribute, starts with</div>
 <div class="no att6" title="cattributeTest6c">attribute, contains</div>
 <div class="no att7" title="ccattributeTest7">attribute, ends with</div>
+
+<div>
+	  <span class="yes att8"  title="foo bar baz"  >attribute, space separated 0</span>
+	| <span class="no att8a"  title="foo bar baz"  >attribute, space separated 1</span>
+	| <span class="no att8a"  title=" foo bar baz ">attribute, space separated 2</span>
+	| <span class="yes att8a" title="-foo bar baz-">attribute, space separated 3</span>
+	| <span class="no att8b"  title="foo bar baz"  >attribute, space separated 4</span>
+	| <span class="no att8b"  title=" foo bar baz ">attribute, space separated 5</span>
+	| <span class="yes att8b" title="-foo-bar-baz-">attribute, space separated 6</span>
+	| <span class="no att8c"  title="foo bar baz"  >attribute, space separated 7</span>
+	| <span class="no att8c"  title=" foo bar baz ">attribute, space separated 8</span>
+	| <span class="yes att8c" title="-foo bar baz-">attribute, space separated 9</span>
+	| <span class="yes att9"  title="foo-bar-baz"  >attribute, dash  separated 0</span>
+	| <span class="no att9a"  title="foo-bar-baz"  >attribute, dash  separated 1</span>
+	| <span class="no att9a"  title="-foo-bar-baz-">attribute, dash  separated 2</span>
+	| <span class="yes att9a" title=" foo-bar-baz ">attribute, dash  separated 3</span>
+	| <span class="no att9b"  title="foo-bar-baz"  >attribute, dash  separated 4</span>
+	| <span class="no att9b"  title="-foo-bar-baz-">attribute, dash  separated 5</span>
+	| <span class="yes att9b" title=" foo bar baz ">attribute, dash  separated 6</span>
+	| <span class="no att9c"  title="foo-bar-baz"  >attribute, dash  separated 7</span>
+	| <span class="no att9c"  title="-foo-bar-baz-">attribute, dash  separated 8</span>
+	| <span class="yes att9c" title=" foo-bar-baz ">attribute, dash  separated 9</span>
+</div>
 
 <div class="descendant1"><div class="no descendant1">descendant 1</div></div>
 <div class="descendant2"><div><div class="no descendant2">descendant 2</div></div></div>
