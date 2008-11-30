@@ -114,42 +114,6 @@ reg.click('div#testmousedownup', null, function(e){
 	}
 });
 
-reg.hover('div#testhover', function(e){
-	if (!hcn(this,'unconfirmed')) { return; }
-	var passed = true;
-	if (!matches(getTarget(e), 'div')) { passed = false; }
-	if (!matches(this, 'div')) { passed = false; }
-	if (passed) {
-		rcn(this, 'failed');
-		rcn(this, 'unconfirmed');
-		acn(this, 'confirmed');
-		this.innerHTML = 'passed mouseover';
-	}
-	else {
-		rcn(this, 'confirmed');
-		rcn(this, 'unconfirmed');
-		acn(this, 'failed');
-		this.innerHTML = 'failed mouseover';
-	}
-}, function(e){
-	if (!hcn(this,'confirmed')) { return; }
-	var passed = true;
-	if (!matches(getTarget(e), 'div')) { passed = false; }
-	if (!matches(this, 'div')) { passed = false; }
-	if (passed) {
-		rcn(this, 'failed');
-		rcn(this, 'unconfirmed');
-		acn(this, 'confirmed');
-		this.innerHTML = 'passed mouseover and mouseout';
-	}
-	else {
-		rcn(this, 'confirmed');
-		rcn(this, 'unconfirmed');
-		acn(this, 'failed');
-		this.innerHTML = 'failed mouseout';
-	}
-});
-
 reg.focus('div#testfocus', function(e){
 	if (!hcn(this,'unconfirmed')) { return; }
 	var passed = true;
@@ -214,6 +178,22 @@ reg.hover('#baz',function(e){
 	console.log('out');
 });
 
+reg.click('#testpause',function(){
+	rcn(this, 'failed');
+	rcn(this, 'unconfirmed');
+	acn(this, 'confirmed');
+	this.innerHTML = 'passed pause';
+});
+
+var pause = reg.click('#testpause',function(){
+	rcn(this, 'confirmed');
+	rcn(this, 'unconfirmed');
+	acn(this, 'failed');
+	this.innerHTML = 'failed pause';
+});
+
+reg.pause(pause);
+
 reg.postSetup(function(){ document.body.innerHTML += ''; });
 
 </script>
@@ -235,10 +215,6 @@ mousedown and mouseup to test
 double click to test
 </div>
 
-<div id="testhover" class="test unconfirmed">
-hover to test
-</div>
-
 <form action="">
 <div id="testfocus" class="test unconfirmed">
 <input type="text" value="focus to test" id="foc"/>
@@ -252,8 +228,8 @@ click to test depth
 </div>
 
 <div class="biz">
-<div id="baz" class="baz 1">
-<div class="baz 2">
+<div class="baz 1">
+<div id="baz" class="baz 2" style="position:relative;left:200px;top:50px">
 <div class="baz 3">
 <div class="test unconfirmed">
 mouseover me
@@ -273,6 +249,10 @@ mouseover me
 </div>
 </div>
 </div>
+</div>
+
+<div id="testpause" class="test unconfirmed">
+click to test pause
 </div>
 
 </div>
