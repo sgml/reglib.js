@@ -40,11 +40,13 @@ Here's a rundown of the selection options:
 || `a + span` || `span` elements that are immediate next siblings of `a` elements ||
 || `a ~ span` || `span` elements that are following siblings of `a` elements ||
 || `a, span` || any `span` or `a` element ||
-|| `a@title` || `a` elements having title attributes ||
-|| `a@title='foo'` || `a` elements whose title attributes equal `foo` ||
-|| `a@title^='foo'` || `a` elements whose title attributes begin with `foo` ||
-|| `a@title*='foo'` || `a` elements whose title attributes contain `foo` ||
-|| `a@title$='foo'` || `a` elements whose title attributes end with `foo` ||
+|| `a@title` || `a` elements having `title` attributes ||
+|| `a@title='foo'` || `a` elements whose `title` attributes equal `foo` ||
+|| `a@title^='foo'` || `a` elements whose `title` attributes begin with `foo` ||
+|| `a@title*='foo'` || `a` elements whose `title` attributes contain `foo` ||
+|| `a@title$='foo'` || `a` elements whose `title` attributes end with `foo` ||
+|| `a@title~='foo'` || `a` elements whose `title` attributes contain `foo` in a space-separated list. ||
+|| `a@title|='foo'` || `a` elements whose `title` attributes either exactly match `foo` or start with `foo` followed by a hyphen ||
 || `a#foo` || `a` elements whose id equals `foo` ||
 || `a.foo` || `a` elements whose class attributes equal `foo`, or contain `foo` in a space-separated list ||
 || `a:target` || `a` elements whose id matches the URL hash ||
