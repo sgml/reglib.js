@@ -1,5 +1,5 @@
 /*
-reglib version 1.0.5
+reglib version 1.0.6
 Copyright 2008
 Released under MIT license
 http://code.google.com/p/reglib/
