@@ -68,26 +68,28 @@ reg.setup('div@title      .iwildcard4',noToYes);
 reg.setup('div#owildcard5 @title',noToYes);
 reg.setup('div@title      #iwildcard6',noToYes);
 
-try{reg.setup('foo[',noToYes);}         catch(exa){reg.setup('div.err-a',function(){noToYes.call(this);this.innerHTML += ' ... ' + exa});}
-try{reg.setup('foo < bar',noToYes);}    catch(exb){reg.setup('div.err-b',function(){noToYes.call(this);this.innerHTML += ' ... ' + exb});}
-try{reg.setup('foo - bar',noToYes);}    catch(exc){reg.setup('div.err-c',function(){noToYes.call(this);this.innerHTML += ' ... ' + exc});}
-try{reg.setup('foo/bar',noToYes);}      catch(exd){reg.setup('div.err-d',function(){noToYes.call(this);this.innerHTML += ' ... ' + exd});}
-try{reg.setup('foo..bar',noToYes);}     catch(exe){reg.setup('div.err-e',function(){noToYes.call(this);this.innerHTML += ' ... ' + exe});}
-try{reg.setup('foo# bar',noToYes);}     catch(exf){reg.setup('div.err-f',function(){noToYes.call(this);this.innerHTML += ' ... ' + exf});}
-try{reg.setup('foo.',noToYes);}         catch(exg){reg.setup('div.err-g',function(){noToYes.call(this);this.innerHTML += ' ... ' + exg});}
-try{reg.setup('a >> b',noToYes);}       catch(exh){reg.setup('div.err-h',function(){noToYes.call(this);this.innerHTML += ' ... ' + exh});}
-try{reg.setup('a +~ b',noToYes);}       catch(exi){reg.setup('div.err-i',function(){noToYes.call(this);this.innerHTML += ' ... ' + exi});}
-try{reg.setup('a ,, b',noToYes);}       catch(exj){reg.setup('div.err-j',function(){noToYes.call(this);this.innerHTML += ' ... ' + exj});}
-try{reg.setup('a,',noToYes);}           catch(exk){reg.setup('div.err-k',function(){noToYes.call(this);this.innerHTML += ' ... ' + exk});}
-try{reg.setup(',a',noToYes);}           catch(exl){reg.setup('div.err-l',function(){noToYes.call(this);this.innerHTML += ' ... ' + exl});}
-try{reg.setup('a+',noToYes);}           catch(exm){reg.setup('div.err-m',function(){noToYes.call(this);this.innerHTML += ' ... ' + exm});}
-try{reg.setup('b,>a',noToYes);}         catch(exn){reg.setup('div.err-n',function(){noToYes.call(this);this.innerHTML += ' ... ' + exn});}
-try{reg.setup('b@foo=bar',noToYes);}    catch(exo){reg.setup('div.err-o',function(){noToYes.call(this);this.innerHTML += ' ... ' + exo});}
-try{reg.setup('b@foo="bar\'',noToYes);} catch(exp){reg.setup('div.err-p',function(){noToYes.call(this);this.innerHTML += ' ... ' + exp});}
-try{reg.setup('b@foo=\'bar"',noToYes);} catch(exq){reg.setup('div.err-q',function(){noToYes.call(this);this.innerHTML += ' ... ' + exq});}
-try{reg.setup('b@foo="bar\\"',noToYes);}catch(exr){reg.setup('div.err-r',function(){noToYes.call(this);this.innerHTML += ' ... ' + exr});}
-try{reg.setup('',noToYes);}             catch(exs){reg.setup('div.err-s',function(){noToYes.call(this);this.innerHTML += ' ... ' + exs});}
-try{reg.setup('div+b~="bar"',noToYes);} catch(exr){reg.setup('div.err-t',function(){noToYes.call(this);this.innerHTML += ' ... ' + exr});}
+reg.setup('a.hrefatt@href="foo.html"',noToYes);
+
+try{reg.setup('foo[',noToYes);}         catch(exa){reg.setup('div.err-a',function(){noToYes.call(this);this.innerHTML += ' ... ' + exa.message});}
+try{reg.setup('foo < bar',noToYes);}    catch(exb){reg.setup('div.err-b',function(){noToYes.call(this);this.innerHTML += ' ... ' + exb.message});}
+try{reg.setup('foo - bar',noToYes);}    catch(exc){reg.setup('div.err-c',function(){noToYes.call(this);this.innerHTML += ' ... ' + exc.message});}
+try{reg.setup('foo/bar',noToYes);}      catch(exd){reg.setup('div.err-d',function(){noToYes.call(this);this.innerHTML += ' ... ' + exd.message});}
+try{reg.setup('foo..bar',noToYes);}     catch(exe){reg.setup('div.err-e',function(){noToYes.call(this);this.innerHTML += ' ... ' + exe.message});}
+try{reg.setup('foo# bar',noToYes);}     catch(exf){reg.setup('div.err-f',function(){noToYes.call(this);this.innerHTML += ' ... ' + exf.message});}
+try{reg.setup('foo.',noToYes);}         catch(exg){reg.setup('div.err-g',function(){noToYes.call(this);this.innerHTML += ' ... ' + exg.message});}
+try{reg.setup('a >> b',noToYes);}       catch(exh){reg.setup('div.err-h',function(){noToYes.call(this);this.innerHTML += ' ... ' + exh.message});}
+try{reg.setup('a +~ b',noToYes);}       catch(exi){reg.setup('div.err-i',function(){noToYes.call(this);this.innerHTML += ' ... ' + exi.message});}
+try{reg.setup('a ,, b',noToYes);}       catch(exj){reg.setup('div.err-j',function(){noToYes.call(this);this.innerHTML += ' ... ' + exj.message});}
+try{reg.setup('a,',noToYes);}           catch(exk){reg.setup('div.err-k',function(){noToYes.call(this);this.innerHTML += ' ... ' + exk.message});}
+try{reg.setup(',a',noToYes);}           catch(exl){reg.setup('div.err-l',function(){noToYes.call(this);this.innerHTML += ' ... ' + exl.message});}
+try{reg.setup('a+',noToYes);}           catch(exm){reg.setup('div.err-m',function(){noToYes.call(this);this.innerHTML += ' ... ' + exm.message});}
+try{reg.setup('b,>a',noToYes);}         catch(exn){reg.setup('div.err-n',function(){noToYes.call(this);this.innerHTML += ' ... ' + exn.message});}
+try{reg.setup('b@foo=bar',noToYes);}    catch(exo){reg.setup('div.err-o',function(){noToYes.call(this);this.innerHTML += ' ... ' + exo.message});}
+try{reg.setup('b@foo="bar\'',noToYes);} catch(exp){reg.setup('div.err-p',function(){noToYes.call(this);this.innerHTML += ' ... ' + exp.message});}
+try{reg.setup('b@foo=\'bar"',noToYes);} catch(exq){reg.setup('div.err-q',function(){noToYes.call(this);this.innerHTML += ' ... ' + exq.message});}
+try{reg.setup('b@foo="bar\\"',noToYes);}catch(exr){reg.setup('div.err-r',function(){noToYes.call(this);this.innerHTML += ' ... ' + exr.message});}
+try{reg.setup('',noToYes);}             catch(exs){reg.setup('div.err-s',function(){noToYes.call(this);this.innerHTML += ' ... ' + exs.message});}
+try{reg.setup('div+b~="bar"',noToYes);} catch(ext){reg.setup('div.err-t',function(){noToYes.call(this);this.innerHTML += ' ... ' + ext.message});}
 
 </script>
 </head>
@@ -126,11 +128,11 @@ try{reg.setup('div+b~="bar"',noToYes);} catch(exr){reg.setup('div.err-t',functio
 	| <span class="no att8c"  title=" foo bar baz ">attribute, space separated 8</span>
 	| <span class="yes att8c" title="-foo bar baz-">attribute, space separated 9</span>
 
-	| <span class="no att9"  title="en-us"  >attribute, dash  separated 0</span>
-	| <span class="no att9"  title="en"  >attribute, dash  separated 1</span>
-	| <span class="no att9"  title="en-">attribute, dash  separated 2</span>
-	| <span class="yes att9" title="-en-us">attribute, dash  separated 3</span>
-	| <span class="yes att9"  title=" en-us"  >attribute, dash  separated 4</span>
+	| <span class="no att9"  title="en-us" >dash-att 0</span>
+	| <span class="no att9"  title="en"    >dash-att 1</span>
+	| <span class="no att9"  title="en-"   >dash-att 2</span>
+	| <span class="yes att9" title="-en-us">dash-att 3</span>
+	| <span class="yes att9" title=" en-us">dash-att 4 (Opera expected to fail on this one)</span>
 </div>
 
 <div class="no att10" title="foo wob bar baz">multiple attributes</div>
@@ -169,6 +171,8 @@ try{reg.setup('div+b~="bar"',noToYes);} catch(exr){reg.setup('div.err-t',functio
 <div title="foo"><div class="iwildcard4 no">implicit wildcard descendant selection 4</div></div>
 <div id="owildcard5"><div title="foo" class="no">implicit wildcard descendant selection 5</div></div>
 <div title="foo"><div id="iwildcard6" class="no">implicit wildcard descendant selection 6</div></div>
+<p><a class="no hrefatt" href="foo.html">href attribute selection</a></p>
+
 
 <h2>Error messages for bad selectors</h2>
 <p>We want these to be green</p>

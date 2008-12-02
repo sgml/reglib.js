@@ -160,7 +160,7 @@ reg.hover('#baz',function(e){
 		el.innerHTML = 'now mouseout...';
 	}
 	over = true;
-	console.log('over');
+	//console.log('over');
 },function(e){
 	var el = gebcn('test',this)[0];
 	if (!over) {
@@ -175,7 +175,7 @@ reg.hover('#baz',function(e){
 		el.innerHTML = 'passed mouseover and mouseout';
 	}
 	over = false;
-	console.log('out');
+	//console.log('out');
 });
 
 reg.click('#testpause',function(){
@@ -229,7 +229,7 @@ click to test depth
 
 <div class="biz">
 <div class="baz 1">
-<div id="baz" class="baz 2" style="position:relative;left:200px;top:50px">
+<div id="baz" class="baz 2">
 <div class="baz 3">
 <div class="test unconfirmed">
 mouseover me

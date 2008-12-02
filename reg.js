@@ -68,7 +68,7 @@ window.reg = (function(){
 		var count = 0;
 		var origSel = selString;
 		while (selString.length>0) {
-			if (count > 100) { throw "failed parsing '"+origSel+"' stuck at '"+selString+"'"; }
+			if (count > 100) { throw new Error("failed parsing '"+origSel+"' stuck at '"+selString+"'"); }
 			// get rid of any leading spaces
 			var leadSpaceChopped = false;
 			if (exp.leadSpace.test(selString)) {
@@ -144,15 +144,15 @@ window.reg = (function(){
 					selString=selString.substring(lastAttribute.matchType.length);
 					if(selString.charAt(0)!='"'&&selString.charAt(0)!="'"){
 						if(exp.spaceQuote.test(selString)){selString=selString.replace(exp.leadSpace,'');}
-						else{throw origSel+" is invalid, single or double quotes required around attribute values";}
+						else{throw new Error(origSel+" is invalid, single or double quotes required around attribute values");}
 					}
 					// it is enclosed in quotes, end is closing quote
 					var q=selString.charAt(0);
 					var lastQInd=selString.indexOf(q,1);
-					if(lastQInd==-1){throw origSel+" is invalid, missing closing quote";}
+					if(lastQInd==-1){throw new Error(origSel+" is invalid, missing closing quote");}
 					while(selString.charAt(lastQInd-1)=='\\'){
 						lastQInd=selString.indexOf(q,lastQInd+1);
-						if(lastQInd==-1){throw origSel+" is invalid, missing closing quote";}
+						if(lastQInd==-1){throw new Error(origSel+" is invalid, missing closing quote");}
 					}
 					lastAttribute.value=selString.substring(1,lastQInd);
 					if      ('~=' == lastAttribute.matchType) { lastAttribute.valuePatt = new RegExp("(^|\\s)"+lastAttribute.value+"($|\\s)"); }
@@ -160,7 +160,7 @@ window.reg = (function(){
 					selString=selString.substring(lastAttribute.value.length+2);// +2 for the quotes
 					continue;
 				} else {
-					throw origSel+" is invalid, "+mTypeMatch[0]+" appeared without preceding attribute identifier";
+					throw new Error(origSel+" is invalid, "+mTypeMatch[0]+" appeared without preceding attribute identifier");
 				}
 				mTypeMatch=null;
 			}
@@ -196,11 +196,11 @@ window.reg = (function(){
 		// do some structural validation
 		for (var a=0;a<this.items.length;a++){
 			var itms = this.items[a];
-			if (itms.length==0) { throw "illegal structure: '"+origSel+"' contains an empty set"; }
-			if (itms[0].name!='tag') { throw "illegal structure: '"+origSel+"' contains a dangling relation"; }
-			if (itms[itms.length-1].name!='tag') { throw "illegal structure: '"+origSel+"' contains a dangling relation"; }
+			if (itms.length==0) { throw new Error("illegal structure: '"+origSel+"' contains an empty set"); }
+			if (itms[0].name!='tag') { throw new Error("illegal structure: '"+origSel+"' contains a dangling relation"); }
+			if (itms[itms.length-1].name!='tag') { throw new Error("illegal structure: '"+origSel+"' contains a dangling relation"); }
 			for(var b=1;b<itms.length;b++){
-				if(itms[b].name!='tag'&&itms[b-1].name!='tag'){ throw "illegal structure: '"+origSel+"' contains doubled up relations"; }
+				if(itms[b].name!='tag'&&itms[b-1].name!='tag'){ throw new Error("illegal structure: '"+origSel+"' contains doubled up relations"); }
 			}
 		}
 	}
@@ -249,14 +249,13 @@ window.reg = (function(){
 			}
 			sel.qss = itemStrings.join(', ');
 		}
-		console.log(sel.qss);
 		return sel.qss;
 	}
 
 	// match against an element
 	reg.Selector.prototype.matches = function(el) {
-		if (!el) { throw this.selectorString+' cannot be evaluated against '+el; }
-		if (el.nodeType != 1) { throw this.selectorString+' cannot be evaluated against element of type '+el.nodeType; }
+		if (!el) { throw new Error(this.selectorString+' cannot be evaluated against '+el); }
+		if (el.nodeType != 1) { throw new Error(this.selectorString+' cannot be evaluated against element of type '+el.nodeType); }
 		commas:for (var a=0;a<this.items.length;a++) { // for each comma-separated selector
 			var tempEl = el;
 			var itms = this.items[a];
@@ -301,7 +300,7 @@ window.reg = (function(){
 					var att = el.getAttribute(itmAtt.name);
 				}else{
 					if(el.nodeType!=1) {return false;}
-					var att = el.getAttribute(itmAtt.name);
+					var att = el.getAttribute(itmAtt.name,2);
 					if(itmAtt.name=='class'){att=el.className;}
 					else if(itmAtt.name=='for'){att=el.htmlFor;}
 					if(!att){return false;}
@@ -318,8 +317,8 @@ window.reg = (function(){
 					} else if ('|='==itmAtt.matchType || '~='==itmAtt.matchType){
 						if (!itmAtt.valuePatt.test(att)){return false;}
 					}else{
-						if(!itmAtt.matchType){throw "illegal structure, parsed selector cannot have null or empty attribute match type";}
-						else{throw "illegal structure, parsed selector cannot have '"+itm.matchType+"' as an attribute match type";}
+						if(!itmAtt.matchType){throw new Error("illegal structure, parsed selector cannot have null or empty attribute match type");}
+						else{throw new Error("illegal structure, parsed selector cannot have '"+itm.matchType+"' as an attribute match type");}
 					}
 				}
 			}
@@ -406,7 +405,7 @@ window.reg = (function(){
 
 	// SWITCH CLASS NAME A->B, B->A
 	function switchClassName(element, cName1, cName2) {
-		if (cName1 == cName2) { throw "cName1 and cName2 both equal "+cName1; }
+		if (cName1 == cName2) { throw new Error("cName1 and cName2 both equal "+cName1); }
 		var has1 = hasClassName(element, cName1);
 		var has2 = hasClassName(element, cName2);
 		if (has1 && has2) { removeClassName(element, cName2); }
@@ -549,7 +548,7 @@ window.reg = (function(){
 	var classTest = /^\s*([a-z0-9_-]+)?\.([a-z0-9_-]+)\s*$/i;
 	var idTest = /^\s*([a-z0-9_-]+)?\#([a-z0-9_-]+)\s*$/i;
 	function getElementsBySelector(selString, contextNode) {
-		if (!contextNode) { contextNode = window.document.documentElement; }
+		contextNode = contextNode || window.document.documentElement;
 		var result = [];
 		var cMat, iMat;
 		if (cMat = selString.match(classTest)) {
@@ -566,8 +565,8 @@ window.reg = (function(){
 			var sel = cSels[selString];
 			if (contextNode.querySelectorAll) {
 				var qlist = contextNode.querySelectorAll(toQuerySelectorString(sel));
-				for (var i=0, node; node = qlist[i++];) {
-					result[result.length] = node;
+				for (var i=0; i<qlist.length; i++) {
+					result[result.length] = qlist[i];
 				}
 			} else {
 				var tagNames = getTagNames(sel);
@@ -1017,7 +1016,7 @@ window.reg = (function(){
 			}
 		}
 		if(result===null){result=-1;}
-		if(result<-1){throw "bad arg for depth, must be -1 or higher";}
+		if(result<-1){throw new Error("bad arg for depth, must be -1 or higher");}
 		return result;
 	}
 
@@ -1099,7 +1098,7 @@ window.reg = (function(){
 	function delegate(selectionHandlers, event) {
 		var targ = getTarget(event);
 		if (selectionHandlers) {
-			selectors:for (var sel in selectionHandlers) {
+			for (var sel in selectionHandlers) {
 				if(!selectionHandlers.hasOwnProperty(sel)) { continue; }
 				for(var a=0; a<selectionHandlers[sel].length; a++) {
 					var selHandler=selectionHandlers[sel][a];
@@ -1127,7 +1126,7 @@ window.reg = (function(){
 			}
 		}
 	}
-
+	
 	if(typeof document.onactivate == 'object'){
 		var focusEventType = 'activate';
 		var blurEventType = 'deactivate';
