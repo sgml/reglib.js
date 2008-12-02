@@ -91,7 +91,7 @@ reg.postSetup(function(){
 		if(!hcn(el, 'qwe')) {
 			throw new Error('scn() or hcn() failed');
 		}
-		
+
 		// gebs()
 		document.body.appendChild(el);
 		var b1 = gebs('a.foo.bar');
@@ -106,7 +106,7 @@ reg.postSetup(function(){
 		) {
 			throw new Error('gebs() failed');
 		}
-		
+
 		// matches()
 		if (!matches(el, 'body p.hideme@title="blah"')) {
 			throw new Error('matches() failed');
@@ -139,7 +139,7 @@ reg.postSetup(function(){
 		if (!matches(n,'span.after') || !matches(p,'a#baz')) {
 			throw new Error('matches() or nextElem() pr prevElem() failed');
 		}
-		
+
 		rcn(holder, 'unconfirmed');
 		rcn(holder, 'failed');
 		acn(holder, 'confirmed');
