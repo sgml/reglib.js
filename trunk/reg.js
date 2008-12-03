@@ -254,7 +254,7 @@ window.reg = (function(){
 
 	// match against an element
 	reg.Selector.prototype.matches = function(el) {
-		if (!el) { throw new Error(this.selectorString+' cannot be evaluated against '+el); }
+		if (!el) { throw new Error('no element provided'); }
 		if (el.nodeType != 1) { throw new Error(this.selectorString+' cannot be evaluated against element of type '+el.nodeType); }
 		commas:for (var a=0;a<this.items.length;a++) { // for each comma-separated selector
 			var tempEl = el;
@@ -300,9 +300,9 @@ window.reg = (function(){
 					var att = el.getAttribute(itmAtt.name);
 				}else{
 					if(el.nodeType!=1) {return false;}
-					var att = el.getAttribute(itmAtt.name,2);
-					if(itmAtt.name=='class'){att=el.className;}
-					else if(itmAtt.name=='for'){att=el.htmlFor;}
+					var att = el.getAttribute(itmAtt.name,2);//ie6/7 returns fully resolved href but ,2 fixes that
+					if(itmAtt.name=='class'){att=el.className;}//todo:remove this line
+					else if(itmAtt.name=='for'){att=el.htmlFor;}//todo:and this one
 					if(!att){return false;}
 				}
 				if (itmAtt.value) {
