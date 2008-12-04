@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-US">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>Testing Misc Functions</title>
+<link rel="stylesheet" type="text/css" href="test.css"/>
+<style type="text/css">
+.hideme{display:none}
+</style>
+<script type="text/javascript" src="../reg.js"></script>
+<script type="text/javascript">
+reg.importAll();
+
+/*
+A bunch of DOM convenience methods (alias names in braces):
+
+CLASSNAMES
+- reg.addClassName(el, cName)..............................{acn}
+- reg.getElementsByClassName(cNames[, ctxNode[, tagName]]).{gebcn}
+- reg.hasClassName(el, cName)..............................{hcn}
+- reg.matchClassName(el, regexp)...........................{mcn}
+- reg.removeClassName(el, cName)...........................{rcn}
+- reg.switchClassName(el, cName1, cName2)..................{scn}
+- reg.toggleClassName(el, cName)...........................{tcn}
+
+SELECTORS
+- reg.elementMatchesSelector(el, selString)................{matches}
+- reg.getElementsBySelector(selString[, ctxNode])..........{gebs}
+
+OTHER
+- reg.elementText(el)......................................{elemText}
+- reg.getElementById().....................................{gebi}
+- reg.getElementsByTagName(tagName[, ctxNode]).............{gebtn}
+- reg.getParent(el, selString)
+- reg.innerWrap(el, wrapperEl)
+- reg.insertAfter(insertMe, afterThis)
+- reg.newElement(tagName[, attObj[, contents]])............{elem}
+- reg.nextElement(el)......................................{nextElem}
+- reg.outerWrap(el, wrapperEl)
+- reg.previousElement(el)..................................{prevElem}
+*/
+
+reg.postSetup(function(){
+
+	var holder = gebi('holder');
+	try {
+		// elem() and elemText()
+		var subel = elem('a.foo',null,'blah');
+		var el = elem('p.hideme',{title:'blah'},[elem('a#baz.foo',{'class':'bar zab'},'blah'),subel]);
+		var elt = elemText(el);
+		if (elt != 'blahblah') { throw new Error('either elem() or elemText() failed'); }
+		
+		// gebcn()
+		var a1 = gebcn('foo bar', el);
+		var a2 = gebcn('foo', el);
+		if (a1.length != 1 || a2.length != 2) {
+			throw new Error('gebcn() failed');
+		}
+		
+		// getParent()
+		var p = getParent(subel, 'p.hideme@title="blah"');
+		if (p != el) {
+			throw new Error('getParent() failed');
+		}
+		
+		// acn()
+		acn(el,'sdf');
+		if(!hcn(el, 'sdf')) {
+			throw new Error('acn() or hcn() failed');
+		}
+		
+		// mcn()
+		if (!mcn(el, /^[sx]df$/) || mcn(el, /^sd[ew]$/)) {
+			throw new Error('mcn() failed');
+		}
+		
+		// rcn()
+		rcn(el,'sdf');
+		if(hcn(el, 'sdf')) {
+			throw new Error('rcn() or hcn() failed');
+		}
+		
+		// tcn()
+		tcn(el,'sdf');
+		if(!hcn(el, 'sdf')) {
+			throw new Error('tcn() or hcn() failed');
+		}
+		
+		// tcn()
+		scn(el,'sdf', 'qwe');
+		if(!hcn(el, 'qwe')) {
+			throw new Error('scn() or hcn() failed');
+		}
+
+		// gebs()
+		document.body.appendChild(el);
+		var b1 = gebs('a.foo.bar');
+		var b2 = gebs('a.foo');
+		var b3 = gebs('a#baz.foo');
+		var b4 = gebs('body p.hideme@title="blah" > a.foo');
+		if (
+			   b1.length != 1
+			|| b2.length != 2
+			|| b3.length != 1
+			|| b4.length != 2
+		) {
+			throw new Error('gebs() failed');
+		}
+
+		// matches()
+		if (!matches(el, 'body p.hideme@title="blah"')) {
+			throw new Error('matches() failed');
+		}
+		
+		// innerWrap()
+		var inner = elem('span.inner');
+		innerWrap(el, inner);
+		if (!matches(subel,'body p.hideme@title="blah" > span.inner > a.foo')) {
+			throw new Error('matches() or innerWrap() failed');
+		}
+		
+		// outerWrap()
+		var outer = elem('div.outer');
+		outerWrap(el, outer);
+		if (!matches(subel,'body div.outer>p.hideme@title="blah" > span > a.foo')) {
+			throw new Error('matches() or outerWrap() failed');
+		}
+		
+		// insertAfter()
+		var after = elem('span.after',null,'after');
+		insertAfter(after, subel);
+		if (!matches(after,'body div.outer>p.hideme@title="blah" > span > a.foo + span.after')) {
+			throw new Error('matches() or insertAfter() failed');
+		}
+		
+		// nextElem() prevElem()
+		var n = nextElem(subel);
+		var p = prevElem(subel);
+		if (!matches(n,'span.after') || !matches(p,'a#baz')) {
+			throw new Error('matches() or nextElem() pr prevElem() failed');
+		}
+
+		rcn(holder, 'unconfirmed');
+		rcn(holder, 'failed');
+		acn(holder, 'confirmed');
+		holder.innerHTML = 'all tests passed';
+	} catch (ex) {
+		rcn(holder, 'unconfirmed');
+		rcn(holder, 'confirmed');
+		acn(holder, 'failed');
+		holder.innerHTML = 'ERROR: '+ex.message;
+	}
+
+});
+
+</script>
+</head>
+<body>
+<div id="pagewrap">
+<p><a href="index.html">&laquo; back to index</a></p>
+<h1>Testing Misc Functions</h1>
+
+<div class="unconfirmed test" id="holder">
+running tests...
+</div>
+
+</div>
+</body>
+</html>
+
+
+
