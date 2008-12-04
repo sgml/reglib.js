@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Traditional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-US">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>IE events test</title>
+<script type="text/javascript">
+
+if (document.all) {
+
+	document.getElementById('foo').attachEvent('onmouseover',function(){
+		var fromEl = window.event.fromElement;
+		var srcEl = window.event.srcElement;
+		msg("over: "+descEl(srcEl)+" from: "+descEl(fromEl));
+	});
+	
+	document.getElementById('foo').attachEvent('onmouseout',function(){
+		var toEl = window.event.toElement;
+		var srcEl = window.event.srcElement;
+		msg("out: "+descEl(srcEl)+" to: "+descEl(toEl));
+	});
+
+}
+
+function descEl(el) {
+	if (!el) return 'none';
+	if(el.nodeType != 1) return 'not an element node';
+	var result = el.nodeName.toLowerCase();
+	if (el.id) result+= '#'+el.id;
+	if (el.className) result+= '.'+el.className;
+	return result;
+}
+
+function msg(s) {
+	document.getElementById('msg').value += s + "\n";
+}
+
+</script>
+</head>
+<body style="background:#eee;margin:0;padding:30px;">
+
+
+<div style="background:white;padding:30px;" class="outer">
+<div style="background:yellow;padding:30px;" class="middle" id="foo">
+<div style="background:pink;padding:30px;" class="inner">
+
+foo
+
+</div>
+</div>
+</div>
+
+<form style="margin:20px 0px;">
+<textarea id="msg" style="width:100%;border:none;height:400px;font-family:monospace;font-size:10px;"></textarea>
+</form>
+
+</body>
+</html>
+
+
+
