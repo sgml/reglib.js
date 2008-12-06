@@ -16,6 +16,7 @@ padding:0px 10px;
 .biz2 .baz{
 background:#ccc;
 }
+form{margin:0}
 </style>
 <script type="text/javascript" src="../reg.js"></script>
 <script type="text/javascript">
@@ -194,6 +195,40 @@ var pause = reg.click('#testpause',function(){
 
 reg.pause(pause);
 
+var submit = reg.submit('div#testsubmit',function(e){
+	rcn(this, 'unconfirmed');
+	rcn(this, 'failed');
+	acn(this, 'confirmed');
+	this.innerHTML = 'passed submit';
+	return false;
+});
+
+var reset = reg.reset('div#testreset',function(e){
+	rcn(this, 'unconfirmed');
+	rcn(this, 'failed');
+	acn(this, 'confirmed');
+	this.innerHTML = 'passed reset';
+	return false;
+});
+
+reg.change('div#testchange',function(e){
+	rcn(this, 'unconfirmed');
+	rcn(this, 'failed');
+	acn(this, 'confirmed');
+	this.innerHTML = 'passed change';
+	return false;
+});
+
+reg.select('div#testselect',function(e){
+	rcn(this, 'unconfirmed');
+	rcn(this, 'failed');
+	acn(this, 'confirmed');
+	this.innerHTML = 'passed select';
+	return false;
+});
+
+//reg.addEvent(document.documentElement,'reset',function(e){console.log('general handler');});
+
 reg.postSetup(function(){ document.body.innerHTML += ''; });
 
 </script>
@@ -253,6 +288,35 @@ mouseover me
 
 <div id="testpause" class="test unconfirmed">
 click to test pause
+</div>
+
+<div id="testsubmit" class="test unconfirmed">
+<form action="">
+<input type="submit" value="click to test submit"/>
+</form>
+</div>
+
+<div id="testreset" class="test unconfirmed">
+<form action="">
+<input type="reset" value="click to test reset"/>
+<input type="text" value=""/>
+</form>
+</div>
+
+<div id="testchange" class="test unconfirmed">
+<form action="">
+<select>
+<option>changeme</option>
+<option>bar</option>
+<option>baz</option>
+</select>
+</form>
+</div>
+
+<div id="testselect" class="test unconfirmed">
+<form action="">
+<input type="text" value="selectme"/>
+</form>
 </div>
 
 </div>
