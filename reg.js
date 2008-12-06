@@ -1102,11 +1102,10 @@ window.reg = (function(){
 // TODO: need a better test here
 if (document.all && !window.opera) {
 
-	interceptCount = 0;
-	function intercept(thisElement, event, func, elType, eventType) {
+	function intercept(thisElement, event, func, elType, eventType, ic) {
 		var targ = reg.getTarget(event);
 		var handledOn = reg.matches(targ,elType) ? targ : reg.getParent(targ, elType);
-		var handled = "__handled__" + interceptCount++;
+		var handled = "__handled__" + ic;
 		if (handledOn && !handledOn[handled]) {
 			handledOn[handled] = true;
 			var feid = reg.addEvent(handledOn, eventType, function(e){
@@ -1134,21 +1133,26 @@ if (document.all && !window.opera) {
 		//TODO:determine if this event triggers a select
 		return true;
 	}
+	var interceptCounter = 0;
 	reg.submit=function(selStr, func) {
-		return [reg.click(selStr, function(e){ submits(e) && intercept(this,e,func,'form', 'submit'); }),
-		        reg.key(selStr,   function(e){ submits(e) && intercept(this,e,func,'form', 'submit'); })];
+		var ic = interceptCounter++;
+		return [reg.click(selStr, function(e){ submits(e) && intercept(this,e,func,'form','submit',ic); }),
+		        reg.key(selStr,   function(e){ submits(e) && intercept(this,e,func,'form','submit',ic); })];
 	};
 	reg.reset=function(selStr, func) {
-		return [reg.click(selStr, function(e){ resets(e) &&  intercept(this,e,func,'form', 'reset'); }),
-		        reg.key(selStr,   function(e){ resets(e) &&  intercept(this,e,func,'form', 'reset'); })];
+		var ic = interceptCounter++;
+		return [reg.click(selStr, function(e){ resets(e) &&  intercept(this,e,func,'form','reset',ic); }),
+		        reg.key(selStr,   function(e){ resets(e) &&  intercept(this,e,func,'form','reset',ic); })];
 	};
 	reg.change=function(selStr, func) {
-		return [reg.click(selStr, function(e){ changes(e) &&  intercept(this,e,func,'select', 'change'); }),
-		        reg.key(selStr,   function(e){ changes(e) &&  intercept(this,e,func,'select', 'change'); })];
+		var ic = interceptCounter++;
+		return [reg.click(selStr, function(e){ changes(e) &&  intercept(this,e,func,'select','change',ic); }),
+		        reg.key(selStr,   function(e){ changes(e) &&  intercept(this,e,func,'select','change',ic); })];
 	};
 	reg.select=function(selStr, func) {
-		return [reg.click(selStr, null, function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select'); }),
-		        reg.key(selStr,         function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select'); })];
+		var ic = interceptCounter++;
+		return [reg.click(selStr, null, function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',ic); }),
+		        reg.key(selStr,         function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',ic); })];
 	};
 } else {
 	// regular bubbling behavior
