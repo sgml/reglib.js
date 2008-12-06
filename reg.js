@@ -1098,7 +1098,7 @@ window.reg = (function(){
 // ###################
 // EXPERIMENTAL !!!
 
-// isolate < IE8
+// isolate IE
 // TODO: need a better test here
 if (document.all && !window.opera) {
 
