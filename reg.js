@@ -1100,7 +1100,7 @@ window.reg = (function(){
 
 // isolate < IE8
 // TODO: need a better test here
-if (document.all && !document.querySelector && !window.opera) {
+if (document.all && !window.opera) {
 
 	interceptCount = 0;
 	function intercept(thisElement, event, func, elType, eventType) {
