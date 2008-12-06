@@ -1,5 +1,5 @@
 /*
-reglib version 1.0.6
+reglib version 1.1
 Copyright 2008
 Released under MIT license
 http://code.google.com/p/reglib/
@@ -1005,6 +1005,10 @@ window.reg = (function(){
 	var keyDownHandlers = {};
 	var keyPressHandlers = {};
 	var keyUpHandlers = {};
+	var submitHandlers = {};
+	var resetHandlers = {};
+	var changeHandlers = {};
+	var selectHandlers = {};
 
 	// returns first arg that's a number
 	function getDepth(fargs){
@@ -1080,18 +1084,138 @@ window.reg = (function(){
 		return memInd;
 	};
 
+// #########################################
+// #######################################
+// #####################################
+// ###################################
+// #################################
+// ###############################
+// #############################
+// ###########################
+// #########################
+// #######################
+// #####################
+// ###################
+// EXPERIMENTAL !!!
+
+// isolate < IE8
+// TODO: need a better test here
+if (document.all && !document.querySelector && !window.opera) {
+
+	function desl(el){return el?el.nodeName.toLowerCase()+'.'+el.className+'#'+el.id:'null';}
+	interceptCount = 0;
+	function intercept(thisElement, event, func, elType, eventType) {
+		var targ = reg.getTarget(event);
+		var handledOn = reg.matches(targ,elType) ? targ : reg.getParent(targ, elType);
+		var handled = "__handled__" + interceptCount++;
+		console.log('targ: '+desl(targ));
+		console.log('this: '+desl(thisElement));
+		console.log('prnt: '+desl(handledOn));
+		if (handledOn && !handledOn[handled]) {
+			handledOn[handled] = true;
+			var feid = reg.addEvent(handledOn, eventType, function(e){
+				var retVal = func.call(thisElement,e);
+				if (retVal === false) { reg.cancelDefault(e); }
+				reg.removeEvent(feid);
+				this[handled] = false;
+			});
+		}
+	}
+	function resets(e){
+		var targ = reg.getTarget(e);
+		var isReset = reg.matches(targ,'@type="reset"') || reg.getParent(targ, '@type="reset"');
+		return isReset && e.type==='click';
+	}
+	function submits(e){
+		//TODO:determine if this event triggers a submit
+		return true;
+	}
+	function changes(e){
+		//TODO:determine if this event triggers a change
+		return true;
+	}
+	function selects(e){
+		//TODO:determine if this event triggers a select
+		return true;
+	}
+	reg.submit=function(selStr, func) {
+		return [reg.click(selStr, function(e){ submits(e) && intercept(this,e,func,'form', 'submit'); }),
+		        reg.key(selStr,   function(e){ submits(e) && intercept(this,e,func,'form', 'submit'); })];
+	};
+	reg.reset=function(selStr, func) {
+		return [reg.click(selStr, function(e){ resets(e) &&  intercept(this,e,func,'form', 'reset'); }),
+		        reg.key(selStr,   function(e){ resets(e) &&  intercept(this,e,func,'form', 'reset'); })];
+	};
+	reg.change=function(selStr, func) {
+		return [reg.click(selStr, function(e){ changes(e) &&  intercept(this,e,func,'select', 'change'); }),
+		        reg.key(selStr,   function(e){ changes(e) &&  intercept(this,e,func,'select', 'change'); })];
+	};
+	reg.select=function(selStr, func) {
+		return [reg.click(selStr, null, function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select'); }),
+		        reg.key(selStr,         function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select'); })];
+	};
+} else {
+	// regular bubbling behavior
+	reg.submit=function(selStr, func) {
+		var depth = getDepth(arguments);
+		var memInd = dMemInd++;
+		pushFunc(selStr, func, depth, submitHandlers, false, memInd);
+		return memInd;
+	};
+	reg.reset=function(selStr, func) {
+		var depth = getDepth(arguments);
+		var memInd = dMemInd++;
+		pushFunc(selStr, func, depth, resetHandlers, false, memInd);
+		return memInd;
+	};
+	reg.change=function(selStr, func) {
+		var depth = getDepth(arguments);
+		var memInd = dMemInd++;
+		pushFunc(selStr, func, depth, changeHandlers, false, memInd);
+		return memInd;
+	};
+	reg.select=function(selStr, func) {
+		var depth = getDepth(arguments);
+		var memInd = dMemInd++;
+		pushFunc(selStr, func, depth, selectHandlers, false, memInd);
+		return memInd;
+	};
+}
+
+// EXPERIMENTAL !!!
+// ###################
+// #####################
+// #######################
+// #########################
+// ###########################
+// #############################
+// ###############################
+// #################################
+// ###################################
+// #####################################
+// #######################################
+// #########################################
+
 	// stops execution of event
 	reg.pause = function(memInd) {
-		if (!(memInd in pauseResumeArray)) { return; }
-		var arr = pauseResumeArray[memInd];
-		for (var i=0; i<arr.length; i++) { arr[i].paused = true; }
+		var memInds = (memInd instanceof Array) ? memInd : [memInd];
+		for (var i=0; i<memInds.length; i++) {
+			memInd = memInds[i];
+			if (!(memInd in pauseResumeArray)) { continue; }
+			var arr = pauseResumeArray[memInd];
+			for (var j=0; j<arr.length; j++) { arr[j].paused = true; }
+		}
 	};
 
 	// starts execution of event
 	reg.resume = function(memInd) {
-		if (!(memInd in pauseResumeArray)) { return; }
-		var arr = pauseResumeArray[memInd];
-		for (var i=0; i<arr.length; i++) { arr[i].paused = false; }
+		var memInds = (memInd instanceof Array) ? memInd : [memInd];
+		for (var i=0; i<memInds.length; i++) {
+			memInd = memInds[i];
+			if (!(memInd in pauseResumeArray)) { continue; }
+			var arr = pauseResumeArray[memInd];
+			for (var j=0; j<arr.length; j++) { arr[j].paused = false; }
+		}
 	};
 
 	// the delegator
@@ -1147,6 +1271,10 @@ window.reg = (function(){
 	addEvent(document.documentElement, blurEventType, function(e){delegate(blurHandlers,       e);},true);
 	addEvent(document.documentElement,'mouseover',    function(e){delegate(mouseOverHandlers,  e);});
 	addEvent(document.documentElement,'mouseout',     function(e){delegate(mouseOutHandlers,   e);});
+	addEvent(document.documentElement,'submit',       function(e){delegate(submitHandlers,     e);});
+	addEvent(document.documentElement,'reset',        function(e){delegate(resetHandlers,      e);});
+	addEvent(document.documentElement,'change',       function(e){delegate(changeHandlers,     e);});
+	addEvent(document.documentElement,'select',       function(e){delegate(selectHandlers,     e);});
 
 	// handy for css
 	addClassName(document.documentElement, 'regenabled');
