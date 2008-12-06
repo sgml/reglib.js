@@ -1102,15 +1102,11 @@ window.reg = (function(){
 // TODO: need a better test here
 if (document.all && !document.querySelector && !window.opera) {
 
-	function desl(el){return el?el.nodeName.toLowerCase()+'.'+el.className+'#'+el.id:'null';}
 	interceptCount = 0;
 	function intercept(thisElement, event, func, elType, eventType) {
 		var targ = reg.getTarget(event);
 		var handledOn = reg.matches(targ,elType) ? targ : reg.getParent(targ, elType);
 		var handled = "__handled__" + interceptCount++;
-		console.log('targ: '+desl(targ));
-		console.log('this: '+desl(thisElement));
-		console.log('prnt: '+desl(handledOn));
 		if (handledOn && !handledOn[handled]) {
 			handledOn[handled] = true;
 			var feid = reg.addEvent(handledOn, eventType, function(e){
