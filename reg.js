@@ -1102,57 +1102,82 @@ window.reg = (function(){
 // TODO: need a better test here
 if (document.all && !window.opera) {
 
-	function intercept(thisElement, event, func, elType, eventType, ic) {
+	function intercept(thisEl,event,func,elType,eventType,iid,depth) {
 		var targ = reg.getTarget(event);
-		var handledOn = reg.matches(targ,elType) ? targ : reg.getParent(targ, elType);
-		var handled = "__handled__" + ic;
-		if (handledOn && !handledOn[handled]) {
-			handledOn[handled] = true;
-			var feid = reg.addEvent(handledOn, eventType, function(e){
-				var retVal = func.call(thisElement,e);
-				if (retVal === false) { reg.cancelDefault(e); }
-				reg.removeEvent(feid);
-				this[handled] = false;
-			});
+		targ = reg.matches(targ, elType) ? targ : reg.getParent(targ, elType);//we want target of the would-be non-bubbling event
+		var hFlag = "_handled_" + iid + "_";
+		if (targ && !targ[hFlag]) {
+			for (var d=0,max=(depth>=0?depth:1000),chEl=targ; d<max && chEl; d++) {
+				if (chEl===thisEl) {
+					targ[hFlag] = true;
+					var feid = reg.addEvent(targ, eventType, function(e){
+						var retVal = func.call(thisEl,e);
+						if (retVal === false) { reg.cancelDefault(e); }
+						reg.removeEvent(feid);
+						this[hFlag] = false;
+					});
+					return;
+				} else {
+					chEl = chEl.parentNode;
+				}
+			}
+			console.log('intercept() failed');
 		}
 	}
-	function resets(e){
+	function resets(e){//will this event trigger reset?
+		if (e.type==='click') {
+			var targ = reg.getTarget(e);
+			var isReset = reg.matches(targ,'@type="reset"') || reg.getParent(targ, '@type="reset"');
+			return isReset && e.type==='click';
+		} else {
+			return false;
+		}
+	}
+	function submits(e){//will this event trigger submit?
 		var targ = reg.getTarget(e);
-		var isReset = reg.matches(targ,'@type="reset"') || reg.getParent(targ, '@type="reset"');
-		return isReset && e.type==='click';
+		if (e.type==='keydown') {
+			var isTextInput = reg.matches(targ,'input@type="text",input@type="password"');
+			var isEnterReturn = e.keyCode==13;
+			return isTextInput && isEnterReturn;
+		} else if (e.type==='click') {
+			var s = '@type="submit"';
+			//clicks can originate from subelements of <button>
+			return !!(reg.matches(targ,s) ? targ : reg.getParent(targ,s));
+		} else {
+			return false;
+		}
 	}
-	function submits(e){
-		//TODO:determine if this event triggers a submit
+	function changes(e){//will this event trigger change?
+		//TODO:implement
 		return true;
 	}
-	function changes(e){
-		//TODO:determine if this event triggers a change
-		return true;
-	}
-	function selects(e){
-		//TODO:determine if this event triggers a select
+	function selects(e){//will this event trigger select?
+		//TODO:implement
 		return true;
 	}
 	var interceptCounter = 0;
 	reg.submit=function(selStr, func) {
-		var ic = interceptCounter++;
-		return [reg.click(selStr, function(e){ submits(e) && intercept(this,e,func,'form','submit',ic); }),
-		        reg.key(selStr,   function(e){ submits(e) && intercept(this,e,func,'form','submit',ic); })];
+		var iid = interceptCounter++;
+		var depth = getDepth(arguments);
+		return [reg.click(selStr, function(e){ submits(e) && intercept(this,e,func,'form','submit',iid,depth); }),
+		        reg.key(selStr,   function(e){ submits(e) && intercept(this,e,func,'form','submit',iid,depth); })];
 	};
 	reg.reset=function(selStr, func) {
-		var ic = interceptCounter++;
-		return [reg.click(selStr, function(e){ resets(e) &&  intercept(this,e,func,'form','reset',ic); }),
-		        reg.key(selStr,   function(e){ resets(e) &&  intercept(this,e,func,'form','reset',ic); })];
+		var iid = interceptCounter++;
+		var depth = getDepth(arguments);
+		return [reg.click(selStr, function(e){ resets(e) &&  intercept(this,e,func,'form','reset',iid,depth); })];
 	};
 	reg.change=function(selStr, func) {
-		var ic = interceptCounter++;
-		return [reg.click(selStr, function(e){ changes(e) &&  intercept(this,e,func,'select','change',ic); }),
-		        reg.key(selStr,   function(e){ changes(e) &&  intercept(this,e,func,'select','change',ic); })];
+		var iid = interceptCounter++;
+		var depth = getDepth(arguments);
+		return [reg.click(selStr, function(e){ changes(e) &&  intercept(this,e,func,'select','change',iid,depth); }),
+		        reg.key(selStr,   function(e){ changes(e) &&  intercept(this,e,func,'select','change',iid,depth); })];
 	};
 	reg.select=function(selStr, func) {
-		var ic = interceptCounter++;
-		return [reg.click(selStr, null, function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',ic); }),
-		        reg.key(selStr,         function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',ic); })];
+		var iid = interceptCounter++;
+		var depth = getDepth(arguments);
+		return [reg.click(selStr, null, function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',iid,depth); }),
+		        reg.key(selStr,         function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',iid,depth); })];
 	};
 } else {
 	// regular bubbling behavior
