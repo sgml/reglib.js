@@ -1025,7 +1025,7 @@ window.reg = (function(){
 	}
 
 	// add a handler function
-	function pushFunc(selStr, handlerFunc, depth, handlers, hoverFlag, memInd) {
+	function pushFunc(selStr, handlerFunc, depth, handlers, hoverFlag) {
 		if(!handlerFunc || typeof handlerFunc != "function"){return;}
 		var parsedSel = new reg.Selector(selStr);
 		if(!handlers[selStr]) {handlers[selStr]=[];}
@@ -1037,51 +1037,37 @@ window.reg = (function(){
 			paused:false
 		};
 		handlers[selStr].push(selHandler);
-		if (!pauseResumeArray[memInd]) { pauseResumeArray[memInd] = []; }
-		pauseResumeArray[memInd].push(selHandler);
 	}
-
-	// to keep track of events for later pause and resume
-	var dMemInd = 0;
-	var pauseResumeArray = [];
 
 	// click
 	reg.click=function(selStr, clickFunc, downFunc, upFunc, doubleFunc){
 		var depth = getDepth(arguments);
-		var memInd = dMemInd++;
-		pushFunc(selStr, clickFunc,  depth, clickHandlers,       false, memInd);
-		pushFunc(selStr, downFunc,   depth, mouseDownHandlers,   false, memInd);
-		pushFunc(selStr, upFunc,     depth, mouseUpHandlers,     false, memInd);
-		pushFunc(selStr, doubleFunc, depth, doubleClickHandlers, false, memInd);
-		return memInd;
+		pushFunc(selStr, clickFunc,  depth, clickHandlers,       false);
+		pushFunc(selStr, downFunc,   depth, mouseDownHandlers,   false);
+		pushFunc(selStr, upFunc,     depth, mouseUpHandlers,     false);
+		pushFunc(selStr, doubleFunc, depth, doubleClickHandlers, false);
 	};
 
 	// mouse over and out
 	reg.hover=function(selStr, overFunc, outFunc){
 		var depth = getDepth(arguments);
-		var memInd = dMemInd++;
-		pushFunc(selStr, overFunc, depth, mouseOverHandlers, true, memInd);
-		pushFunc(selStr, outFunc,  depth, mouseOutHandlers,  true, memInd);
-		return memInd;
+		pushFunc(selStr, overFunc, depth, mouseOverHandlers, true);
+		pushFunc(selStr, outFunc,  depth, mouseOutHandlers,  true);
 	};
 
 	// focus and blur
 	reg.focus=function(selStr, focusFunc, blurFunc){
 		var depth = getDepth(arguments);
-		var memInd = dMemInd++;
-		pushFunc(selStr, focusFunc, depth, focusHandlers, false, memInd);
-		pushFunc(selStr, blurFunc,  depth, blurHandlers,  false, memInd);
-		return memInd;
+		pushFunc(selStr, focusFunc, depth, focusHandlers, false);
+		pushFunc(selStr, blurFunc,  depth, blurHandlers,  false);
 	};
 
 	// key press
 	reg.key=function(selStr, downFunc, pressFunc, upFunc){
 		var depth = getDepth(arguments);
-		var memInd = dMemInd++;
-		pushFunc(selStr, downFunc,  depth, keyDownHandlers,  false, memInd);
-		pushFunc(selStr, pressFunc, depth, keyPressHandlers, false, memInd);
-		pushFunc(selStr, upFunc,    depth, keyUpHandlers,    false, memInd);
-		return memInd;
+		pushFunc(selStr, downFunc,  depth, keyDownHandlers,  false);
+		pushFunc(selStr, pressFunc, depth, keyPressHandlers, false);
+		pushFunc(selStr, upFunc,    depth, keyUpHandlers,    false);
 	};
 
 // #########################################
@@ -1098,8 +1084,10 @@ window.reg = (function(){
 // ###################
 // EXPERIMENTAL !!!
 
-// isolate IE
-// TODO: need a better test here
+// TODO: is there a better generic test for IE?
+// TODO: is it only IE that fails to bubble on form events?
+// TODO: will IE8 ship with bubbling form events? IE8b2 does not have them.
+// TODO: will IE9 ship with bubbling form events? will it ship with document.all?
 if (document.all && !window.opera) {
 
 	function intercept(thisEl,event,func,elType,eventType,iid,depth) {
@@ -1107,7 +1095,7 @@ if (document.all && !window.opera) {
 		targ = reg.matches(targ, elType) ? targ : reg.getParent(targ, elType);//we want target of the would-be non-bubbling event
 		var hFlag = "_handled_" + iid + "_";
 		if (targ && !targ[hFlag]) {
-			for (var d=0,max=(depth>=0?depth:1000),chEl=targ; d<max && chEl; d++) {
+			for (var d=0,max=(depth>=0?depth:1000),chEl=targ; d<=max && chEl; d++) {
 				if (chEl===thisEl) {
 					targ[hFlag] = true;
 					var feid = reg.addEvent(targ, eventType, function(e){
@@ -1148,62 +1136,58 @@ if (document.all && !window.opera) {
 		}
 	}
 	function changes(e){//will this event trigger change?
-		//TODO:implement
-		return true;
+		var targ = reg.getTarget(e);
+		var isSelect = reg.matches(targ, 'select');
+		//TODO:
+		//this only narrows it down.
+		//how to determine if the selected option will be changed?
+		return isSelect;
 	}
 	function selects(e){//will this event trigger select?
 		//TODO:implement
 		return true;
 	}
-	var interceptCounter = 0;
+	var interceptIdCounter = 0;
 	reg.submit=function(selStr, func) {
-		var iid = interceptCounter++;
+		var iid = interceptIdCounter++;
 		var depth = getDepth(arguments);
-		return [reg.click(selStr, function(e){ submits(e) && intercept(this,e,func,'form','submit',iid,depth); }),
-		        reg.key(selStr,   function(e){ submits(e) && intercept(this,e,func,'form','submit',iid,depth); })];
+		reg.click(selStr, function(e){ submits(e) && intercept(this,e,func,'form','submit',iid,depth); });
+		reg.key(selStr,   function(e){ submits(e) && intercept(this,e,func,'form','submit',iid,depth); });
 	};
 	reg.reset=function(selStr, func) {
-		var iid = interceptCounter++;
+		var iid = interceptIdCounter++;
 		var depth = getDepth(arguments);
-		return [reg.click(selStr, function(e){ resets(e) &&  intercept(this,e,func,'form','reset',iid,depth); })];
+		reg.click(selStr, function(e){ resets(e) &&  intercept(this,e,func,'form','reset',iid,depth); });
 	};
 	reg.change=function(selStr, func) {
-		var iid = interceptCounter++;
+		var iid = interceptIdCounter++;
 		var depth = getDepth(arguments);
-		return [reg.click(selStr, function(e){ changes(e) &&  intercept(this,e,func,'select','change',iid,depth); }),
-		        reg.key(selStr,   function(e){ changes(e) &&  intercept(this,e,func,'select','change',iid,depth); })];
+		reg.key(selStr,  function(e){ changes(e) &&  intercept(this,e,func,'select','change',iid,depth); });
+		reg.click(selStr,function(e){ changes(e) &&  intercept(this,e,func,'select','change',iid,depth); });
 	};
 	reg.select=function(selStr, func) {
-		var iid = interceptCounter++;
+		var iid = interceptIdCounter++;
 		var depth = getDepth(arguments);
-		return [reg.click(selStr, null, function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',iid,depth); }),
-		        reg.key(selStr,         function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',iid,depth); })];
+		reg.click(selStr, null, function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',iid,depth); });
+		reg.key(selStr,         function(e){ selects(e) && intercept(this,e,func,'input@type="text",textarea','select',iid,depth); });
 	};
 } else {
 	// regular bubbling behavior
 	reg.submit=function(selStr, func) {
 		var depth = getDepth(arguments);
-		var memInd = dMemInd++;
-		pushFunc(selStr, func, depth, submitHandlers, false, memInd);
-		return memInd;
+		pushFunc(selStr, func, depth, submitHandlers, false);
 	};
 	reg.reset=function(selStr, func) {
 		var depth = getDepth(arguments);
-		var memInd = dMemInd++;
-		pushFunc(selStr, func, depth, resetHandlers, false, memInd);
-		return memInd;
+		pushFunc(selStr, func, depth, resetHandlers, false);
 	};
 	reg.change=function(selStr, func) {
 		var depth = getDepth(arguments);
-		var memInd = dMemInd++;
-		pushFunc(selStr, func, depth, changeHandlers, false, memInd);
-		return memInd;
+		pushFunc(selStr, func, depth, changeHandlers, false);
 	};
 	reg.select=function(selStr, func) {
 		var depth = getDepth(arguments);
-		var memInd = dMemInd++;
-		pushFunc(selStr, func, depth, selectHandlers, false, memInd);
-		return memInd;
+		pushFunc(selStr, func, depth, selectHandlers, false);
 	};
 }
 
@@ -1220,28 +1204,6 @@ if (document.all && !window.opera) {
 // #####################################
 // #######################################
 // #########################################
-
-	// stops execution of event
-	reg.pause = function(memInd) {
-		var memInds = (memInd instanceof Array) ? memInd : [memInd];
-		for (var i=0; i<memInds.length; i++) {
-			memInd = memInds[i];
-			if (!(memInd in pauseResumeArray)) { continue; }
-			var arr = pauseResumeArray[memInd];
-			for (var j=0; j<arr.length; j++) { arr[j].paused = true; }
-		}
-	};
-
-	// starts execution of event
-	reg.resume = function(memInd) {
-		var memInds = (memInd instanceof Array) ? memInd : [memInd];
-		for (var i=0; i<memInds.length; i++) {
-			memInd = memInds[i];
-			if (!(memInd in pauseResumeArray)) { continue; }
-			var arr = pauseResumeArray[memInd];
-			for (var j=0; j<arr.length; j++) { arr[j].paused = false; }
-		}
-	};
 
 	// the delegator
 	function delegate(selectionHandlers, event) {
