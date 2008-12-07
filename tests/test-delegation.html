@@ -161,7 +161,7 @@ reg.hover('#baz',function(e){
 		el.innerHTML = 'now mouseout...';
 	}
 	over = true;
-	//console.log('over');
+	console.log('over');
 },function(e){
 	var el = gebcn('test',this)[0];
 	if (!over) {
@@ -176,24 +176,8 @@ reg.hover('#baz',function(e){
 		el.innerHTML = 'passed mouseover and mouseout';
 	}
 	over = false;
-	//console.log('out');
+	console.log('out');
 });
-
-reg.click('#testpause',function(){
-	rcn(this, 'failed');
-	rcn(this, 'unconfirmed');
-	acn(this, 'confirmed');
-	this.innerHTML = 'passed pause';
-});
-
-var pause = reg.click('#testpause',function(){
-	rcn(this, 'confirmed');
-	rcn(this, 'unconfirmed');
-	acn(this, 'failed');
-	this.innerHTML = 'failed pause';
-});
-
-reg.pause(pause);
 
 var submit = reg.submit('div#testsubmit',function(e){
 	rcn(this, 'unconfirmed');
@@ -201,7 +185,15 @@ var submit = reg.submit('div#testsubmit',function(e){
 	acn(this, 'confirmed');
 	this.innerHTML = 'passed submit';
 	return false;
-});
+},1);
+
+var submit = reg.submit('div#testsubmit',function(e){
+	rcn(this, 'unconfirmed');
+	acn(this, 'failed');
+	rcn(this, 'confirmed');
+	this.innerHTML = 'depth failed';
+	return false;
+},0);
 
 var reset = reg.reset('div#testreset',function(e){
 	rcn(this, 'unconfirmed');
@@ -226,6 +218,8 @@ reg.select('div#testselect',function(e){
 	this.innerHTML = 'passed select';
 	return false;
 });
+//reg.focus('select',function(e){console.log('focus: '+this.selectedIndex);});
+//reg.click('select',function(e){console.log('click: '+this.selectedIndex);},function(e){console.log('mousedown: '+this.selectedIndex);});
 
 //reg.addEvent(document.documentElement,'reset',function(e){console.log('general handler');});
 
@@ -286,13 +280,10 @@ mouseover me
 </div>
 </div>
 
-<div id="testpause" class="test unconfirmed">
-click to test pause
-</div>
-
 <div id="testsubmit" class="test unconfirmed">
 <form action="">
 <input type="submit" value="click to test submit"/>
+<input type="text"/>
 </form>
 </div>
 
