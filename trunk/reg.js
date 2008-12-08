@@ -698,24 +698,33 @@ Event attachment and detachment:
 
 var memEvents = {};
 var aMemInd = 0;
-function rememberEvent(elmt,evt,handle,cptr){
+function rememberEvent(elmt,evt,handle,cptr,cleanable){
 	var memInd = aMemInd++;
 	var key = "mem"+memInd;
 	memEvents[key] = {
 		element: elmt,
 		event: evt,
 		handler: handle,
-		capture: cptr
+		capture: cptr,
+		cleanable: cleanable
 	};
 	return memInd;
 }
-function cleanup(){return;
+// if "all" is true, it nukes all events
+// otherwise only those created with "cleanable" flag
+function cleanup(all){
 	for (var key in memEvents) {
 		var matches = key.match(/^mem(\d+)$/);
 		if (!matches) { continue; }
-		removeEvent(parseInt(matches[1]));
+		if (all || (memEvents[key].cleanable && !document.documentElement.contains(memEvents[key].element))) {
+			removeEvent(parseInt(matches[1]));
+			//console.log("cleaning up event: "+matches[1]);
+		}
 	}
 }
+window.setInterval(function(){
+	cleanup(false);
+},10000);
 
 // get the element on which the event occurred
 function getTarget(e) {
@@ -751,15 +760,17 @@ function cancelBubble(e) {
 
 // generic event adder, plus memory leak prevention
 // returns an int mem that you can use to later remove that event removeEvent(mem)
-function addEvent(elmt,evt,handler,cptr) {
+// cptr defaults false
+function addEvent(elmt,evt,handler,cptr,cleanable) {
 	cptr=(cptr)?true:false;
+	cleanable=(cleanable)?true:false;
 	if(elmt.addEventListener){
 		elmt.addEventListener(evt,handler,cptr);
-		return rememberEvent(elmt,evt,handler,cptr);
+		return rememberEvent(elmt,evt,handler,cptr,cleanable);
 	}else if(elmt.attachEvent){
 		var actualHandler = function(){handler.call(elmt,window.event);};
 		elmt.attachEvent("on"+evt,actualHandler);
-		return rememberEvent(elmt,evt,actualHandler);
+		return rememberEvent(elmt,evt,actualHandler,cptr,cleanable);
 	}
 }
 
@@ -783,7 +794,7 @@ function removeEvent(memInt) {
 }
 
 // fight memory leaks in ie
-addEvent(window,'unload',cleanup);
+addEvent(window,'unload',function(){cleanup(true)});
 
 var events = {
 	getTarget:        getTarget,
@@ -1083,12 +1094,12 @@ if (document.all && !window.opera) {
 		this._submit_prep=addEvent(this,'submit',function(e){
 			delegate(submitHandlers,e);
 			cancelBubble(e);
-		});
+		},false,true);
 		removeEvent(this._reset_prep);
 		this._reset_prep=addEvent(this,'reset',function(e){
 			delegate(resetHandlers,e);
 			cancelBubble(e);
-		});
+		},false,true);
 	},function(){
 		removeEvent(this._submit_prep);
 		removeEvent(this._reset_prep);
@@ -1098,7 +1109,7 @@ if (document.all && !window.opera) {
 		this._change_prep=addEvent(this,'change',function(e){
 			delegate(changeHandlers,e);
 			cancelBubble(e);
-		});
+		},false,true);
 	},function(){
 		removeEvent(this._change_prep);
 	});
@@ -1107,7 +1118,7 @@ if (document.all && !window.opera) {
 		this._select_prep=addEvent(this,'select',function(e){
 			delegate(selectHandlers,e);
 			cancelBubble(e);
-		});
+		},false,true);
 	},function(){
 		removeEvent(this._select_prep);
 	});
