@@ -1087,17 +1087,17 @@ window.reg = (function(){
 if (document.all && !window.opera) {
 	reg.focus('form',function(){
 		reg.removeEvent(this._submit_prep);
-		this._submit_prep=addEvent(this,'submit',function(e){delegate(this,submitHandlers,e);cancelBubble(e);});
+		this._submit_prep=addEvent(this,'submit',function(e){delegate(submitHandlers,e);cancelBubble(e);});
 		reg.removeEvent(this._reset_prep);
-		this._reset_prep=addEvent(this,'reset',function(e){delegate(this,resetHandlers,e);cancelBubble(e);});
+		this._reset_prep=addEvent(this,'reset',function(e){delegate(resetHandlers,e);cancelBubble(e);});
 	});
 	reg.focus('select',function(){
 		reg.removeEvent(this._change_prep);
-		this._change_prep=addEvent(this,'change',function(e){delegate(this,changeHandlers,e);cancelBubble(e);});
+		this._change_prep=addEvent(this,'change',function(e){delegate(changeHandlers,e);cancelBubble(e);});
 	});
 	reg.focus('input@type="text", input@type="password", textarea',function(){
 		reg.removeEvent(this._select_prep);
-		this._select_prep=addEvent(this,'select',function(e){delegate(this,selectHandlers,e);cancelBubble(e);});
+		this._select_prep=addEvent(this,'select',function(e){delegate(selectHandlers,e);cancelBubble(e);});
 	});
 }
 // regular bubbling behavior
@@ -1133,8 +1133,9 @@ reg.select=function(selStr, func) {
 // #########################################
 
 	// the delegator
-	function delegate(targ, selectionHandlers, event) {
+	function delegate(selectionHandlers, event) {
 		if (selectionHandlers) {
+			var targ = getTarget(event);
 			for (var sel in selectionHandlers) {
 				if(!selectionHandlers.hasOwnProperty(sel)) { continue; }
 				for(var a=0; a<selectionHandlers[sel].length; a++) {
@@ -1172,21 +1173,21 @@ reg.select=function(selStr, func) {
 	}
 
 	// attach the events
-	addEvent(document.documentElement,'click',        function(e){delegate(getTarget(e), clickHandlers,      e);});
-	addEvent(document.documentElement,'mousedown',    function(e){delegate(getTarget(e), mouseDownHandlers,  e);});
-	addEvent(document.documentElement,'mouseup',      function(e){delegate(getTarget(e), mouseUpHandlers,    e);});
-	addEvent(document.documentElement,'dblclick',     function(e){delegate(getTarget(e), doubleClickHandlers,e);});
-	addEvent(document.documentElement,'keydown',      function(e){delegate(getTarget(e), keyDownHandlers,    e);});
-	addEvent(document.documentElement,'keypress',     function(e){delegate(getTarget(e), keyPressHandlers,   e);});
-	addEvent(document.documentElement,'keyup',        function(e){delegate(getTarget(e), keyUpHandlers,      e);});
-	addEvent(document.documentElement,focusEventType, function(e){delegate(getTarget(e), focusHandlers,      e);},true);
-	addEvent(document.documentElement,blurEventType,  function(e){delegate(getTarget(e), blurHandlers,       e);},true);
-	addEvent(document.documentElement,'mouseover',    function(e){delegate(getTarget(e), mouseOverHandlers,  e);});
-	addEvent(document.documentElement,'mouseout',     function(e){delegate(getTarget(e), mouseOutHandlers,   e);});
-	addEvent(document.documentElement,'submit',       function(e){delegate(getTarget(e), submitHandlers,     e);});
-	addEvent(document.documentElement,'reset',        function(e){delegate(getTarget(e), resetHandlers,      e);});
-	addEvent(document.documentElement,'change',       function(e){delegate(getTarget(e), changeHandlers,     e);});
-	addEvent(document.documentElement,'select',       function(e){delegate(getTarget(e), selectHandlers,     e);});
+	addEvent(document.documentElement,'click',        function(e){delegate(clickHandlers,      e);});
+	addEvent(document.documentElement,'mousedown',    function(e){delegate(mouseDownHandlers,  e);});
+	addEvent(document.documentElement,'mouseup',      function(e){delegate(mouseUpHandlers,    e);});
+	addEvent(document.documentElement,'dblclick',     function(e){delegate(doubleClickHandlers,e);});
+	addEvent(document.documentElement,'keydown',      function(e){delegate(keyDownHandlers,    e);});
+	addEvent(document.documentElement,'keypress',     function(e){delegate(keyPressHandlers,   e);});
+	addEvent(document.documentElement,'keyup',        function(e){delegate(keyUpHandlers,      e);});
+	addEvent(document.documentElement,focusEventType, function(e){delegate(focusHandlers,      e);},true);
+	addEvent(document.documentElement,blurEventType,  function(e){delegate(blurHandlers,       e);},true);
+	addEvent(document.documentElement,'mouseover',    function(e){delegate(mouseOverHandlers,  e);});
+	addEvent(document.documentElement,'mouseout',     function(e){delegate(mouseOutHandlers,   e);});
+	addEvent(document.documentElement,'submit',       function(e){delegate(submitHandlers,     e);});
+	addEvent(document.documentElement,'reset',        function(e){delegate(resetHandlers,      e);});
+	addEvent(document.documentElement,'change',       function(e){delegate(changeHandlers,     e);});
+	addEvent(document.documentElement,'select',       function(e){delegate(selectHandlers,     e);});
 
 	// handy for css
 	addClassName(document.documentElement, 'regenabled');
