@@ -1070,14 +1070,6 @@ window.reg = (function(){
 		pushFunc(selStr, upFunc,    depth, keyUpHandlers,    false);
 	};
 
-// #########################################
-// #######################################
-// #####################################
-// ###################################
-// #################################
-// ###############################
-// #############################
-// ###########################
 // #########################
 // #######################
 // #####################
@@ -1086,17 +1078,17 @@ window.reg = (function(){
 
 if (document.all && !window.opera) {
 	reg.focus('form',function(){
-		reg.removeEvent(this._submit_prep);
+		removeEvent(this._submit_prep);
 		this._submit_prep=addEvent(this,'submit',function(e){delegate(submitHandlers,e);cancelBubble(e);});
-		reg.removeEvent(this._reset_prep);
+		removeEvent(this._reset_prep);
 		this._reset_prep=addEvent(this,'reset',function(e){delegate(resetHandlers,e);cancelBubble(e);});
 	});
 	reg.focus('select',function(){
-		reg.removeEvent(this._change_prep);
+		removeEvent(this._change_prep);
 		this._change_prep=addEvent(this,'change',function(e){delegate(changeHandlers,e);cancelBubble(e);});
 	});
 	reg.focus('input@type="text", input@type="password", textarea',function(){
-		reg.removeEvent(this._select_prep);
+		removeEvent(this._select_prep);
 		this._select_prep=addEvent(this,'select',function(e){delegate(selectHandlers,e);cancelBubble(e);});
 	});
 }
@@ -1123,14 +1115,6 @@ reg.select=function(selStr, func) {
 // #####################
 // #######################
 // #########################
-// ###########################
-// #############################
-// ###############################
-// #################################
-// ###################################
-// #####################################
-// #######################################
-// #########################################
 
 	// the delegator
 	function delegate(selectionHandlers, event) {
