@@ -83,18 +83,6 @@ Three things to remember about the handler functions:
 
 --------
 
-=pause() and resume()=
-
-`reg.click()`, `reg.hover()`, `reg.focus()` and `reg.key()` return an ID that can later be used to pause and resume that event handler.
-
-{{{
-var id = reg.click('div.foo',myFunc);
-reg.pause(id); // now events on div.foo won't be handled
-reg.resume(id); // now events on div.foo will once again be handled
-}}}
-
---------
-
 =Examples=
 
 Here are some code examples showing what kinds of things you can do with the `reglib` event delegation methods.
