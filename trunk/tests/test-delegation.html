@@ -183,7 +183,7 @@ var submit = reg.submit('div#testsubmit',function(e){
 	rcn(this, 'unconfirmed');
 	rcn(this, 'failed');
 	acn(this, 'confirmed');
-	this.innerHTML = 'passed submit';
+	this.innerHTML += ' passed submit';
 	return false;
 },1);
 
@@ -191,7 +191,7 @@ var submit = reg.submit('div#testsubmit',function(e){
 	rcn(this, 'unconfirmed');
 	acn(this, 'failed');
 	rcn(this, 'confirmed');
-	this.innerHTML = 'depth failed';
+	this.innerHTML += 'depth failed';
 	return false;
 },0);
 
@@ -199,7 +199,7 @@ var reset = reg.reset('div#testreset',function(e){
 	rcn(this, 'unconfirmed');
 	rcn(this, 'failed');
 	acn(this, 'confirmed');
-	this.innerHTML = 'passed reset';
+	this.innerHTML += ' passed reset';
 	return false;
 });
 
@@ -208,13 +208,13 @@ reg.change('div#testchange',function(e){
 		rcn(this, 'unconfirmed');
 		acn(this, 'failed');
 		rcn(this, 'confirmed');
-		this.innerHTML = 'failed change';
+		this.innerHTML += 'failed change';
 		return false;
 	} else {
 		rcn(this, 'unconfirmed');
 		rcn(this, 'failed');
 		acn(this, 'confirmed');
-		this.innerHTML = 'passed change';
+		this.innerHTML += ' passed change';
 		return false;
 	}
 });
@@ -223,13 +223,9 @@ reg.select('div#testselect',function(e){
 	rcn(this, 'unconfirmed');
 	rcn(this, 'failed');
 	acn(this, 'confirmed');
-	this.innerHTML = 'passed select';
+	this.innerHTML += ' passed select';
 	return false;
 });
-//reg.focus('select',function(e){console.log('focus: '+this.selectedIndex);});
-//reg.click('select',function(e){console.log('click: '+this.selectedIndex);},function(e){console.log('mousedown: '+this.selectedIndex);});
-
-//reg.addEvent(document.documentElement,'reset',function(e){console.log('general handler');});
 
 reg.postSetup(function(){ document.body.innerHTML += ''; });
 

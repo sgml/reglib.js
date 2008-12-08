@@ -765,14 +765,17 @@ function addEvent(elmt,evt,handler,cptr) {
 
 // event remover
 function removeEvent(memInt) {
-	var eo = memEvents["mem"+memInt];
+	var memProp = "mem"+memInt;
+	var eo = memEvents[memProp];
 	if (eo) {
 		var el=eo.element;
 		if(el.removeEventListener) {
 			el.removeEventListener(eo.event, eo.handler, eo.capture);
+			delete memEvents[memProp];
 			return true;
 		} else if(el.detachEvent) {
 			el.detachEvent('on'+eo.event, eo.handler);
+			delete memEvents[memProp];
 			return true;
 		}
 	}
