@@ -204,7 +204,7 @@ var reset = reg.reset('div#testreset',function(e){
 });
 
 reg.change('div#testchange',function(e){
-	if (!reg.matches(reg.getTarget(e),'select') || !reg.matches(this,'div#testchange')) {
+	if (!reg.matches(reg.getTarget(e),'select,input,textarea') || !reg.matches(this,'div#testchange')) {
 		rcn(this, 'unconfirmed');
 		acn(this, 'failed');
 		rcn(this, 'confirmed');
@@ -316,6 +316,8 @@ mouseover me
 <option>baz2</option>
 </select>
 <input type="text"/>
+<input type="checkbox"/>
+<input type="radio"/>
 </form>
 </div>
 
