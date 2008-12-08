@@ -204,11 +204,19 @@ var reset = reg.reset('div#testreset',function(e){
 });
 
 reg.change('div#testchange',function(e){
-	rcn(this, 'unconfirmed');
-	rcn(this, 'failed');
-	acn(this, 'confirmed');
-	this.innerHTML = 'passed change';
-	return false;
+	if (!reg.matches(reg.getTarget(e),'select') || !reg.matches(this,'div#testchange')) {
+		rcn(this, 'unconfirmed');
+		acn(this, 'failed');
+		rcn(this, 'confirmed');
+		this.innerHTML = 'failed change';
+		return false;
+	} else {
+		rcn(this, 'unconfirmed');
+		rcn(this, 'failed');
+		acn(this, 'confirmed');
+		this.innerHTML = 'passed change';
+		return false;
+	}
 });
 
 reg.select('div#testselect',function(e){
@@ -284,6 +292,7 @@ mouseover me
 <form action="">
 <input type="submit" value="click to test submit"/>
 <input type="text"/>
+<input/>
 </form>
 </div>
 
@@ -301,6 +310,12 @@ mouseover me
 <option>bar</option>
 <option>baz</option>
 </select>
+<select>
+<option>changeme2</option>
+<option>bar2</option>
+<option>baz2</option>
+</select>
+<input type="text"/>
 </form>
 </div>
 
