@@ -1084,104 +1084,39 @@ window.reg = (function(){
 // ###################
 // EXPERIMENTAL !!!
 
-// TODO: is there a better generic test for IE?
-// TODO: is it only IE that fails to bubble on form events?
-// TODO: will IE8 ship with bubbling form events? IE8b2 does not have them.
-// TODO: will IE9 ship with bubbling form events? will it ship with document.all?
 if (document.all && !window.opera) {
-
-	function intercept(thisEl,event,func,elType,eventType,iid,depth) {
-		var targ = reg.getTarget(event);
-		targ = reg.matches(targ, elType) ? targ : reg.getParent(targ, elType);//we want target of the would-be non-bubbling event
-		var hFlag = "_handled_" + iid + "_";
-		if (targ && !targ[hFlag]) {
-			for (var d=0,max=(depth>=0?depth:1000),chEl=targ; d<=max && chEl; d++) {
-				if (chEl===thisEl) {
-					targ[hFlag] = true;
-					var feid = reg.addEvent(targ, eventType, function(e){
-						var retVal = func.call(thisEl,e);
-						if (retVal === false) { reg.cancelDefault(e); }
-						reg.removeEvent(feid);
-						this[hFlag] = false;
-					});
-					return;
-				} else {
-					chEl = chEl.parentNode;
-				}
-			}
-			console.log('intercept() failed');
-		}
-	}
-	function resets(e){//will this event trigger reset?
-		if (e.type==='click') {
-			var targ = reg.getTarget(e);
-			var isReset = reg.matches(targ,'@type="reset"') || reg.getParent(targ, '@type="reset"');
-			return isReset && e.type==='click';
-		} else {
-			return false;
-		}
-	}
-	function submits(e){//will this event trigger submit?
-		var targ = reg.getTarget(e);
-		if (e.type==='keydown') {
-			var isTextInput = reg.matches(targ,'input@type="text",input@type="password"');
-			var isEnterReturn = e.keyCode==13;
-			return isTextInput && isEnterReturn;
-		} else if (e.type==='click') {
-			var s = '@type="submit"';
-			//clicks can originate from subelements of <button>
-			return !!(reg.matches(targ,s) ? targ : reg.getParent(targ,s));
-		} else {
-			return false;
-		}
-	}
-	var interceptIdCounter = 0;
-	reg.submit=function(selStr, func) {
-		var iid = interceptIdCounter++;
-		var depth = getDepth(arguments);
-		reg.click(selStr, function(e){ submits(e) && intercept(this,e,func,'form','submit',iid,depth); });
-		reg.key(selStr,   function(e){ submits(e) && intercept(this,e,func,'form','submit',iid,depth); });
-	};
-	reg.reset=function(selStr, func) {
-		var iid = interceptIdCounter++;
-		var depth = getDepth(arguments);
-		reg.click(selStr, function(e){ resets(e) &&  intercept(this,e,func,'form','reset',iid,depth); });
-	};
+	reg.focus('form',function(){
+		reg.removeEvent(this._submit_prep);
+		this._submit_prep=addEvent(this,'submit',function(e){delegate(this,submitHandlers,e);cancelBubble(e);});
+		reg.removeEvent(this._reset_prep);
+		this._reset_prep=addEvent(this,'reset',function(e){delegate(this,resetHandlers,e);cancelBubble(e);});
+	});
 	reg.focus('select',function(){
 		reg.removeEvent(this._change_prep);
-		this._change_prep=addEvent(this,'change',function(e){delegate(this,changeHandlers,e);});
+		this._change_prep=addEvent(this,'change',function(e){delegate(this,changeHandlers,e);cancelBubble(e);});
 	});
 	reg.focus('input@type="text", input@type="password", textarea',function(){
 		reg.removeEvent(this._select_prep);
-		this._select_prep=addEvent(this,'select',function(e){delegate(this,selectHandlers,e);});
+		this._select_prep=addEvent(this,'select',function(e){delegate(this,selectHandlers,e);cancelBubble(e);});
 	});
-	reg.change=function(selStr, func) {
-		var depth = getDepth(arguments);
-		pushFunc(selStr, func, depth, changeHandlers, false);
-	};
-	reg.select=function(selStr, func) {
-		var depth = getDepth(arguments);
-		pushFunc(selStr, func, depth, selectHandlers, false);
-	};
-} else {
-	// regular bubbling behavior
-	reg.submit=function(selStr, func) {
-		var depth = getDepth(arguments);
-		pushFunc(selStr, func, depth, submitHandlers, false);
-	};
-	reg.reset=function(selStr, func) {
-		var depth = getDepth(arguments);
-		pushFunc(selStr, func, depth, resetHandlers, false);
-	};
-	reg.change=function(selStr, func) {
-		var depth = getDepth(arguments);
-		pushFunc(selStr, func, depth, changeHandlers, false);
-	};
-	reg.select=function(selStr, func) {
-		var depth = getDepth(arguments);
-		pushFunc(selStr, func, depth, selectHandlers, false);
-	};
 }
+// regular bubbling behavior
+reg.submit=function(selStr, func) {
+	var depth = getDepth(arguments);
+	pushFunc(selStr, func, depth, submitHandlers, false);
+};
+reg.reset=function(selStr, func) {
+	var depth = getDepth(arguments);
+	pushFunc(selStr, func, depth, resetHandlers, false);
+};
+reg.change=function(selStr, func) {
+	var depth = getDepth(arguments);
+	pushFunc(selStr, func, depth, changeHandlers, false);
+};
+reg.select=function(selStr, func) {
+	var depth = getDepth(arguments);
+	pushFunc(selStr, func, depth, selectHandlers, false);
+};
 
 // EXPERIMENTAL !!!
 // ###################
