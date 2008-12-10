@@ -1084,41 +1084,40 @@ reg.key=function(selStr, downFunc, pressFunc, upFunc){
 // set delegation directly on the element in question by co-opting
 // the focus event which is guaranteed to happen first
 if (document.all && !window.opera) {
-	/*
-	It adds the event every time (instead of just setting it once
-	and setting a flag) because sometimes IE persists the flag
-	across a reload, but not the event handler.
-	*/
+	function ieSubmitDelegate(e) {
+		delegate(submitHandlers,e);
+		cancelBubble(e);
+	};
+	function ieResetDelegate(e) {
+		delegate(resetHandlers,e);
+		cancelBubble(e);
+	};
+	function ieChangeDelegate(e) {
+		delegate(changeHandlers,e);
+		cancelBubble(e);
+	};
+	function ieSelectDelegate(e) {
+		delegate(selectHandlers,e);
+		cancelBubble(e);
+	};
 	reg.focus('form',function(){
 		removeEvent(this._submit_prep);
-		this._submit_prep=addEvent(this,'submit',function(e){
-			delegate(submitHandlers,e);
-			cancelBubble(e);
-		},false,true);
+		this._submit_prep=addEvent(this,'submit',ieSubmitDelegate,false,true);
 		removeEvent(this._reset_prep);
-		this._reset_prep=addEvent(this,'reset',function(e){
-			delegate(resetHandlers,e);
-			cancelBubble(e);
-		},false,true);
+		this._reset_prep=addEvent(this,'reset',ieResetDelegate,false,true);
 	},function(){
 		removeEvent(this._submit_prep);
 		removeEvent(this._reset_prep);
 	});
-	reg.focus('select,input@type="text",input@type="password",input@type="radio",input@type="checkbox",textarea',function(){
+	reg.focus('select,input,textarea',function(){
 		removeEvent(this._change_prep);
-		this._change_prep=addEvent(this,'change',function(e){
-			delegate(changeHandlers,e);
-			cancelBubble(e);
-		},false,true);
+		this._change_prep=addEvent(this,'change',ieChangeDelegate,false,true);
 	},function(){
 		removeEvent(this._change_prep);
 	});
-	reg.focus('input@type="text",input@type="password",textarea',function(){
+	reg.focus('input,textarea',function(){
 		removeEvent(this._select_prep);
-		this._select_prep=addEvent(this,'select',function(e){
-			delegate(selectHandlers,e);
-			cancelBubble(e);
-		},false,true);
+		this._select_prep=addEvent(this,'select',ieSelectDelegate,false,true);
 	},function(){
 		removeEvent(this._select_prep);
 	});
