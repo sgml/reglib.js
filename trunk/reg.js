@@ -1,6 +1,6 @@
 /*
 reglib version 1.1
-Copyright 2008
+Copyright 2008 greg.reimer@sun.com
 Released under MIT license
 http://code.google.com/p/reglib/
 */
@@ -525,14 +525,22 @@ function newElement(name, atts, content) {
 function elementText(el) {
 	// <a id="foo" href="page.html">click <b>here</b></a>
 	// elementText(document.getElementById('foo')) == "click here"
-	var r = '';
-	if (el.alt) { r += el.alt; }
-	r += el.innerHTML.replace(/<[a-z0-9_-]+ [^>]+alt="([^">]+)[^>]+>/ig,'$1').replace(/<[^>]+>/ig,'');
-	var d = newElement('div');
-	d.innerHTML = r;
-	r = (d.childNodes[0]) ? d.childNodes[0].data : '';
-	d = null;
-	return r;
+	// warning: recurses through *all* descendants of el
+	if(!el){return '';}
+	var chlds = el.childNodes;
+	var result = '';
+	if (reg.matches(el,'img@alt,area@alt')) { result += el.alt; }
+	else if (reg.matches(el,'input')) { result += el.value; }
+	else {
+		for (var a=0; a<chlds.length; a++) {
+			if (3 == chlds[a].nodeType) {
+				result += chlds[a].data;
+			} else if (1 == chlds[a].nodeType) {
+				result += elemText(chlds[a]);
+			}
+		}
+	}
+	return result;
 }
 
 // GET ELEMENT BY ID
@@ -837,13 +845,14 @@ and N is the number of elements on the page
 
 // these contain lists of things to do
 var preSetupQueue=[];
-var setupQueue={};
+var setupQueue=[];
+var setupQueueByTag={};
 var postSetupQueue=[];
 
 // traverse and act onload
 reg.setup=function(selector, setup, firstTimeOnly){
 	firstTimeOnly=(firstTimeOnly)?true:false;
-	var sq=setupQueue;
+	var sqt=setupQueueByTag;
 	var parsedSel = new reg.Selector(selector);
 	var tagNames=getTagNames(parsedSel);
 	var regObj={
@@ -852,10 +861,11 @@ reg.setup=function(selector, setup, firstTimeOnly){
 		ran:false,
 		firstTimeOnly:firstTimeOnly
 	};
+	setupQueue.push(regObj);
 	for(var a=0;a<tagNames.length;a++){
 		var tagName = tagNames[a];
-		if(!sq[tagName]){sq[tagName]=[regObj];}
-		else{sq[tagName].push(regObj);}
+		if(!sqt[tagName]){sqt[tagName]=[regObj];}
+		else{sqt[tagName].push(regObj);}
 	}
 };
 // do this before setup
@@ -872,11 +882,11 @@ var runSetupFunctions = reg.rerun = function(el, noClobber){
 	var start = new Date().getTime();
 	if (typeof el.clobberable != 'undefined' && el.clobberable && noClobber) { return; }
 	var doc=(el)?el:document;
-	var sq=setupQueue;
-	var sqIsEmpty=true;
-	for (var tagName in sq) {
-		if(!sq.hasOwnProperty(tagName)) { continue; }
-		sqIsEmpty = false;
+	var sqt=setupQueueByTag;
+	var sqtIsEmpty=true;
+	for (var tagName in sqt) {
+		if(!sqt.hasOwnProperty(tagName)) { continue; }
+		sqtIsEmpty = false;
 		break;
 	}
 
@@ -886,37 +896,33 @@ var runSetupFunctions = reg.rerun = function(el, noClobber){
 		//querySelector() branch
 
 		var qSelResults = [];
-		for (var tagName in sq) {
-			if(!sq.hasOwnProperty(tagName)) { continue; }
-			var regObjArray = sq[tagName];
-			for (var i=0; i<regObjArray.length; i++) {
-				var regObj = regObjArray[i];
-				if (regObj.firstTimeOnly) {
-					if (regObj.ran) { continue; }
-					try {
-						var elmt = el.querySelector(toQuerySelectorString(regObj.selector));
-						if (elmt) { qSelResults.push({el:elmt,regObj:regObj}); }
-					} catch (ex) {
-						console.log("querySelector('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
-						continue;
+		for (var i=0; i<setupQueue.length; i++) {
+			var regObj = setupQueue[i];
+			if (regObj.firstTimeOnly) {
+				if (regObj.ran) { continue; }
+				try {
+					var elmt = el.querySelector(toQuerySelectorString(regObj.selector));
+					if (elmt) { qSelResults.push({el:elmt,regObj:regObj}); }
+				} catch (ex) {
+					console.log("querySelector('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
+					continue;
+				}
+			} else {
+				try {
+					var elmts = el.querySelectorAll(toQuerySelectorString(regObj.selector));
+					for (var j=0; j<elmts.length; j++) {
+						qSelResults.push({el:elmts[j],regObj:regObj});
 					}
-				} else {
-					try {
-						var elmts = el.querySelectorAll(toQuerySelectorString(regObj.selector));
-						for (var j=0; j<elmts.length; j++) {
-							qSelResults.push({el:elmts[j],regObj:regObj});
-						}
-					} catch (ex) {
-						console.log("querySelectorAll('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
-						continue;
-					}
+				} catch (ex) {
+					console.log("querySelectorAll('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
+					continue;
 				}
 			}
 		}
 		for (var i=0; i<qSelResults.length; i++) {
 			runIt(qSelResults[i].el, qSelResults[i].regObj);
 		}
-	} else if (!sqIsEmpty) {
+	} else if (!sqtIsEmpty) {
 
 		//####################################
 		//old branch
@@ -932,8 +938,8 @@ var runSetupFunctions = reg.rerun = function(el, noClobber){
 		for(var a=0,elmt;elmt=els[a++];){
 			if (elmt.nodeType!=1){continue;}//for ie7
 			var lcNodeName=elmt.nodeName.toLowerCase();
-			var regObjArrayAll=sq['*'];
-			var regObjArrayTag=sq[lcNodeName];
+			var regObjArrayAll=sqt['*'];
+			var regObjArrayTag=sqt[lcNodeName];
 
 			// any wildcards?
 			if(regObjArrayAll){
@@ -1076,6 +1082,22 @@ reg.key=function(selStr, downFunc, pressFunc, upFunc){
 	pushFunc(selStr, pressFunc, depth, keyPressHandlers, false);
 	pushFunc(selStr, upFunc,    depth, keyUpHandlers,    false);
 };
+reg.submit=function(selStr, func) {
+	var depth = getDepth(arguments);
+	pushFunc(selStr, func, depth, submitHandlers, false);
+};
+reg.reset=function(selStr, func) {
+	var depth = getDepth(arguments);
+	pushFunc(selStr, func, depth, resetHandlers, false);
+};
+reg.change=function(selStr, func) {
+	var depth = getDepth(arguments);
+	pushFunc(selStr, func, depth, changeHandlers, false);
+};
+reg.select=function(selStr, func) {
+	var depth = getDepth(arguments);
+	pushFunc(selStr, func, depth, selectHandlers, false);
+};
 
 // workaround for IE's lack of support for bubbling on form events
 // set delegation directly on the element in question by co-opting
@@ -1084,19 +1106,19 @@ if (document.all && !window.opera) {
 	function ieSubmitDelegate(e) {
 		delegate(submitHandlers,e);
 		cancelBubble(e);
-	};
+	}
 	function ieResetDelegate(e) {
 		delegate(resetHandlers,e);
 		cancelBubble(e);
-	};
+	}
 	function ieChangeDelegate(e) {
 		delegate(changeHandlers,e);
 		cancelBubble(e);
-	};
+	}
 	function ieSelectDelegate(e) {
 		delegate(selectHandlers,e);
 		cancelBubble(e);
-	};
+	}
 	reg.focus('form',function(){
 		removeEvent(this._submit_prep);
 		this._submit_prep=addEvent(this,'submit',ieSubmitDelegate,false,true);
@@ -1119,23 +1141,6 @@ if (document.all && !window.opera) {
 		removeEvent(this._select_prep);
 	});
 }
-
-reg.submit=function(selStr, func) {
-	var depth = getDepth(arguments);
-	pushFunc(selStr, func, depth, submitHandlers, false);
-};
-reg.reset=function(selStr, func) {
-	var depth = getDepth(arguments);
-	pushFunc(selStr, func, depth, resetHandlers, false);
-};
-reg.change=function(selStr, func) {
-	var depth = getDepth(arguments);
-	pushFunc(selStr, func, depth, changeHandlers, false);
-};
-reg.select=function(selStr, func) {
-	var depth = getDepth(arguments);
-	pushFunc(selStr, func, depth, selectHandlers, false);
-};
 
 // the delegator
 function delegate(selectionHandlers, event) {
@@ -1178,24 +1183,22 @@ if(typeof document.onactivate == 'object'){
 }
 
 // attach the events
-addEvent(document.documentElement,'click',        function(e){delegate(clickHandlers,   e);});
-addEvent(document.documentElement,'mousedown',    function(e){delegate(mDownHandlers,   e);});
-addEvent(document.documentElement,'mouseup',      function(e){delegate(mUpHandlers,     e);});
-addEvent(document.documentElement,'dblclick',     function(e){delegate(dblClickHandlers,e);});
-addEvent(document.documentElement,'keydown',      function(e){delegate(keyDownHandlers, e);});
-addEvent(document.documentElement,'keypress',     function(e){delegate(keyPressHandlers,e);});
-addEvent(document.documentElement,'keyup',        function(e){delegate(keyUpHandlers,   e);});
-addEvent(document.documentElement,focusEventType, function(e){delegate(focusHandlers,   e);},true);
-addEvent(document.documentElement,blurEventType,  function(e){delegate(blurHandlers,    e);},true);
-addEvent(document.documentElement,'mouseover',    function(e){delegate(mOverHandlers,   e);});
-addEvent(document.documentElement,'mouseout',     function(e){delegate(mOutHandlers,    e);});
-addEvent(document.documentElement,'submit',       function(e){delegate(submitHandlers,  e);});
-addEvent(document.documentElement,'reset',        function(e){delegate(resetHandlers,   e);});
-addEvent(document.documentElement,'change',       function(e){delegate(changeHandlers,  e);});
-addEvent(document.documentElement,'select',       function(e){delegate(selectHandlers,  e);});
-
-// handy for css
-addClassName(document.documentElement, 'regenabled');
+var docEl = document.documentElement;
+addEvent(docEl,'click',        function(e){delegate(clickHandlers,   e);});
+addEvent(docEl,'mousedown',    function(e){delegate(mDownHandlers,   e);});
+addEvent(docEl,'mouseup',      function(e){delegate(mUpHandlers,     e);});
+addEvent(docEl,'dblclick',     function(e){delegate(dblClickHandlers,e);});
+addEvent(docEl,'keydown',      function(e){delegate(keyDownHandlers, e);});
+addEvent(docEl,'keypress',     function(e){delegate(keyPressHandlers,e);});
+addEvent(docEl,'keyup',        function(e){delegate(keyUpHandlers,   e);});
+addEvent(docEl,focusEventType, function(e){delegate(focusHandlers,   e);},true);
+addEvent(docEl,blurEventType,  function(e){delegate(blurHandlers,    e);},true);
+addEvent(docEl,'mouseover',    function(e){delegate(mOverHandlers,   e);});
+addEvent(docEl,'mouseout',     function(e){delegate(mOutHandlers,    e);});
+addEvent(docEl,'submit',       function(e){delegate(submitHandlers,  e);});
+addEvent(docEl,'reset',        function(e){delegate(resetHandlers,   e);});
+addEvent(docEl,'change',       function(e){delegate(changeHandlers,  e);});
+addEvent(docEl,'select',       function(e){delegate(selectHandlers,  e);});
 
 // #############################################################################
 // #### CONSOLE.LOG BACKUP #####################################################
@@ -1222,6 +1225,7 @@ else {
 // #### AND... DONE. ###########################################################
 // #############################################################################
 
+addClassName(docEl, 'regenabled');
 return reg;
 
 })();
