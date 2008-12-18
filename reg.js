@@ -691,40 +691,7 @@ for (var func in helpers) {
 
 /*
 Event attachment and detachment:
-- reg.addEvent(elmt,evt,handler,cptr)
-- reg.calcelDefault(evt)
-- reg.getTarget(evt)
 */
-
-var memEvents = {};
-var aMemInd = 0;
-function rememberEvent(elmt,evt,handle,cptr,cleanable){
-	var memInd = aMemInd++;
-	var key = "mem"+memInd;
-	memEvents[key] = {
-		element: elmt,
-		event: evt,
-		handler: handle,
-		capture: cptr,
-		cleanable: cleanable
-	};
-	return memInd;
-}
-// if "all" is true, it nukes all events
-// otherwise only those created with "cleanable" flag
-function cleanup(all){
-	for (var key in memEvents) {
-		var matches = key.match(/^mem(\d+)$/);
-		if (!matches) { continue; }
-		if (all || (memEvents[key].cleanable && !document.documentElement.contains(memEvents[key].element))) {
-			removeEvent(parseInt(matches[1]));
-			//console.log("cleaning up event: "+matches[1]);
-		}
-	}
-}
-window.setInterval(function(){
-	cleanup(false);
-},10000);
 
 // get the element on which the event occurred
 function getTarget(e) {
@@ -758,12 +725,61 @@ function cancelBubble(e) {
 	e.cancelBubble=true;
 }
 
+// event registry
+var memEvents = {};
+var aMemInd = 0;
+function rememberEvent(elmt,evt,handle,cptr,cleanable){
+	var memInd = aMemInd++;
+	memEvents[memInd+""] = {
+		element:   elmt,
+		event:     evt,
+		handler:   handle,
+		capture:   !!cptr,
+		cleanable: !!cleanable
+	};
+	return memInd;
+}
+
+// event remover
+function removeEvent(memInd) {
+	var key = memInd+"";
+	var eo = memEvents[key];
+	if (eo) {
+		var el=eo.element;
+		if(el.removeEventListener) {
+			el.removeEventListener(eo.event, eo.handler, eo.capture);
+			delete memEvents[key];
+			return true;
+		} else if(el.detachEvent) {
+			el.detachEvent('on'+eo.event, eo.handler);
+			delete memEvents[key];
+			return true;
+		}
+	}
+	return false;
+}
+
+// if "all" is true, it nukes all events
+// otherwise only those created with "cleanable" flag
+function cleanup(all){
+	for (var key in memEvents) {
+		if (!memEvents.hasOwnProperty(key)) { continue; }
+		if (all || (memEvents[key].cleanable && !document.documentElement.contains(memEvents[key].element))) {
+			removeEvent(key);
+			//console.log("cleaning up event: "+key);
+		}
+	}
+}
+
+//periodically clean up all cleanable events
+window.setInterval(function(){
+	cleanup(false);
+},10000);
+
 // generic event adder, plus memory leak prevention
 // returns an int mem that you can use to later remove that event removeEvent(mem)
 // cptr defaults false
 function addEvent(elmt,evt,handler,cptr,cleanable) {
-	cptr=(cptr)?true:false;
-	cleanable=(cleanable)?true:false;
 	if(elmt.addEventListener){
 		elmt.addEventListener(evt,handler,cptr);
 		return rememberEvent(elmt,evt,handler,cptr,cleanable);
@@ -774,26 +790,7 @@ function addEvent(elmt,evt,handler,cptr,cleanable) {
 	}
 }
 
-// event remover
-function removeEvent(memInt) {
-	var memProp = "mem"+memInt;
-	var eo = memEvents[memProp];
-	if (eo) {
-		var el=eo.element;
-		if(el.removeEventListener) {
-			el.removeEventListener(eo.event, eo.handler, eo.capture);
-			delete memEvents[memProp];
-			return true;
-		} else if(el.detachEvent) {
-			el.detachEvent('on'+eo.event, eo.handler);
-			delete memEvents[memProp];
-			return true;
-		}
-	}
-	return false;
-}
-
-// fight memory leaks in ie
+// try to reduce memory leaks in ie
 addEvent(window,'unload',function(){cleanup(true)});
 
 var events = {
