@@ -933,6 +933,8 @@ var runSetupFunctions = reg.rerun = function(el, noClobber){
 		for (var i=elsList.length-1, els=[]; i>=0; i--) {
 			els[i] = elsList[i];
 		}
+		
+		var qSelResults = [];
 
 		// crawl the dom
 		for(var a=0,elmt;elmt=els[a++];){
@@ -947,7 +949,9 @@ var runSetupFunctions = reg.rerun = function(el, noClobber){
 					var regObj=regObjArrayAll[b];
 					if(regObj.firstTimeOnly && regObj.ran){continue;}
 					var matches = regObj.selector.matches(elmt);
-					if(matches){runIt(elmt, regObj);}
+					if(matches){
+						qSelResults.push({el:elmt,regObj:regObj});
+					}
 				}
 			}
 
@@ -957,10 +961,16 @@ var runSetupFunctions = reg.rerun = function(el, noClobber){
 					var regObj=regObjArrayTag[b];
 					if(regObj.firstTimeOnly && regObj.ran){continue;}
 					var matches = regObj.selector.matches(elmt);
-					if(matches){runIt(elmt, regObj);}
+					if(matches){
+						qSelResults.push({el:elmt,regObj:regObj});
+					}
 				}
 			}
 		}
+		for (var i=0; i<qSelResults.length; i++) {
+			runIt(qSelResults[i].el, qSelResults[i].regObj);
+		}
+
 	}
 	el.clobberable = true;
 	var runtime = new Date().getTime() - start;
