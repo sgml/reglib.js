@@ -985,6 +985,7 @@ if (!ie6) {
 var loadFuncRan = false;
 function loadFunc(e) {
 	if (!loadFuncRan) {
+		loadFuncRan = true;
 		for(var a=0;a<preSetupQueue.length;a++){
 			preSetupQueue[a]();
 		}
@@ -992,7 +993,6 @@ function loadFunc(e) {
 		for(var a=0;a<postSetupQueue.length;a++){
 			postSetupQueue[a]();
 		}
-		loadFuncRan = true;
 		if (!ie6) {
 			// unfortunately this causes hangs and laborious redraws in ie6
 			removeClassName(document.documentElement, 'regloading');
