@@ -1,6 +1,6 @@
 /*
 reglib version 1.1
-Copyright 2008 greg.reimer@sun.com
+Copyright 2008
 Released under MIT license
 http://code.google.com/p/reglib/
 */
@@ -10,9 +10,9 @@ window.reg = (function(){
 
 var reg = {};
 
-// this adds reg's dom helper functions and event functions to the 
-// global namespace. don't call this method if you want to keep your 
-// global namespace clean. alternatively you can individually import 
+// this adds reg's dom helper functions and event functions to the
+// global namespace. don't call this method if you want to keep your
+// global namespace clean. alternatively you can individually import
 // certain sections, this is just a convenient way to do them all.
 reg.importAll = function() {
 	var errStrings = [];
@@ -140,7 +140,7 @@ reg.Selector=function(selString) {
 
 				var lastAttribute = lastTag.attributes[lastTag.attributes.length-1];
 				lastAttribute.matchType = mTypeMatch[0];
-				
+
 				selString=selString.substring(lastAttribute.matchType.length);
 				if(selString.charAt(0)!='"'&&selString.charAt(0)!="'"){
 					if(exp.spaceQuote.test(selString)){selString=selString.replace(exp.leadSpace,'');}
@@ -220,7 +220,7 @@ function toQuerySelectorString(sel) {
 					if (des.id) { result += '#' + des.id; }
 					if (des.targeted) {  result += ':target'; }
 					if (des.attributes) {
-						
+
 						for (var k=0; k<des.attributes.length; k++) {
 							result += '[' + des.attributes[k].name;
 							if (des.attributes[k].matchType) {
@@ -229,7 +229,7 @@ function toQuerySelectorString(sel) {
 							}
 							result += ']';
 						}
-						
+
 					}
 				} else if (des.name=='descendant') {
 					result += ' ';
@@ -311,7 +311,8 @@ function matchIt(el, itm) {
 				} else if (itmAtt.matchType=='*='){
 					if (att.indexOf(itmAtt.value)==-1){return false;}
 				} else if (itmAtt.matchType=='$='){
-					if (att.indexOf(itmAtt.value)!=att.length-itmAtt.value.length){return false;}
+					var indOf = att.indexOf(itmAtt.value);
+					if (indOf===-1||indOf!=att.length-itmAtt.value.length){return false;}
 				} else if (itmAtt.matchType=='='){
 					if (att!=itmAtt.value){return false;}
 				} else if ('|='==itmAtt.matchType || '~='==itmAtt.matchType){
@@ -851,7 +852,7 @@ var postSetupQueue=[];
 
 // traverse and act onload
 reg.setup=function(selector, setup, firstTimeOnly){
-	firstTimeOnly=(firstTimeOnly)?true:false;
+	firstTimeOnly=!!firstTimeOnly;
 	var sqt=setupQueueByTag;
 	var parsedSel = new reg.Selector(selector);
 	var tagNames=getTagNames(parsedSel);
@@ -933,7 +934,7 @@ var runSetupFunctions = reg.rerun = function(el, noClobber){
 		for (var i=elsList.length-1, els=[]; i>=0; i--) {
 			els[i] = elsList[i];
 		}
-		
+
 		var qSelResults = [];
 
 		// crawl the dom
@@ -951,6 +952,7 @@ var runSetupFunctions = reg.rerun = function(el, noClobber){
 					var matches = regObj.selector.matches(elmt);
 					if(matches){
 						qSelResults.push({el:elmt,regObj:regObj});
+						regObj.ran = true;
 					}
 				}
 			}
@@ -963,6 +965,7 @@ var runSetupFunctions = reg.rerun = function(el, noClobber){
 					var matches = regObj.selector.matches(elmt);
 					if(matches){
 						qSelResults.push({el:elmt,regObj:regObj});
+						regObj.ran = true;
 					}
 				}
 			}
