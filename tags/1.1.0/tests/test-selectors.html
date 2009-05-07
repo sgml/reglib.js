@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-US">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>Testing Selectors</title>
+<link rel="stylesheet" type="text/css" href="test.css"/>
+<script type="text/javascript" src="../reg.js"></script>
+<script type="text/javascript">
+reg.importAll();
+function noToYes(){
+	removeClassName(this,'no');
+	addClassName(this,'yes');
+}
+function yesToNo(){
+	removeClassName(this,'yes');
+	addClassName(this,'no');
+}
+function switchYesNo(){
+	switchClassName(this,'yes','no');
+}
+
+reg.setup('em',noToYes);
+reg.setup('div.classTest',noToYes);
+reg.setup('div.classTest2.classTest2Extra',switchYesNo);
+reg.setup('div#idTest',noToYes);
+reg.setup('#wildId',noToYes);
+reg.setup('.wildClass',noToYes);
+reg.setup('div@title.attributeTest',noToYes);
+reg.setup('div@title="attributeTest2"',noToYes);
+reg.setup("div@title='attributeTest3'",noToYes);
+reg.setup("div.att5@title ^= 'attributeTest5'",noToYes);
+reg.setup("div.att6@title*='attributeTest6'",noToYes);
+reg.setup("div.att7@title$='attributeTest7'",noToYes);
+
+reg.setup(".att8@title~='wob'",switchYesNo);
+reg.setup(".att8a@title~='foo'",switchYesNo);
+reg.setup(".att8b@title~='bar'",switchYesNo);
+reg.setup(".att8c@title~='baz'",switchYesNo);
+
+reg.setup(".att9@title|='en'",switchYesNo);
+
+reg.setup(".att10@title~='foo'@title~='bar'",switchYesNo);
+
+reg.setup('div.descendant1 div.descendant1',switchYesNo);
+reg.setup('div.descendant2 div.descendant2',switchYesNo);
+reg.setup('div.descendant3 div.descendant3',switchYesNo);
+reg.setup('div.child > div.child',switchYesNo);
+reg.setup('div.nextSib1 + div.nextSib1',switchYesNo);
+reg.setup('div.nextSib2 + div.nextSib2',switchYesNo);
+reg.setup('div.nextSib3 + div.nextSib3',switchYesNo);
+reg.setup('div.nextSib4 + div.nextSib4',switchYesNo);
+reg.setup('div.followingSib1 ~ div.followingSib1',switchYesNo);
+reg.setup('div.followingSib2 ~ div.followingSib2',switchYesNo);
+reg.setup('div.followingSib3 ~ div.followingSib3',switchYesNo);
+reg.setup('div.followingSib4 ~ div.followingSib4',switchYesNo);
+reg.setup('div.followingSib5 ~ div.followingSib5',switchYesNo);
+reg.setup('div.wildcard *',noToYes);
+reg.setup('div.multiple1, div.multiple2, div.multiple3',noToYes);
+reg.setup('div@title.emptyTitle',noToYes);
+reg.setup('div@class*="class-attribute-select-"',noToYes);
+reg.setup('div@id^="id-attribute-select-"',noToYes);
+reg.setup('label@for="idTest"',noToYes);
+reg.setup('div.cx1 + div.cx2 > div.cx3 + div.cx4 span.cx5@title="foo"',noToYes);
+reg.setup('div.owildcard1 #iwildcard1',noToYes);
+reg.setup('div#owildcard2 .iwildcard2',noToYes);
+reg.setup('div.owildcard3 @title',noToYes);
+reg.setup('div@title      .iwildcard4',noToYes);
+reg.setup('div#owildcard5 @title',noToYes);
+reg.setup('div@title      #iwildcard6',noToYes);
+
+reg.setup('a.hrefatt@href="foo.html"',noToYes);
+
+try{reg.setup('foo[',noToYes);}         catch(exa){reg.setup('div.err-a',function(){noToYes.call(this);this.innerHTML += ' ... ' + exa.message});}
+try{reg.setup('foo < bar',noToYes);}    catch(exb){reg.setup('div.err-b',function(){noToYes.call(this);this.innerHTML += ' ... ' + exb.message});}
+try{reg.setup('foo - bar',noToYes);}    catch(exc){reg.setup('div.err-c',function(){noToYes.call(this);this.innerHTML += ' ... ' + exc.message});}
+try{reg.setup('foo/bar',noToYes);}      catch(exd){reg.setup('div.err-d',function(){noToYes.call(this);this.innerHTML += ' ... ' + exd.message});}
+try{reg.setup('foo..bar',noToYes);}     catch(exe){reg.setup('div.err-e',function(){noToYes.call(this);this.innerHTML += ' ... ' + exe.message});}
+try{reg.setup('foo# bar',noToYes);}     catch(exf){reg.setup('div.err-f',function(){noToYes.call(this);this.innerHTML += ' ... ' + exf.message});}
+try{reg.setup('foo.',noToYes);}         catch(exg){reg.setup('div.err-g',function(){noToYes.call(this);this.innerHTML += ' ... ' + exg.message});}
+try{reg.setup('a >> b',noToYes);}       catch(exh){reg.setup('div.err-h',function(){noToYes.call(this);this.innerHTML += ' ... ' + exh.message});}
+try{reg.setup('a +~ b',noToYes);}       catch(exi){reg.setup('div.err-i',function(){noToYes.call(this);this.innerHTML += ' ... ' + exi.message});}
+try{reg.setup('a ,, b',noToYes);}       catch(exj){reg.setup('div.err-j',function(){noToYes.call(this);this.innerHTML += ' ... ' + exj.message});}
+try{reg.setup('a,',noToYes);}           catch(exk){reg.setup('div.err-k',function(){noToYes.call(this);this.innerHTML += ' ... ' + exk.message});}
+try{reg.setup(',a',noToYes);}           catch(exl){reg.setup('div.err-l',function(){noToYes.call(this);this.innerHTML += ' ... ' + exl.message});}
+try{reg.setup('a+',noToYes);}           catch(exm){reg.setup('div.err-m',function(){noToYes.call(this);this.innerHTML += ' ... ' + exm.message});}
+try{reg.setup('b,>a',noToYes);}         catch(exn){reg.setup('div.err-n',function(){noToYes.call(this);this.innerHTML += ' ... ' + exn.message});}
+try{reg.setup('b@foo=bar',noToYes);}    catch(exo){reg.setup('div.err-o',function(){noToYes.call(this);this.innerHTML += ' ... ' + exo.message});}
+try{reg.setup('b@foo="bar\'',noToYes);} catch(exp){reg.setup('div.err-p',function(){noToYes.call(this);this.innerHTML += ' ... ' + exp.message});}
+try{reg.setup('b@foo=\'bar"',noToYes);} catch(exq){reg.setup('div.err-q',function(){noToYes.call(this);this.innerHTML += ' ... ' + exq.message});}
+try{reg.setup('b@foo="bar\\"',noToYes);}catch(exr){reg.setup('div.err-r',function(){noToYes.call(this);this.innerHTML += ' ... ' + exr.message});}
+try{reg.setup('',noToYes);}             catch(exs){reg.setup('div.err-s',function(){noToYes.call(this);this.innerHTML += ' ... ' + exs.message});}
+try{reg.setup('div+b~="bar"',noToYes);} catch(ext){reg.setup('div.err-t',function(){noToYes.call(this);this.innerHTML += ' ... ' + ext.message});}
+
+</script>
+</head>
+<body>
+<div id="pagewrap">
+<p><a href="index.html">&laquo; back to index</a></p>
+<h1>Testing Selectors</h1>
+<p>If anything shows up red, there was an error. All green means there were no errors.</p>
+
+<div><em class="no">single tag</em></div>
+<div class="no classTest">class</div>
+<div class="no classTest2 classTest2Extra">mult classes 1</div>
+<div class="no classTest2Extra classTest2">mult classes 2</div>
+<div class="yes classTest2Extra">mult classes 3</div>
+<div class="yes classTest2">mult classes 4</div>
+<div class="no" id="idTest">id</div>
+<div class="wildClass no">wildcard class</div>
+<div class="no" id="wildId">wildcard id</div>
+<div class="attributeTest no" title="something">attribute existing</div>
+<div class="no" title="attributeTest2">attribute, double quotes</div>
+<div class="no" title="attributeTest3">attribute, single quotes</div>
+
+<div class="no att5" title="attributeTest5cc">attribute, starts with</div>
+<div class="no att6" title="cattributeTest6c">attribute, contains</div>
+<div class="no att7" title="ccattributeTest7">attribute, ends with</div>
+
+<div>
+	  <span class="yes att8"  title="foo bar baz"  >attribute, space separated 0</span>
+	| <span class="no att8a"  title="foo bar baz"  >attribute, space separated 1</span>
+	| <span class="no att8a"  title=" foo bar baz ">attribute, space separated 2</span>
+	| <span class="yes att8a" title="-foo bar baz-">attribute, space separated 3</span>
+	| <span class="no att8b"  title="foo bar baz"  >attribute, space separated 4</span>
+	| <span class="no att8b"  title=" foo bar baz ">attribute, space separated 5</span>
+	| <span class="yes att8b" title="-foo-bar-baz-">attribute, space separated 6</span>
+	| <span class="no att8c"  title="foo bar baz"  >attribute, space separated 7</span>
+	| <span class="no att8c"  title=" foo bar baz ">attribute, space separated 8</span>
+	| <span class="yes att8c" title="-foo bar baz-">attribute, space separated 9</span>
+
+	| <span class="no att9"  title="en-us" >dash-att 0</span>
+	| <span class="no att9"  title="en"    >dash-att 1</span>
+	| <span class="no att9"  title="en-"   >dash-att 2</span>
+	| <span class="yes att9" title="-en-us">dash-att 3</span>
+	| <span class="yes att9" title=" en-us">dash-att 4 (Opera expected to fail on this one)</span>
+</div>
+
+<div class="no att10" title="foo wob bar baz">multiple attributes</div>
+
+<div class="descendant1"><div class="no descendant1">descendant 1</div></div>
+<div class="descendant2"><div><div class="no descendant2">descendant 2</div></div></div>
+<div class="yes descendant3">descendant 3</div>
+
+<div class="child"><div class="no child">child 1</div></div>
+<div class="child"><div><div class="yes child">child 2</div></div></div>
+
+<div class="nextSib1"></div><div class="nextSib1 no">nextSib 1</div>
+<div class="nextSib2"></div>-<div class="nextSib2 no">nextSib 2</div>
+<div class="nextSib3"></div><!-- comment --><div class="nextSib3 no">nextSib 3</div>
+<div class="nextSib4"></div><br/><div class="nextSib4 yes">nextSib 4</div>
+
+<div class="followingSib1"></div><div class="followingSib1 no">following sibling 1</div>
+<div class="followingSib2"></div><div></div><div class="followingSib2 no">following sibling 2</div>
+<div class="followingSib3"></div><div></div><div></div><div></div><div></div><div></div><div class="followingSib3 no">following sibling 3</div>
+<div class="followingSib4"></div><br/><div class="followingSib4 no">following sibling 4</div>
+<div class="yes followingSib5">following sibling 5</div>
+
+<div class="wildcard"><div class="no">wildcard 1</div></div>
+<div class="no multiple1">multiple 1</div>
+<div class="no multiple2">multiple 2</div>
+<div class="no multiple3">multiple 3</div>
+<div class="emptyTitle no" title="">empty title attribute (IE6/7 expected to fail this one)</div>
+<div class="class-attribute-select-foo no">class selection via attribute</div>
+<div id="id-attribute-select-foo" class="no">id selection via attribute</div>
+<div><label for="idTest" class="no">selecting label for attribute</label></div>
+<div class="cx1"></div><div class="cx2"><div class="cx3"></div><div class="cx4"><span class="cx5 no" title="foo">a complex one</span></div></div>
+
+<div class="owildcard1"><div id="iwildcard1" class="no">implicit wildcard descendant selection 1</div></div>
+<div id="owildcard2"><div class="iwildcard2 no">implicit wildcard descendant selection 2</div></div>
+<div class="owildcard3"><div title="foo" class="no">implicit wildcard descendant selection 3</div></div>
+<div title="foo"><div class="iwildcard4 no">implicit wildcard descendant selection 4</div></div>
+<div id="owildcard5"><div title="foo" class="no">implicit wildcard descendant selection 5</div></div>
+<div title="foo"><div id="iwildcard6" class="no">implicit wildcard descendant selection 6</div></div>
+<p><a class="no hrefatt" href="foo.html">href attribute selection</a></p>
+
+
+<h2>Error messages for bad selectors</h2>
+<p>We want these to be green</p>
+
+<div class="err-a no">malformed selector</div>
+<div class="err-b no">malformed selector</div>
+<div class="err-c no">malformed selector</div>
+<div class="err-d no">malformed selector</div>
+<div class="err-e no">malformed selector</div>
+<div class="err-f no">malformed selector</div>
+<div class="err-g no">malformed selector</div>
+<div class="err-h no">malformed selector</div>
+<div class="err-i no">malformed selector</div>
+<div class="err-j no">malformed selector</div>
+<div class="err-k no">malformed selector</div>
+<div class="err-l no">malformed selector</div>
+<div class="err-m no">malformed selector</div>
+<div class="err-n no">malformed selector</div>
+<div class="err-o no">malformed selector</div>
+<div class="err-p no">malformed selector</div>
+<div class="err-q no">malformed selector</div>
+<div class="err-r no">malformed selector</div>
+<div class="err-s no">malformed selector</div>
+<div class="err-t no">malformed selector</div>
+</div>
+</body>
+</html>
