@@ -709,7 +709,7 @@ window.reg = (function(){
 		};
 		return memInd;
 	}
-	function cleanup(){return;
+	function cleanup(){
 		for (var key in memEvents) {
 			var matches = key.match(/^mem(\d+)$/);
 			if (!matches) { continue; }
@@ -826,13 +826,14 @@ window.reg = (function(){
 
 	// these contain lists of things to do
 	var preSetupQueue=[];
-	var setupQueue={};
+	var setupQueue=[];
+	var setupQueueByTag={};
 	var postSetupQueue=[];
-
+	
 	// traverse and act onload
 	reg.setup=function(selector, setup, firstTimeOnly){
 		firstTimeOnly=(firstTimeOnly)?true:false;
-		var sq=setupQueue;
+		var sqt=setupQueueByTag;
 		var parsedSel = new reg.Selector(selector);
 		var tagNames=getTagNames(parsedSel);
 		var regObj={
@@ -841,17 +842,18 @@ window.reg = (function(){
 			ran:false,
 			firstTimeOnly:firstTimeOnly
 		};
+		setupQueue.push(regObj);
 		for(var a=0;a<tagNames.length;a++){
 			var tagName = tagNames[a];
-			if(!sq[tagName]){sq[tagName]=[regObj];}
-			else{sq[tagName].push(regObj);}
+			if(!sqt[tagName]){sqt[tagName]=[regObj];}
+			else{sqt[tagName].push(regObj);}
 		}
 	};
 	// do this before setup
 	reg.preSetup=function(fn){preSetupQueue.push(fn);};
 	// do this after setup
 	reg.postSetup=function(fn){postSetupQueue.push(fn);};
-
+	
 	// (re)run setup functions
 	var runSetupFunctions = reg.rerun = function(el, noClobber){
 		function runIt(el, regObj){
@@ -861,52 +863,48 @@ window.reg = (function(){
 		var start = new Date().getTime();
 		if (typeof el.clobberable != 'undefined' && el.clobberable && noClobber) { return; }
 		var doc=(el)?el:document;
-		var sq=setupQueue;
-		var sqIsEmpty=true;
-		for (var tagName in sq) {
-			if(!sq.hasOwnProperty(tagName)) { continue; }
-			sqIsEmpty = false;
+		var sqt=setupQueueByTag;
+		var sqtIsEmpty=true;
+		for (var tagName in sqt) {
+			if(!sqt.hasOwnProperty(tagName)) { continue; }
+			sqtIsEmpty = false;
 			break;
 		}
-
+	
 		if (el.querySelector) {
-
+	
 			//####################################
 			//querySelector() branch
-
+	
 			var qSelResults = [];
-			for (var tagName in sq) {
-				if(!sq.hasOwnProperty(tagName)) { continue; }
-				var regObjArray = sq[tagName];
-				for (var i=0; i<regObjArray.length; i++) {
-					var regObj = regObjArray[i];
-					if (regObj.firstTimeOnly) {
-						if (regObj.ran) { continue; }
-						try {
-							var elmt = el.querySelector(toQuerySelectorString(regObj.selector));
-							if (elmt) { qSelResults.push({el:elmt,regObj:regObj}); }
-						} catch (ex) {
-							console.log("querySelector('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
-							continue;
+			for (var i=0; i<setupQueue.length; i++) {
+				var regObj = setupQueue[i];
+				if (regObj.firstTimeOnly) {
+					if (regObj.ran) { continue; }
+					try {
+						var elmt = el.querySelector(toQuerySelectorString(regObj.selector));
+						if (elmt) { qSelResults.push({el:elmt,regObj:regObj}); }
+					} catch (ex) {
+						console.log("querySelector('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
+						continue;
+					}
+				} else {
+					try {
+						var elmts = el.querySelectorAll(toQuerySelectorString(regObj.selector));
+						for (var j=0; j<elmts.length; j++) {
+							qSelResults.push({el:elmts[j],regObj:regObj});
 						}
-					} else {
-						try {
-							var elmts = el.querySelectorAll(toQuerySelectorString(regObj.selector));
-							for (var j=0; j<elmts.length; j++) {
-								qSelResults.push({el:elmts[j],regObj:regObj});
-							}
-						} catch (ex) {
-							console.log("querySelectorAll('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
-							continue;
-						}
+					} catch (ex) {
+						console.log("querySelectorAll('"+toQuerySelectorString(regObj.selector)+"') threw "+ex);
+						continue;
 					}
 				}
 			}
 			for (var i=0; i<qSelResults.length; i++) {
 				runIt(qSelResults[i].el, qSelResults[i].regObj);
 			}
-		} else if (!sqIsEmpty) {
-
+		} else if (!sqtIsEmpty) {
+	
 			//####################################
 			//old branch
 
@@ -921,8 +919,8 @@ window.reg = (function(){
 			for(var a=0,elmt;elmt=els[a++];){
 				if (elmt.nodeType!=1){continue;}//for ie7
 				var lcNodeName=elmt.nodeName.toLowerCase();
-				var regObjArrayAll=sq['*'];
-				var regObjArrayTag=sq[lcNodeName];
+				var regObjArrayAll=sqt['*'];
+				var regObjArrayTag=sqt[lcNodeName];
 
 				// any wildcards?
 				if(regObjArrayAll){
