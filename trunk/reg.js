@@ -511,10 +511,10 @@ function newElement(name, atts, content) {
 			content = [content];
 		}
 		for (var a=0; a<content.length; a++) {
-			if (typeof content[a] == 'string') {
-				e.appendChild(document.createTextNode(content[a]));
-			}else{
+			if (content[a].nodeType !== undefined) {
 				e.appendChild(content[a]);
+			}else{
+				e.appendChild(document.createTextNode(content[a]));
 			}
 		}
 	}
