@@ -537,7 +537,7 @@ function elementText(el) {
 			if (3 == chlds[a].nodeType) {
 				result += chlds[a].data;
 			} else if (1 == chlds[a].nodeType) {
-				result += elemText(chlds[a]);
+				result += elementText(chlds[a]);
 			}
 		}
 	}
