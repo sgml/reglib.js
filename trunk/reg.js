@@ -1158,6 +1158,7 @@ if (document.all && !window.opera) {
 // the delegator
 function delegate(selectionHandlers, event) {
 	if (selectionHandlers) {
+		var execList = [];
 		var targ = getTarget(event);
 		for (var sel in selectionHandlers) {
 			if(!selectionHandlers.hasOwnProperty(sel)) { continue; }
@@ -1174,14 +1175,18 @@ function delegate(selectionHandlers, event) {
 								break;
 							}
 						}
-						var retVal=selHandler.handle.call(el,event);
-						// if they return false from the handler, cancel default
-						if(retVal!==undefined && !retVal) {
-							cancelDefault(event);
-						}
+						execList.push({"handle":selHandler.handle,"element":el});
 						break;
 					}
 				}
+			}
+		}
+		for (var i=0; i<execList.length; i++) {
+			var exec = execList[i];
+			var retVal=exec.handle.call(exec.element,event);
+			// if they return false from the handler, cancel default
+			if(retVal!==undefined && !retVal) {
+				cancelDefault(event);
 			}
 		}
 	}
