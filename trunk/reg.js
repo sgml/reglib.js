@@ -22,7 +22,7 @@ reg.importAll = function() {
 	catch (err) { errStrings.push(err.message); }
 	try { reg.importEventFunctions(); }
 	catch (err) { errStrings.push(err.message); }
-	if (errStrings.length > 0) { throw new Error(errStrings.join("\n")); }
+	if (errStrings.length > 0) { if (console && console.log) { console.log(errStrings.join("\n")); } }
 };
 function globalError(name) {
 	return "reglib tried to add \""+name+"\" to global namespace but \""+name+"\" already existed.";
