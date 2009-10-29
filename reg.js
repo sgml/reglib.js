@@ -29,7 +29,8 @@ function globalError(name) {
 }
 if (window.Node && Node.prototype && !Node.prototype.contains) {
 	Node.prototype.contains = function (arg) {
-		return !!(this.compareDocumentPosition(arg) & 16);
+		try{return !!(this.compareDocumentPosition(arg) & 16);}
+		catch(ex){return false;}
 	}
 }
 
